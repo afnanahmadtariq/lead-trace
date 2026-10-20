@@ -3,12 +3,12 @@ import Link from 'next/link'
 import { Section, SiteShell } from '../../components/site-shell'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy · InsightIQ',
-  description: 'How InsightIQ collects, uses, and protects your information.',
+  title: 'Privacy Policy · Lead Trace',
+  description: 'How Lead Trace collects, uses, and protects your information.',
 }
 
 export default function PrivacyPage() {
-  return <SiteShell title="Privacy Policy" lead="We collect only what we need to run InsightIQ, improve the product, and communicate with you." updated="September 5, 2026">
+  return <SiteShell title="Privacy Policy" lead="We collect only what we need to run Lead Trace, improve the product, and communicate with you." updated="September 5, 2026">
     <Section title="What we collect">
       <ul>
         <li>Account details you provide (name, email, password or OAuth identity).</li>
@@ -26,10 +26,10 @@ export default function PrivacyPage() {
       </ul>
     </Section>
     <Section title="Research & public data">
-      <p>When you start a research run, InsightIQ may collect publicly available information about the prospect or company you specify. That material is stored in your workspace with source links so you can review it. You are responsible for using research outputs in line with applicable laws and your own policies.</p>
+      <p>When you start a research run, Lead Trace may collect publicly available information about the prospect or company you specify. That material is stored in your workspace with source links so you can review it. You are responsible for using research outputs in line with applicable laws and your own policies.</p>
     </Section>
     <Section title="Sharing">
-      <p>We do not sell personal data. We may share data with infrastructure providers that help us host, authenticate, email, or process requests—only as needed to operate InsightIQ—and if required by law.</p>
+      <p>We do not sell personal data. We may share data with infrastructure providers that help us host, authenticate, email, or process requests—only as needed to operate Lead Trace—and if required by law.</p>
     </Section>
     <Section title="Retention & your choices">
       <p>We keep account and workspace data while your account is active. You can request access, correction, or deletion of personal data by contacting us. You can unsubscribe from marketing emails at any time.</p>

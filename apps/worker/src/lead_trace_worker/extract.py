@@ -4,7 +4,7 @@ import re
 from decimal import Decimal
 from typing import Iterable, Mapping, Optional
 
-from insightiq_worker.models import ExtractedClaim, RunContext, SignalType
+from lead_trace_worker.models import ExtractedClaim, RunContext, SignalType
 
 SENTENCE_SPLIT = re.compile(r'(?<=[.!?])\s+')
 JUNK = re.compile(

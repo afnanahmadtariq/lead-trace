@@ -10,7 +10,7 @@ import { Field } from './ui/form-field'
 import { FormMessage } from './ui/form-message'
 
 function ReturnToSignIn() {
-  return <p className="mt-0.5 mb-0 text-center text-sm text-iq-600"><Link className="font-semibold text-brand" href="/sign-in">Return to sign in</Link></p>
+  return <p className="mt-0.5 mb-0 text-center text-sm text-lt-600"><Link className="font-semibold text-brand" href="/sign-in">Return to sign in</Link></p>
 }
 
 export function ForgotPasswordForm() {
@@ -44,7 +44,7 @@ export function VerifyEmailActions({ email }: { email: string }) {
   const [sent, setSent] = useState(false)
   const resendCooldown = useResendCooldown({
     startLocked: true,
-    storageKey: `insightiq:email-verification:${email.trim().toLowerCase()}`,
+    storageKey: `lead-trace:email-verification:${email.trim().toLowerCase()}`,
   })
 
   async function resend() {
@@ -69,7 +69,7 @@ export function VerifyEmailActions({ email }: { email: string }) {
     {pending
       ? <Button className="w-full" type="button" variant="secondary" disabled>Sending…</Button>
       : resendCooldown.locked
-        ? <p className="m-0 text-center text-[.78rem] font-medium text-iq-500" role="status">{resendCooldown.ready ? `Resend available in ${resendCooldown.secondsRemaining}s` : 'Checking email status…'}</p>
+        ? <p className="m-0 text-center text-[.78rem] font-medium text-lt-500" role="status">{resendCooldown.ready ? `Resend available in ${resendCooldown.secondsRemaining}s` : 'Checking email status…'}</p>
         : <Button className="w-full" type="button" variant="secondary" onClick={resend} disabled={!email}>Resend verification email</Button>}
     <ReturnToSignIn/>
   </div>

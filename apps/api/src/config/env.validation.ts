@@ -1,6 +1,6 @@
 const DEFAULT_WEB_URL = 'http://localhost:3000'
 const DEFAULT_API_URL = 'http://localhost:3001'
-const DEVELOPMENT_AUTH_SECRET = 'insightiq-development-secret-change-before-production'
+const DEVELOPMENT_AUTH_SECRET = 'lead-trace-development-secret-change-before-production'
 const EMAIL_PATTERN = /^[^\s<>@]+@[^\s<>@]+\.[^\s<>@]+$/
 const TAVILY_SEARCH_DEPTHS = ['basic', 'advanced', 'fast', 'ultra-fast'] as const
 
@@ -52,7 +52,7 @@ function authConfiguration(config: Record<string, unknown>) {
 
 function emailConfiguration(config: Record<string, unknown>) {
   const apiKey = optionalString(config.RESEND_API_KEY)
-  const from = optionalString(config.RESEND_FROM_EMAIL) ?? 'InsightIQ <onboarding@resend.dev>'
+  const from = optionalString(config.RESEND_FROM_EMAIL) ?? 'Lead Trace <onboarding@resend.dev>'
   const address = from.match(/<([^<>]+)>$/)?.[1] ?? from
   if (apiKey && !apiKey.startsWith('re_')) throw new Error('RESEND_API_KEY must begin with re_')
   if (!EMAIL_PATTERN.test(address)) throw new Error('RESEND_FROM_EMAIL must contain a valid email address')

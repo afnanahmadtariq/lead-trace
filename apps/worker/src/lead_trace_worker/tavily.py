@@ -6,10 +6,10 @@ from typing import Optional
 
 import httpx
 
-from insightiq_worker.models import SourceBundle
+from lead_trace_worker.models import SourceBundle
 
 TAVILY_URL = 'https://api.tavily.com/search'
-USER_AGENT = 'InsightIQ-Research/0.1'
+USER_AGENT = 'LeadTrace-Research/0.1'
 
 
 def _clean(value: Optional[str], maximum: int = 100) -> str:

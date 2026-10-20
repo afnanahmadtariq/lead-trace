@@ -3,9 +3,9 @@ import os
 import signal
 import time
 
-from insightiq_worker.db import Worker
+from lead_trace_worker.db import Worker
 
-log = logging.getLogger('insightiq.worker')
+log = logging.getLogger('lead-trace.worker')
 
 
 def configure_logging() -> None:

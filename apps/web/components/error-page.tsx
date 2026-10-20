@@ -13,18 +13,18 @@ function ErrorShell({ icon, eyebrow, title, lead, children }: {
   lead: string
   children?: ReactNode
 }) {
-  return <main className="min-h-screen bg-iq-50 text-iq-950">
+  return <main className="min-h-screen bg-lt-50 text-lt-950">
     <nav className={`${container} flex items-center justify-between py-5`} aria-label="Error page navigation">
       <Brand/>
       <Link className="text-sm font-semibold text-brand hover:underline" href="/sign-in">Sign in</Link>
     </nav>
 
     <section className={`${container} grid justify-items-start gap-6 py-16 pb-24 max-sm:py-12`}>
-      <span className="grid size-14 place-items-center rounded-2xl bg-white text-brand shadow-card ring-1 ring-iq-200">{icon}</span>
+      <span className="grid size-14 place-items-center rounded-2xl bg-white text-brand shadow-card ring-1 ring-lt-200">{icon}</span>
       <div className="grid max-w-[640px] gap-3">
         <p className="m-0 text-[.69rem] font-bold tracking-[.12em] text-brand uppercase">{eyebrow}</p>
-        <h1 className="m-0 text-[clamp(2.2rem,5vw,3.4rem)] leading-[1.02] font-light tracking-[-.055em] text-iq-900">{title}</h1>
-        <p className="m-0 text-base leading-relaxed text-iq-600">{lead}</p>
+        <h1 className="m-0 text-[clamp(2.2rem,5vw,3.4rem)] leading-[1.02] font-light tracking-[-.055em] text-lt-900">{title}</h1>
+        <p className="m-0 text-base leading-relaxed text-lt-600">{lead}</p>
       </div>
       {children && <div className="flex flex-wrap gap-3">{children}</div>}
     </section>
@@ -36,7 +36,7 @@ export function NotFoundPage() {
     icon={<SearchX size={26}/>}
     eyebrow="404"
     title="This page isn't here."
-    lead="The link may be mistyped, expired, or the page may have moved. Head back to InsightIQ and continue from your workspace."
+    lead="The link may be mistyped, expired, or the page may have moved. Head back to Lead Trace and continue from your workspace."
   >
     <ButtonLink href="/"><ArrowLeft size={16}/>Back to home</ButtonLink>
     <ButtonLink href="/dashboard" variant="secondary">Open dashboard</ButtonLink>

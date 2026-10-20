@@ -1,5 +1,5 @@
 import { prismaAdapter } from '@better-auth/prisma-adapter'
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 import { betterAuth } from 'better-auth'
 import { APIError, createAuthMiddleware, getSessionFromCtx } from 'better-auth/api'
 import { organization, twoFactor } from 'better-auth/plugins'
@@ -18,10 +18,10 @@ const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim()
 const cookieDomain = process.env.BETTER_AUTH_COOKIE_DOMAIN?.trim()
 
 export const auth = betterAuth({
-  appName: 'InsightIQ',
+  appName: 'Lead Trace',
   baseURL,
   basePath: '/api/auth',
-  secret: process.env.BETTER_AUTH_SECRET?.trim() || 'insightiq-development-secret-change-before-production',
+  secret: process.env.BETTER_AUTH_SECRET?.trim() || 'lead-trace-development-secret-change-before-production',
   database: prismaAdapter(db, {
     provider: 'postgresql',
     transaction: true,
@@ -43,7 +43,7 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url }) => sendAuthEmail({
       to: user.email,
       kind: 'password-reset',
-      title: 'Reset your InsightIQ password',
+      title: 'Reset your Lead Trace password',
       message: 'Use the secure link below to choose a new password. The link expires in one hour.',
       actionUrl: url,
       actionLabel: 'Reset password',
@@ -58,7 +58,7 @@ export const auth = betterAuth({
       to: user.email,
       kind: 'verification',
       title: 'Verify your email',
-      message: 'Confirm this email address to secure your InsightIQ workspace.',
+      message: 'Confirm this email address to secure your Lead Trace workspace.',
       actionUrl: url,
       actionLabel: 'Verify email',
     }),
@@ -71,7 +71,7 @@ export const auth = betterAuth({
         to: user.email,
         kind: 'email-change',
         title: 'Confirm your email change',
-        message: `Confirm the request to change your InsightIQ sign-in email to ${newEmail}.`,
+        message: `Confirm the request to change your Lead Trace sign-in email to ${newEmail}.`,
         actionUrl: url,
         actionLabel: 'Confirm email change',
       }),
@@ -83,7 +83,7 @@ export const auth = betterAuth({
         to: user.email,
         kind: 'account-deletion',
         title: 'Confirm account deletion',
-        message: 'Confirm this request to permanently delete your InsightIQ account. This link expires in one hour.',
+        message: 'Confirm this request to permanently delete your Lead Trace account. This link expires in one hour.',
         actionUrl: url,
         actionLabel: 'Delete account',
       }),
@@ -122,7 +122,7 @@ export const auth = betterAuth({
   },
   advanced: {
     database: { joins: true },
-    cookiePrefix: 'insightiq',
+    cookiePrefix: 'lead-trace',
     useSecureCookies: isProduction,
     ...(cookieDomain ? {
       crossSubDomainCookies: { enabled: true, domain: cookieDomain },
@@ -168,7 +168,7 @@ export const auth = betterAuth({
   },
   plugins: [
     twoFactor({
-      issuer: 'InsightIQ',
+      issuer: 'Lead Trace',
       allowPasswordless: true,
       otpOptions: {
         period: 5,
@@ -178,7 +178,7 @@ export const auth = betterAuth({
         sendOTP: async ({ user, otp }) => sendAuthEmail({
           to: user.email,
           kind: 'two-factor',
-          title: 'Your InsightIQ security code',
+          title: 'Your Lead Trace security code',
           message: 'Enter this code to complete sign-in. It expires in five minutes.',
           code: otp,
         }),
@@ -198,7 +198,7 @@ export const auth = betterAuth({
         await sendAuthEmail({
           to: email,
           kind: 'workspace-invitation',
-          title: `Join ${invitedOrganization.name} on InsightIQ`,
+          title: `Join ${invitedOrganization.name} on Lead Trace`,
           message: `${inviter.user.name} invited you to collaborate in the ${invitedOrganization.name} workspace.`,
           actionUrl: invitationUrl.toString(),
           actionLabel: 'Review invitation',
@@ -208,4 +208,4 @@ export const auth = betterAuth({
   ],
 })
 
-export type InsightIQAuthSession = typeof auth.$Infer.Session
+export type LeadTraceAuthSession = typeof auth.$Infer.Session

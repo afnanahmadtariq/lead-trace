@@ -5,7 +5,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler'
 import { AllowAnonymous, AuthModule } from '@thallesp/nestjs-better-auth'
 import { resolve } from 'node:path'
 import { auth } from './auth/auth'
-import { InsightIQAuthModule } from './auth/insightiq-auth.module'
+import { LeadTraceAuthModule } from './auth/lead-trace-auth.module'
 import { validateEnvironment } from './config/env.validation'
 import { E2eModule } from './e2e/e2e.module'
 import { ResearchModule } from './research/research.module'
@@ -37,7 +37,7 @@ class HealthController {
         urlencoded: { limit: '1mb', extended: true },
       },
     }),
-    InsightIQAuthModule,
+    LeadTraceAuthModule,
     ResearchModule,
     ...(e2eEnabled ? [E2eModule] : []),
   ],

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { InsightIQAuthModule } from '../auth/insightiq-auth.module'
+import { LeadTraceAuthModule } from '../auth/lead-trace-auth.module'
 import { TavilyModule } from '../tavily/tavily.module'
 import { ResearchDiscoveryService } from './research-discovery.service'
 import { WikipediaDiscoveryService } from './wikipedia-discovery.service'
@@ -9,7 +9,7 @@ import { ResearchRunsController } from './research-runs.controller'
 import { ResearchRunsService } from './research-runs.service'
 
 @Module({
-  imports: [InsightIQAuthModule, TavilyModule],
+  imports: [LeadTraceAuthModule, TavilyModule],
   controllers: [ResearchRunsController, ResearchLibraryController],
   providers: [ResearchRunsService, ResearchDiscoveryService, ResearchLibraryService, WikipediaDiscoveryService],
 })

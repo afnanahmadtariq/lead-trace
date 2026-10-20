@@ -9,11 +9,11 @@ from typing import Optional
 
 from pydantic import BaseModel, Field
 
-from insightiq_worker.extract import extract_claims, numeric_quantities
-from insightiq_worker.evidence import ExtractedClaim as GroundedClaim, filter_claims_for_source
-from insightiq_worker.models import BriefSections, ConversationAngle, EvidenceDraft, RunContext, SignalType, SourceBundle
+from lead_trace_worker.extract import extract_claims, numeric_quantities
+from lead_trace_worker.evidence import ExtractedClaim as GroundedClaim, filter_claims_for_source
+from lead_trace_worker.models import BriefSections, ConversationAngle, EvidenceDraft, RunContext, SignalType, SourceBundle
 
-log = logging.getLogger('insightiq.worker.llm')
+log = logging.getLogger('lead-trace.worker.llm')
 
 DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
 DEFAULT_DASHSCOPE_MODEL = 'qwen3.8-max'
@@ -113,7 +113,7 @@ def _client():
     try:
         from openai import OpenAI
     except ImportError as error:
-        raise RuntimeError('openai package required for LLM features; pip install insightiq-worker[llm]') from error
+        raise RuntimeError('openai package required for LLM features; pip install lead-trace-worker[llm]') from error
 
     config = resolve_llm_config()
     return OpenAI(api_key=config.api_key, base_url=config.base_url)

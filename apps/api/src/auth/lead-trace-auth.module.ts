@@ -10,4 +10,4 @@ import { WorkspaceSettingsService } from './workspace-settings.service'
   providers: [AccountContextService, WorkspaceSettingsService],
   exports: [AccountContextService],
 })
-export class InsightIQAuthModule {}
+export class LeadTraceAuthModule {}

@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common'
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 import type { UserSession } from '@thallesp/nestjs-better-auth'
 import { createHmac, randomInt, randomUUID, timingSafeEqual } from 'node:crypto'
 import { auth } from './auth'
@@ -26,7 +26,7 @@ function securityAuthorizationIdentifier(sessionId: string, action: SecurityChan
 }
 
 function hashSecurityConfirmationCode(code: string) {
-  return createHmac('sha256', process.env.BETTER_AUTH_SECRET || 'insightiq-development-secret-change-before-production').update(code).digest('hex')
+  return createHmac('sha256', process.env.BETTER_AUTH_SECRET || 'lead-trace-development-secret-change-before-production').update(code).digest('hex')
 }
 
 @Injectable()

@@ -3,12 +3,12 @@ import datetime
 import unittest
 from unittest.mock import patch
 
-from insightiq_worker.evidence import ExtractedClaim, filter_claims_for_source, reconcile_claims
-from insightiq_worker.extract import is_relevant_claim, rank_evidence_for_brief
-from insightiq_worker.graph_brief import _compute_urgency, assemble_sections, polish_sections
-from insightiq_worker.llm import extract_claims_with_llm, polish_brief, refine_claims
-from insightiq_worker.models import EvidenceDraft, RunContext, SourceBundle
-from insightiq_worker.stages import _prefer_source_published_at
+from lead_trace_worker.evidence import ExtractedClaim, filter_claims_for_source, reconcile_claims
+from lead_trace_worker.extract import is_relevant_claim, rank_evidence_for_brief
+from lead_trace_worker.graph_brief import _compute_urgency, assemble_sections, polish_sections
+from lead_trace_worker.llm import extract_claims_with_llm, polish_brief, refine_claims
+from lead_trace_worker.models import EvidenceDraft, RunContext, SourceBundle
+from lead_trace_worker.stages import _prefer_source_published_at
 
 
 def context(goal='meeting', company='Acme'):
@@ -93,8 +93,8 @@ class SourceGroundingTest(unittest.TestCase):
         rows = reconcile_claims([('source-a', [claim]), ('source-b', [claim, claim])])
         self.assertAlmostEqual(rows[0].confidence, 0.84)
 
-    @patch('insightiq_worker.llm.llm_enabled', return_value=True)
-    @patch('insightiq_worker.llm._chat_json')
+    @patch('lead_trace_worker.llm.llm_enabled', return_value=True)
+    @patch('lead_trace_worker.llm._chat_json')
     def test_legacy_model_extraction_also_rejects_unsupported_numbers(self, chat, enabled):
         chat.return_value = {'claims': [{
             'source_id': 'source', 'claim': 'Acme hired 50 new account executives.',
@@ -104,8 +104,8 @@ class SourceGroundingTest(unittest.TestCase):
                                 text='Acme is hiring account executives.', score=0.9)]
         self.assertEqual(extract_claims_with_llm(context(), sources), [])
 
-    @patch('insightiq_worker.llm.llm_enabled', return_value=True)
-    @patch('insightiq_worker.llm._chat_json', return_value={'claims': []})
+    @patch('lead_trace_worker.llm.llm_enabled', return_value=True)
+    @patch('lead_trace_worker.llm._chat_json', return_value={'claims': []})
     def test_refinement_rejection_does_not_resurrect_discarded_claims(self, chat, enabled):
         sources = [SourceBundle(source_id='source', url='https://example.test', title='Acme',
                                 text='Acme is hiring account executives.')]
@@ -164,7 +164,7 @@ class BriefGroundingTest(unittest.TestCase):
         self.assertIn('Developer onboarding analytics', brief.outreach_draft)
         self.assertLess(len(brief.outreach_draft.split()), 120)
 
-    @patch('insightiq_worker.graph_brief.polish_brief')
+    @patch('lead_trace_worker.graph_brief.polish_brief')
     def test_polisher_receives_only_claims_actually_cited_by_the_brief(self, polish):
         rows = [evidence(str(i), f'Acme is hiring sales managers for region {i}.') for i in range(6)]
         state = assemble_sections({'context': context(), 'evidence': rows, 'sections': None, 'error': None})
@@ -174,8 +174,8 @@ class BriefGroundingTest(unittest.TestCase):
         self.assertEqual({row['id'] for row in submitted}, {c.evidence_id for c in state['sections'].key_signals})
         self.assertEqual(len(submitted), 5)
 
-    @patch('insightiq_worker.llm.llm_enabled', return_value=True)
-    @patch('insightiq_worker.llm._chat_json')
+    @patch('lead_trace_worker.llm.llm_enabled', return_value=True)
+    @patch('lead_trace_worker.llm._chat_json')
     def test_optional_model_fields_cannot_erase_required_goal_output(self, chat, enabled):
         chat.return_value = {
             'summary': 'Acme is hiring account executives; explore whether sales onboarding is a priority.',

@@ -6,15 +6,15 @@ import logging
 import os
 from typing import Any, Callable, Optional, Union
 
-from insightiq_worker import evidence
-from insightiq_worker.graph_brief import build_brief_graph, new_id
-from insightiq_worker.graph_evidence import build_evidence_graph
-from insightiq_worker.email import send_brief_ready_email
-from insightiq_worker.model_gateway import ModelGatewayConfig, StructuredOutputError, build_client
-from insightiq_worker.models import EvidenceDraft, RunContext, SourceBundle
-from insightiq_worker.pipeline import FETCH_SOURCES_SQL, INSERT_EVIDENCE_SQL
+from lead_trace_worker import evidence
+from lead_trace_worker.graph_brief import build_brief_graph, new_id
+from lead_trace_worker.graph_evidence import build_evidence_graph
+from lead_trace_worker.email import send_brief_ready_email
+from lead_trace_worker.model_gateway import ModelGatewayConfig, StructuredOutputError, build_client
+from lead_trace_worker.models import EvidenceDraft, RunContext, SourceBundle
+from lead_trace_worker.pipeline import FETCH_SOURCES_SQL, INSERT_EVIDENCE_SQL
 
-log = logging.getLogger('insightiq.worker.stages')
+log = logging.getLogger('lead-trace.worker.stages')
 
 LOAD_RUN_SQL = """
 SELECT

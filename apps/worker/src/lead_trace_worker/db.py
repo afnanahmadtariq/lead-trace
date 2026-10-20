@@ -8,10 +8,10 @@ from typing import Callable, Optional
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from uuid import uuid4
 
-from insightiq_worker.model_gateway import ModelGatewayConfig, build_client
-from insightiq_worker.pipeline import BACKOFF_SQL, CLAIM_SQL, COUNTS_SQL, FAIL_SQL, next_stage
+from lead_trace_worker.model_gateway import ModelGatewayConfig, build_client
+from lead_trace_worker.pipeline import BACKOFF_SQL, CLAIM_SQL, COUNTS_SQL, FAIL_SQL, next_stage
 
-log = logging.getLogger('insightiq.worker')
+log = logging.getLogger('lead-trace.worker')
 
 
 def postgres_url(url: str) -> str:
@@ -112,7 +112,7 @@ class Worker:
                     )
                     return True
                 if stage == 'evidence':
-                    from insightiq_worker.stages import process_evidence_stage
+                    from lead_trace_worker.stages import process_evidence_stage
 
                     inserted = process_evidence_stage(
                         connection,
@@ -133,7 +133,7 @@ class Worker:
                     )
                     return True
                 if stage == 'brief':
-                    from insightiq_worker.stages import process_brief_stage
+                    from lead_trace_worker.stages import process_brief_stage
 
                     brief_id = process_brief_stage(connection, run_id, organization_id)
                     connection.commit()

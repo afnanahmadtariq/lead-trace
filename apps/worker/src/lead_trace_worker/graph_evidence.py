@@ -4,10 +4,10 @@ from typing import TypedDict
 
 from langgraph.graph import END, START, StateGraph
 
-from insightiq_worker.extract import extract_claims
-from insightiq_worker.fetch import fetch_page_text
-from insightiq_worker.llm import extract_claims_with_llm, fallback_claims, llm_enabled, refine_claims
-from insightiq_worker.models import EvidenceDraft, RunContext, SourceBundle
+from lead_trace_worker.extract import extract_claims
+from lead_trace_worker.fetch import fetch_page_text
+from lead_trace_worker.llm import extract_claims_with_llm, fallback_claims, llm_enabled, refine_claims
+from lead_trace_worker.models import EvidenceDraft, RunContext, SourceBundle
 
 
 class EvidenceState(TypedDict):

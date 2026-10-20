@@ -5,11 +5,11 @@ import logging
 import sys
 from typing import Optional
 
-from insightiq_worker.db import Worker
-from insightiq_worker.pipeline import next_stage
-from insightiq_worker.stages import process_brief_stage, process_evidence_stage
+from lead_trace_worker.db import Worker
+from lead_trace_worker.pipeline import next_stage
+from lead_trace_worker.stages import process_brief_stage, process_evidence_stage
 
-log = logging.getLogger('insightiq.worker.process_run')
+log = logging.getLogger('lead-trace.worker.process_run')
 
 RUN_STATE_SQL = """
 SELECT

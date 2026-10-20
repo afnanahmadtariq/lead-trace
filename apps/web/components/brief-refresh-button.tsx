@@ -41,12 +41,12 @@ export function BriefRefreshButton({
       {pending ? 'Refreshing brief…' : 'Refresh brief'}
     </Button>
     {error && <FormMessage tone="error">{error}</FormMessage>}
-    {diff.length > 0 && <section className="rounded-[15px] border border-iq-200 bg-iq-50/60 p-4">
-      <strong className="text-sm text-iq-900">Changes since last refresh</strong>
-      <div className="mt-3 grid gap-3">{diff.map((item) => <article className="rounded-xl border border-iq-200 bg-white p-3" key={item.field}>
+    {diff.length > 0 && <section className="rounded-[15px] border border-lt-200 bg-lt-50/60 p-4">
+      <strong className="text-sm text-lt-900">Changes since last refresh</strong>
+      <div className="mt-3 grid gap-3">{diff.map((item) => <article className="rounded-xl border border-lt-200 bg-white p-3" key={item.field}>
         <h3 className="m-0 text-xs font-bold tracking-[.06em] text-brand uppercase">{item.field}</h3>
-        {item.before && <p className="mt-2 mb-1 text-xs text-iq-500"><span className="font-semibold">Before:</span> {item.before}</p>}
-        {item.after && <p className="m-0 text-xs text-iq-700"><span className="font-semibold">After:</span> {item.after}</p>}
+        {item.before && <p className="mt-2 mb-1 text-xs text-lt-500"><span className="font-semibold">Before:</span> {item.before}</p>}
+        {item.after && <p className="m-0 text-xs text-lt-700"><span className="font-semibold">After:</span> {item.after}</p>}
       </article>)}</div>
     </section>}
   </div>

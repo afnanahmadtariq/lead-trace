@@ -5,13 +5,13 @@ import json
 import sys
 from typing import Optional
 
-from insightiq_worker.fetch import company_news_urls, fetch_page_text, wikipedia_resolve
-from insightiq_worker.graph_brief import build_brief_graph, new_id
-from insightiq_worker.graph_evidence import build_evidence_graph
-from insightiq_worker.llm import llm_enabled
-from insightiq_worker.models import RunContext, SourceBundle
-from insightiq_worker.stages import _assemble_langgraph_evidence
-from insightiq_worker.tavily import discover_sources, tavily_configured
+from lead_trace_worker.fetch import company_news_urls, fetch_page_text, wikipedia_resolve
+from lead_trace_worker.graph_brief import build_brief_graph, new_id
+from lead_trace_worker.graph_evidence import build_evidence_graph
+from lead_trace_worker.llm import llm_enabled
+from lead_trace_worker.models import RunContext, SourceBundle
+from lead_trace_worker.stages import _assemble_langgraph_evidence
+from lead_trace_worker.tavily import discover_sources, tavily_configured
 
 
 def _wiki_sources(prospect_name: str, company_name: Optional[str], *, use_crawl4ai: bool) -> list[SourceBundle]:
@@ -72,7 +72,7 @@ def collect_public_profile(prospect_name: str, company_name: Optional[str], *, u
         created_by_id=None,
         prospect_name=prospect_name,
         company_name=company_name,
-        offer_name='InsightIQ platform',
+        offer_name='Lead Trace platform',
         value_proposition='Evidence-first sales intelligence for better conversations.',
     )
     evidence_result = build_evidence_graph().invoke(

@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, Logger, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 import { AccountContextService, type AuthenticatedSession } from '../auth/account-context.service'
 import { TavilySearchService } from '../tavily/tavily-search.service'
 import {

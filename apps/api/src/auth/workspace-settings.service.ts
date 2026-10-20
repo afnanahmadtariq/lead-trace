@@ -1,5 +1,5 @@
 import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common'
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 import type { AuthenticatedSession } from './account-context.service'
 import { AccountContextService } from './account-context.service'
 

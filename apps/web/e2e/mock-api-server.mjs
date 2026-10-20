@@ -3,7 +3,7 @@ import { randomUUID } from 'node:crypto'
 import { e2eFixtures } from './fixtures.mjs'
 
 const PORT = Number(process.env.E2E_API_PORT || 3001)
-const SESSION_COOKIE = 'insightiq.session_token'
+const SESSION_COOKIE = 'lead-trace.session_token'
 const WEB_ORIGIN = process.env.PLAYWRIGHT_BASE_URL || `http://127.0.0.1:${process.env.E2E_WEB_PORT || 3000}`
 
 const corsHeaders = {

@@ -29,7 +29,7 @@ export function renderAuthEmail(input: AuthEmailInput) {
   const plainCode = input.code ? `\n\nYour code: ${input.code}` : ''
 
   return {
-    subject: `[InsightIQ] ${input.title}`,
+    subject: `[Lead Trace] ${input.title}`,
     text: `${input.title}\n\n${input.message}${plainCode}${plainAction}\n\nIf you did not request this, you can safely ignore this email.`,
     html: `<!doctype html>
 <html lang="en">
@@ -37,7 +37,7 @@ export function renderAuthEmail(input: AuthEmailInput) {
   <body style="background:#f8fbff;color:#10264f;font-family:Arial,Helvetica,sans-serif;margin:0;padding:32px 12px;">
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
       <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#fff;border:1px solid #dceafa;border-radius:18px;max-width:580px;overflow:hidden;">
-        <tr><td style="background:#12346f;border-top:6px solid #49bcf7;color:#fff;font-size:23px;font-weight:800;letter-spacing:-.04em;padding:22px 30px;">InsightIQ</td></tr>
+        <tr><td style="background:#12346f;border-top:6px solid #49bcf7;color:#fff;font-size:23px;font-weight:800;letter-spacing:-.04em;padding:22px 30px;">Lead Trace</td></tr>
         <tr><td style="padding:34px 30px 10px;"><p style="color:#168ce5;font-size:12px;font-weight:800;letter-spacing:.12em;margin:0;text-transform:uppercase;">Secure workspace</p></td></tr>
         <tr><td style="padding:0 30px 12px;"><h1 style="font-size:28px;letter-spacing:-.035em;line-height:1.2;margin:0;">${escapeHtml(input.title)}</h1></td></tr>
         <tr><td style="color:#617798;font-size:16px;line-height:1.6;padding:0 30px 24px;"><p style="margin:0;">${escapeHtml(input.message)}</p></td></tr>

@@ -6,7 +6,7 @@ from typing import Optional
 
 import httpx
 
-log = logging.getLogger('insightiq.worker.email')
+log = logging.getLogger('lead-trace.worker.email')
 
 
 def _escape_html(value: str) -> str:
@@ -28,7 +28,7 @@ Your conversation brief for {prospect_name} is ready to review.
 
 Open brief: {action_url}
 
-— The InsightIQ team
+— The Lead Trace team
 """
     html = f"""<!doctype html>
 <html lang="en">
@@ -36,7 +36,7 @@ Open brief: {action_url}
   <body style="background:#f8fbff;color:#10264f;font-family:Arial,Helvetica,sans-serif;margin:0;padding:32px 12px;">
     <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
       <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#fff;border:1px solid #dceafa;border-radius:18px;max-width:580px;overflow:hidden;">
-        <tr><td style="background:#12346f;border-top:6px solid #49bcf7;color:#fff;font-size:23px;font-weight:800;letter-spacing:-.04em;padding:22px 30px;">InsightIQ</td></tr>
+        <tr><td style="background:#12346f;border-top:6px solid #49bcf7;color:#fff;font-size:23px;font-weight:800;letter-spacing:-.04em;padding:22px 30px;">Lead Trace</td></tr>
         <tr><td style="padding:34px 30px 12px;"><h1 style="font-size:28px;letter-spacing:-.035em;line-height:1.2;margin:0;">Your brief is ready.</h1></td></tr>
         <tr><td style="color:#617798;font-size:16px;line-height:1.65;padding:0 30px 24px;">
           <p style="margin:0 0 16px;">{_escape_html(greeting)}</p>
@@ -69,7 +69,7 @@ def send_brief_ready_email(
         action_url=action_url,
         recipient_name=recipient_name,
     )
-    from_email = os.environ.get('RESEND_FROM_EMAIL', 'InsightIQ <onboarding@resend.dev>').strip()
+    from_email = os.environ.get('RESEND_FROM_EMAIL', 'Lead Trace <onboarding@resend.dev>').strip()
     payload: dict = {
         'from': from_email,
         'to': [to],

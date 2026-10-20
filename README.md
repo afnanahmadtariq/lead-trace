@@ -1,20 +1,28 @@
 <p align="center">
-  <img src="apps/web/public/insightiq-logo.svg" alt="InsightIQ logo" width="100" />
+  <img src="apps/web/public/lead-trace-logo.svg" alt="Lead Trace logo" width="100" />
 </p>
 
-<h1 align="center">InsightIQ</h1>
+<h1 align="center">Lead Trace</h1>
 <p align="center"><strong>A source. A hypothesis. A better question.</strong></p>
 <p align="center">
-  <a href="https://insightiq.zerotools.online">Try InsightIQ</a> ·
-  <a href="video/InsightIQ-demo.mp4">Watch the demo</a> ·
-  <a href="presentation/InsightIQ-pitch-enhanced.pptx">View the pitch</a> ·
+  <a href="https://leadtrace.online">Try Lead Trace</a> ·
+  <a href="video/Lead-Trace-demo.mp4">Watch the demo</a> ·
+  <a href="presentation/Lead-Trace-pitch-enhanced.pptx">View the pitch</a> ·
   <a href="#getting-started">Get started</a> ·
   <a href="#supporting-attachments">Explore the attachments</a>
 </p>
 
-## Meet InsightIQ
+## From InsightIQ to Lead Trace
 
-InsightIQ is an AI sales research assistant for **B2B sales teams, agencies, and founders**. Give it a prospect and describe what you sell. It finds public signals and turns them into a **cited Deal Brief** for meeting preparation or personalized outreach—with source links and visible research gaps.
+We listened to feedback from industry professionals and used it to rethink the project's direction around the needs of sales teams. **InsightIQ is now Lead Trace.**
+
+The project began with AI-assisted prospect research and cited Deal Briefs. We are building on that foundation toward a broader sales workflow that brings lead generation, research, and CRM together. The new name reflects that direction: helping teams follow a lead from discovery through the sales relationship.
+
+Lead generation, CRM, and related capabilities are planned. We will refine the feature set, priorities, pitch, and documentation as development progresses and we gather further feedback. The working product described below provides the research and briefing foundation.
+
+## Meet Lead Trace
+
+Lead Trace currently provides an AI sales research assistant for **B2B sales teams, agencies, and founders**. Give it a prospect and describe what you sell. It finds public signals and turns them into a **cited Deal Brief** for meeting preparation or personalized outreach—with source links and visible research gaps.
 
 We built the complete journey: a shared workspace, public-source discovery, AI evidence extraction, and briefs you can review and reuse. Its central feature is a **conversation angle**: a source claim, a clearly labeled hypothesis about your offer, and a question that tests whether the fit is real.
 
@@ -26,48 +34,48 @@ Click a preview to view the full desktop screenshot.
   <tr>
     <td width="50%" align="center">
       <strong>Landing page</strong><br />
-      <a href="docs/assets/insightiq-landing.png"><img src="docs/assets/insightiq-landing.png" alt="InsightIQ landing page desktop screenshot" width="360" /></a><br />
-      <sub>Discover what InsightIQ does.</sub>
+      <a href="docs/assets/lead-trace-landing.png"><img src="docs/assets/lead-trace-landing.png" alt="Lead Trace landing page desktop screenshot" width="360" /></a><br />
+      <sub>Discover what Lead Trace does.</sub>
     </td>
     <td width="50%" align="center">
       <strong>Dashboard</strong><br />
-      <a href="docs/assets/insightiq-dashboard.png"><img src="docs/assets/insightiq-dashboard.png" alt="InsightIQ dashboard desktop screenshot" width="360" /></a><br />
+      <a href="docs/assets/lead-trace-dashboard.png"><img src="docs/assets/lead-trace-dashboard.png" alt="Lead Trace dashboard desktop screenshot" width="360" /></a><br />
       <sub>See your workspace at a glance.</sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
       <strong>New research</strong><br />
-      <a href="docs/assets/insightiq-new-research.png"><img src="docs/assets/insightiq-new-research.png" alt="InsightIQ new research desktop screenshot" width="360" /></a><br />
+      <a href="docs/assets/lead-trace-new-research.png"><img src="docs/assets/lead-trace-new-research.png" alt="Lead Trace new research desktop screenshot" width="360" /></a><br />
       <sub>Choose a goal and add prospect context.</sub>
     </td>
     <td width="50%" align="center">
       <strong>Prospect library</strong><br />
-      <a href="docs/assets/insightiq-prospects.png"><img src="docs/assets/insightiq-prospects.png" alt="InsightIQ prospect library desktop screenshot" width="360" /></a><br />
+      <a href="docs/assets/lead-trace-prospects.png"><img src="docs/assets/lead-trace-prospects.png" alt="Lead Trace prospect library desktop screenshot" width="360" /></a><br />
       <sub>Find prospects and open ready briefs.</sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
       <strong>Deal Brief</strong><br />
-      <a href="docs/assets/insightiq-brief.png"><img src="docs/assets/insightiq-brief.png" alt="InsightIQ deal brief desktop screenshot" width="360" /></a><br />
+      <a href="docs/assets/lead-trace-brief.png"><img src="docs/assets/lead-trace-brief.png" alt="Lead Trace deal brief desktop screenshot" width="360" /></a><br />
       <sub>Prepare your next sales conversation.</sub>
     </td>
     <td width="50%" align="center">
       <strong>Evidence library</strong><br />
-      <a href="docs/assets/insightiq-evidence.png"><img src="docs/assets/insightiq-evidence.png" alt="InsightIQ evidence library desktop screenshot" width="360" /></a><br />
+      <a href="docs/assets/lead-trace-evidence.png"><img src="docs/assets/lead-trace-evidence.png" alt="Lead Trace evidence library desktop screenshot" width="360" /></a><br />
       <sub>Inspect the sources behind the claims.</sub>
     </td>
   </tr>
   <tr>
     <td width="50%" align="center">
       <strong>Conversation angles</strong><br />
-      <a href="docs/assets/insightiq-angles.png"><img src="docs/assets/insightiq-angles.png" alt="A cited fact, conditional offer fit, and question to ask" width="360" /></a><br />
+      <a href="docs/assets/lead-trace-angles.png"><img src="docs/assets/lead-trace-angles.png" alt="A cited fact, conditional offer fit, and question to ask" width="360" /></a><br />
       <sub>Connect the evidence to a useful question.</sub>
     </td>
     <td width="50%" align="center">
       <strong>Personalized outreach</strong><br />
-      <a href="docs/assets/insightiq-outreach.png"><img src="docs/assets/insightiq-outreach.png" alt="Actual outreach draft with talking points and objections" width="360" /></a><br />
+      <a href="docs/assets/lead-trace-outreach.png"><img src="docs/assets/lead-trace-outreach.png" alt="Actual outreach draft with talking points and objections" width="360" /></a><br />
       <sub>Adapt the draft, then copy or download it.</sub>
     </td>
   </tr>
@@ -77,7 +85,7 @@ Click a preview to view the full desktop screenshot.
 
 ## The idea: research with a purpose
 
-A company profile can tell you what a business does. Preparing for a conversation means understanding **why your offer could matter to that prospect**. InsightIQ brings both sides together, keeping the evidence behind its suggestions within reach.
+A company profile can tell you what a business does. Preparing for a conversation means understanding **why your offer could matter to that prospect**. Lead Trace brings both sides together, keeping the evidence behind its suggestions within reach.
 
 | Prepare for a meeting | Start a conversation | Check the evidence |
 | --- | --- | --- |
@@ -92,7 +100,7 @@ A company profile can tell you what a business does. Preparing for a conversatio
 
 ## Getting started
 
-1. **Enter your workspace.** [Create an account](https://insightiq.zerotools.online/sign-up) and verify your email.
+1. **Enter your workspace.** [Create an account](https://leadtrace.online/sign-up) and verify your email.
 2. **Add your context.** Enter a prospect's name, company, domain, or public profile, then describe what you sell.
 3. **Choose your goal.** Pick meeting preparation or outreach and follow the research progress.
 4. **Choose an angle.** Inspect its source, consider the possible fit, and use the question to start a conversation.
@@ -128,19 +136,27 @@ flowchart LR
 
 The web app runs on **Cloudflare Workers via OpenNext**. The API, research worker, and PostgreSQL run with **Docker Compose on a VPS**, with Nginx handling API traffic. PostgreSQL tracks the job queue, and database relationships keep research records tied to their workspace.
 
+## Product direction
+
+| Available in the current application | Planned direction |
+| --- | --- |
+| Prospect and offer context, public-source research, cited Deal Briefs, outreach drafts, shared briefs, and workspace accounts | Lead generation, CRM, and related sales workflows |
+
+Planned capabilities do not yet represent a finalized feature list or a release commitment. We will update this distinction as each capability becomes available.
+
 ## Supporting attachments
 
-A compact set of materials for exploring and presenting the project:
+A compact set of materials for exploring and presenting the project. The presentation, PDFs, screenshots, and narrated demo are being refreshed for the new product direction and incoming logo. Their current contents reflect the earlier research-focused version:
 
 | Attachment | What's inside |
 | --- | --- |
-| [PowerPoint pitch](presentation/InsightIQ-pitch-enhanced.pptx) · [PDF pitch](supporting/InsightIQ-pitch.pdf) | Product story, desktop screenshots, workflow, architecture, and team |
-| [Narrated product demo](video/InsightIQ-demo.mp4) · [Captions](video/InsightIQ-captions.srt) | A 78-second, 1080p story with an animated logo, actual app captures, conversational ElevenLabs narration, and original background music |
-| [Project overview](supporting/InsightIQ-overview.pdf) | A concise introduction to the idea and what we built |
-| [Architecture diagram](supporting/InsightIQ-architecture.png) | The system architecture shown above |
-| [Workflow diagram](supporting/InsightIQ-workflow.png) | From prospect context to a reviewable Deal Brief |
-| [Demo inputs](supporting/InsightIQ-demo-inputs.csv) | Fictional prospect and offer examples for demonstrations; not a benchmark or measured results |
-| [All attachments](supporting/InsightIQ-attachments.zip) | The supporting materials in one download |
+| [PowerPoint pitch](presentation/Lead-Trace-pitch-enhanced.pptx) · [PDF pitch](supporting/Lead-Trace-pitch.pdf) | Product story, desktop screenshots, workflow, architecture, and team |
+| [Narrated product demo](video/Lead-Trace-demo.mp4) · [Captions](video/Lead-Trace-captions.srt) | A 78-second, 1080p story with an animated logo, actual app captures, conversational ElevenLabs narration, and original background music |
+| [Project overview](supporting/Lead-Trace-overview.pdf) | A concise introduction to the idea and what we built |
+| [Architecture diagram](supporting/Lead-Trace-architecture.png) | The system architecture shown above |
+| [Workflow diagram](supporting/Lead-Trace-workflow.png) | From prospect context to a reviewable Deal Brief |
+| [Demo inputs](supporting/Lead-Trace-demo-inputs.csv) | Fictional prospect and offer examples for demonstrations; not a benchmark or measured results |
+| [All attachments](supporting/Lead-Trace-attachments.zip) | The supporting materials in one download |
 
 ## Contributors
 
@@ -187,11 +203,23 @@ Quality checks: `npm run build`, `npm run lint`, `npm run check-types`, and `npm
 For browser tests while the app is already running:
 
 ```bash
-E2E_WEB_PORT=3100 E2E_API_PORT=3101 npm run test --workspace=@insightiq/web
+E2E_WEB_PORT=3100 E2E_API_PORT=3101 npm run test --workspace=@lead-trace/web
 ```
 
 The suite covers source matching, complete exports, refresh differences, and the mobile journey. Worker regressions cover identity matching, duplicate events, dated urgency, numeric grounding, and conversation-angle citations.
 
 Repository layout: `apps/web`, `apps/api`, `apps/worker`, and `packages/db`.
+
+### Rebrand deployment notes
+
+The workspace scope is `@lead-trace`, the Python module is `lead_trace_worker`, and the CLI commands use the `lead-trace-` prefix. Run `npm install` and `npm run worker:setup` after updating to refresh package links and the editable Python installation.
+
+The public site is `https://leadtrace.online`. The checked-in API default is `https://api.leadtrace.online`, with authentication cookies scoped to `.leadtrace.online`. The example sender is `auth@leadtrace.online` and the contact address is `hello@leadtrace.online`. Configure the API subdomain and verify both email addresses before production use.
+
+The checked-in configuration uses Lead Trace names for the Cloudflare Worker, container images, deployment directory, and database defaults. Provision and verify the new DNS records, API origin, OAuth callbacks, email sender domain, TLS certificate, and Cloudflare route before deploying. These repository changes do not provision external infrastructure.
+
+For an existing deployment, retain the configured database name and URL, credentials, and Compose project/volume identity until you deliberately migrate them. Set `COMPOSE_PROJECT_NAME` to the existing project identity when moving the deployment directory so Compose reuses its database volume. Renaming a default does not rename a populated PostgreSQL database. Copy the existing environment and TLS files into the new deployment directory before a release.
+
+The authentication cookie prefix and browser storage keys now use `lead-trace`. Existing users will need to sign in again, and local UI preferences and resend cooldown state will restart. Existing authenticator enrollments continue to use their saved labels until re-enrolled. Existing database content and previously sent messages retain their historical content.
 
 </details>

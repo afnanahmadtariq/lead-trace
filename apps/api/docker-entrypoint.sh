@@ -2,7 +2,7 @@
 set -eu
 
 run_database_migrations() {
-  npm run db:migrate --workspace=@insightiq/db
+  npm run db:migrate --workspace=@lead-trace/db
 }
 
 case "${1:-serve}" in

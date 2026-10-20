@@ -3,7 +3,7 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-insightiq}
+      POSTGRES_DB: ${POSTGRES_DB:-lead-trace}
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     volumes:
@@ -15,25 +15,25 @@ services:
       retries: 10
 
   api:
-    image: ${API_IMAGE:-insightiq-api:local}
+    image: ${API_IMAGE:-lead-trace-api:local}
     restart: unless-stopped
     environment:
       NODE_ENV: production
       PORT: 3001
-      WEB_ORIGIN: https://${PRIMARY_DOMAIN:-insightiq.zerotools.online}
+      WEB_ORIGIN: https://${PRIMARY_DOMAIN:-leadtrace.online}
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_URL: https://${API_DOMAIN:-api-insightiq.zerotools.online}
-      BETTER_AUTH_TRUSTED_ORIGINS: https://${PRIMARY_DOMAIN:-insightiq.zerotools.online}
-      BETTER_AUTH_COOKIE_DOMAIN: ${BETTER_AUTH_COOKIE_DOMAIN:-.zerotools.online}
+      BETTER_AUTH_URL: https://${API_DOMAIN:-api.leadtrace.online}
+      BETTER_AUTH_TRUSTED_ORIGINS: https://${PRIMARY_DOMAIN:-leadtrace.online}
+      BETTER_AUTH_COOKIE_DOMAIN: ${BETTER_AUTH_COOKIE_DOMAIN:-.leadtrace.online}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       RESEND_API_KEY: ${RESEND_API_KEY}
-      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-InsightIQ <onboarding@resend.dev>}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-Lead Trace <onboarding@resend.dev>}
       TAVILY_API_KEY: ${TAVILY_API_KEY:-}
       TAVILY_SEARCH_DEPTH: ${TAVILY_SEARCH_DEPTH:-advanced}
       TAVILY_MAX_RESULTS: ${TAVILY_MAX_RESULTS:-6}
       API_RUN_DB_SETUP_ON_STARTUP: ${API_RUN_DB_SETUP_ON_STARTUP:-true}
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-insightiq}?schema=public
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-lead-trace}?schema=public
     depends_on:
       postgres:
         condition: service_healthy
@@ -45,11 +45,11 @@ services:
       start_period: 10s
 
   worker:
-    image: ${WORKER_IMAGE:-insightiq-worker:local}
+    image: ${WORKER_IMAGE:-lead-trace-worker:local}
     build: ./apps/worker
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-insightiq}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@postgres:5432/${POSTGRES_DB:-lead-trace}
       WORKER_LOG_LEVEL: ${WORKER_LOG_LEVEL:-INFO}
       WORKER_POLL_SECONDS: ${WORKER_POLL_SECONDS:-3}
       WORKER_HEARTBEAT_SECONDS: ${WORKER_HEARTBEAT_SECONDS:-60}
@@ -62,8 +62,8 @@ services:
       DASHSCOPE_BASE_URL: ${DASHSCOPE_BASE_URL:-https://dashscope-intl.aliyuncs.com/compatible-mode/v1}
       DASHSCOPE_MODEL: ${DASHSCOPE_MODEL:-qwen3.8-max}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
-      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-InsightIQ <onboarding@resend.dev>}
-      WEB_ORIGIN: https://${PRIMARY_DOMAIN:-insightiq.zerotools.online}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-Lead Trace <onboarding@resend.dev>}
+      WEB_ORIGIN: https://${PRIMARY_DOMAIN:-leadtrace.online}
       WORKER_USE_CRAWL4AI: ${WORKER_USE_CRAWL4AI:-false}
     depends_on:
       postgres:
@@ -76,7 +76,7 @@ services:
       api:
         condition: service_healthy
     environment:
-      API_DOMAIN: ${API_DOMAIN:-api-insightiq.zerotools.online}
+      API_DOMAIN: ${API_DOMAIN:-api.leadtrace.online}
     ports:
       - "80:80"
       - "443:443"

@@ -1,5 +1,5 @@
 {
-  "name": "insightiq",
+  "name": "lead-trace",
   "private": true,
   "packageManager": "npm@12.0.2",
   "workspaces": [
@@ -13,11 +13,11 @@
     "check-types": "turbo run check-types",
     "test": "turbo run test",
     "clean": "turbo run clean && rimraf .turbo",
-    "worker:setup": "npm run setup --workspace=@insightiq/worker",
-    "worker:process": "npm run process --workspace=@insightiq/worker",
-    "db:generate": "npm run db:generate --workspace=@insightiq/db",
-    "db:migrate": "npm run db:migrate --workspace=@insightiq/db",
-    "db:migrate:dev": "npm run db:migrate:dev --workspace=@insightiq/db"
+    "worker:setup": "npm run setup --workspace=@lead-trace/worker",
+    "worker:process": "npm run process --workspace=@lead-trace/worker",
+    "db:generate": "npm run db:generate --workspace=@lead-trace/db",
+    "db:migrate": "npm run db:migrate --workspace=@lead-trace/db",
+    "db:migrate:dev": "npm run db:migrate:dev --workspace=@lead-trace/db"
   },
   "dependencies": {
     "turbo": "^2.10.11"

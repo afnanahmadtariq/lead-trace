@@ -12,9 +12,9 @@ from urllib.parse import quote, urljoin, urlparse
 import httpx
 from bs4 import BeautifulSoup
 
-log = logging.getLogger('insightiq.worker.fetch')
+log = logging.getLogger('lead-trace.worker.fetch')
 
-USER_AGENT = 'InsightIQ-Research/0.1 (+https://insightiq.app)'
+USER_AGENT = 'LeadTrace-Research/0.1 (+https://leadtrace.online)'
 TRACKING = re.compile(r'\s+')
 MAX_TEXT = 12_000
 MAX_DOWNLOAD_BYTES = 1_000_000

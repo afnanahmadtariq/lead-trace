@@ -48,7 +48,7 @@ export function ResearchRunActions({ run }: { run: Pick<ResearchRunSummary, 'id'
       {pending ? <RefreshCw className="animate-spin" size={17}/> : <Search size={17}/>}
       {pending ? 'Collecting public sources…' : run.status === 'failed' ? 'Retry source discovery' : 'Collect public sources'}
     </Button>
-    {result && <p className="m-0 max-w-[300px] text-right text-xs text-iq-600 max-[700px]:text-left">{result.sourcesCollected} sources collected across {result.queriesCompleted} searches.</p>}
+    {result && <p className="m-0 max-w-[300px] text-right text-xs text-lt-600 max-[700px]:text-left">{result.sourcesCollected} sources collected across {result.queriesCompleted} searches.</p>}
     {error && <FormMessage tone="error" className="text-[.8rem]">{error}</FormMessage>}
   </div>
 }

@@ -69,10 +69,10 @@ export function AuthForm({ mode, callbackPath = '/auth/continue' }: { mode: 'sig
     {mode === 'sign-up' && <Field id="name" name="name" label="Full name" placeholder="Your name" autoComplete="name" required icon={<UserRound size={18}/>}/>} 
     <Field id="email" name="email" type="email" label="Work email" placeholder="you@company.com" autoComplete="email" required icon={<Mail size={18}/>}/>
     <Field id="password" name="password" type="password" label="Password" labelAction={mode === 'sign-in' ? <Link href="/forgot-password">Forgot password?</Link> : undefined} placeholder={mode === 'sign-up' ? 'At least 10 characters' : 'Your password'} autoComplete={mode === 'sign-up' ? 'new-password' : 'current-password'} minLength={10} maxLength={128} required icon={<LockKeyhole size={18}/>}/>
-    {mode === 'sign-in' && <label className="flex items-center gap-2 text-sm text-iq-600"><input className="size-4 accent-brand" type="checkbox" name="remember"/>Keep me signed in</label>}
+    {mode === 'sign-in' && <label className="flex items-center gap-2 text-sm text-lt-600"><input className="size-4 accent-brand" type="checkbox" name="remember"/>Keep me signed in</label>}
     {error && <FormMessage tone="error" role="alert">{error}</FormMessage>}
     <Button className="w-full" type="submit" disabled={pending}>{pending ? 'Please wait…' : mode === 'sign-up' ? 'Create workspace' : 'Sign in'} {!pending && <ArrowRight size={18}/>}</Button>
-    {mode === 'sign-up' && <p className="m-0 text-center text-xs leading-relaxed text-iq-500">By creating an account, you agree to our <Link className="font-semibold text-brand" href="/terms">Terms</Link> and <Link className="font-semibold text-brand" href="/privacy">Privacy Policy</Link>.</p>}
-    {googleEnabled && <><div className="flex items-center gap-3 text-sm text-iq-500 before:h-px before:flex-1 before:bg-iq-200 after:h-px after:flex-1 after:bg-iq-200">or</div><Button className="w-full" type="button" variant="secondary" onClick={google} disabled={pending}><GoogleMark/>Continue with Google</Button></>}
+    {mode === 'sign-up' && <p className="m-0 text-center text-xs leading-relaxed text-lt-500">By creating an account, you agree to our <Link className="font-semibold text-brand" href="/terms">Terms</Link> and <Link className="font-semibold text-brand" href="/privacy">Privacy Policy</Link>.</p>}
+    {googleEnabled && <><div className="flex items-center gap-3 text-sm text-lt-500 before:h-px before:flex-1 before:bg-lt-200 after:h-px after:flex-1 after:bg-lt-200">or</div><Button className="w-full" type="button" variant="secondary" onClick={google} disabled={pending}><GoogleMark/>Continue with Google</Button></>}
   </form>
 }

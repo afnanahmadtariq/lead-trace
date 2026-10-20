@@ -5,6 +5,6 @@ export function FormMessage({ tone = 'notice', className = '', ...props }: HTMLA
     ? 'border border-danger/20 bg-[#fff0f2] text-danger'
     : tone === 'success'
       ? 'bg-[#eef9f3] text-success'
-      : 'bg-iq-100 text-iq-700'
+      : 'bg-lt-100 text-lt-700'
   return <p className={`m-0 rounded-[10px] px-[13px] py-[11px] text-[.87rem] leading-normal ${toneClass} ${className}`} {...props}/>
 }

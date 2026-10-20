@@ -1,5 +1,5 @@
 [project]
-name = "insightiq-worker"
+name = "lead-trace-worker"
 version = "0.0.0"
 requires-python = ">=3.9"
 dependencies = [
@@ -16,8 +16,8 @@ dependencies = [
 llm = ["openai>=1.40"]
 
 [project.scripts]
-insightiq-demo-collect = "insightiq_worker.demo:main"
-insightiq-process-run = "insightiq_worker.process_run:main"
+lead-trace-demo-collect = "lead_trace_worker.demo:main"
+lead-trace-process-run = "lead_trace_worker.process_run:main"
 
 [build-system]
 requires = ["setuptools"]

@@ -8,9 +8,9 @@ from uuid import uuid4
 from langgraph.graph import END, START, StateGraph
 from pydantic import ValidationError
 
-from insightiq_worker.extract import rank_evidence_for_brief
-from insightiq_worker.llm import personalize_outreach_draft, polish_brief
-from insightiq_worker.models import BriefCitation, BriefSections, ConversationAngle, RunContext
+from lead_trace_worker.extract import rank_evidence_for_brief
+from lead_trace_worker.llm import personalize_outreach_draft, polish_brief
+from lead_trace_worker.models import BriefCitation, BriefSections, ConversationAngle, RunContext
 
 
 class StoredEvidence(TypedDict, total=False):

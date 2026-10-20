@@ -8,9 +8,9 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from insightiq_worker.extract import is_junk_claim, is_relevant_claim
-from insightiq_worker.model_gateway import ModelGatewayConfig, request_structured_output
-from insightiq_worker.models import RunContext
+from lead_trace_worker.extract import is_junk_claim, is_relevant_claim
+from lead_trace_worker.model_gateway import ModelGatewayConfig, request_structured_output
+from lead_trace_worker.models import RunContext
 
 SIGNAL_TYPES: frozenset[str] = frozenset(
     {'hiring', 'funding', 'launch', 'leadership', 'partnership', 'role-context', 'other'}

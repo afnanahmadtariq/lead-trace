@@ -1,7 +1,7 @@
 /** Shared with apps/api/src/e2e/e2e-seed.service.ts for real-stack runs. */
 export const e2eFixtures = {
   user: {
-    email: 'e2e@insightiq.test',
+    email: 'e2e@lead-trace.test',
     password: 'E2eTestPass1!',
     name: 'E2E Tester',
   },
@@ -24,7 +24,7 @@ export const e2eFixtures = {
     companyName: 'Apple',
   },
   offer: {
-    name: 'InsightIQ Platform',
+    name: 'Lead Trace Platform',
     context: 'Evidence-backed deal briefs for every prospect conversation.',
     persona: 'Revenue leaders',
   },

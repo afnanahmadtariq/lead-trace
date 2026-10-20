@@ -14,7 +14,7 @@ export async function apiRequest<T>(path: string, init: RequestInit = {}) {
   })
   if (!response.ok) {
     const payload = await response.json().catch(() => null) as { message?: string } | null
-    throw new ApiError(payload?.message || 'InsightIQ could not complete this request', response.status)
+    throw new ApiError(payload?.message || 'Lead Trace could not complete this request', response.status)
   }
   if (response.status === 204) return undefined as T
   return response.json() as Promise<T>

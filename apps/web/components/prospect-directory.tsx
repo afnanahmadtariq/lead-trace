@@ -89,46 +89,46 @@ export function ProspectDirectory({ runs }: { runs: ResearchRunSummary[] }) {
             key={option.value}
             aria-pressed={selected}
             onClick={() => setStatus(option.value)}
-            className={`inline-flex min-h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-medium transition-[color,background-color,border-color,box-shadow] duration-200 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/20 motion-reduce:transition-none ${selected ? 'border-brand bg-brand text-white shadow-sm' : 'border-iq-200 bg-white text-iq-600 hover:border-iq-300 hover:bg-iq-50 hover:text-iq-900'}`}
-          ><strong className={selected ? 'text-sm text-white' : 'text-sm text-iq-900'}>{totals[option.value]}</strong>{option.label}</button>
+            className={`inline-flex min-h-10 items-center gap-2 rounded-full border px-3.5 text-xs font-medium transition-[color,background-color,border-color,box-shadow] duration-200 focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/20 motion-reduce:transition-none ${selected ? 'border-brand bg-brand text-white shadow-sm' : 'border-lt-200 bg-white text-lt-600 hover:border-lt-300 hover:bg-lt-50 hover:text-lt-900'}`}
+          ><strong className={selected ? 'text-sm text-white' : 'text-sm text-lt-900'}>{totals[option.value]}</strong>{option.label}</button>
         })}
       </div>
 
       <div className="grid grid-cols-[minmax(240px,1fr)_190px_205px] gap-2.5 max-[760px]:grid-cols-2 max-[520px]:grid-cols-1">
         <label className="relative block max-[760px]:col-span-2 max-[520px]:col-span-1">
           <span className="sr-only">Search prospects</span>
-          <Search size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-iq-500"/>
+          <Search size={16} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-lt-500"/>
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Search prospect, company, or offer"
-            className="h-11 w-full rounded-control border border-iq-200 bg-white pr-10 pl-10 text-[.82rem] text-iq-900 outline-none transition-[border-color,box-shadow] placeholder:text-iq-500 focus:border-brand focus:ring-3 focus:ring-brand/10"
+            className="h-11 w-full rounded-control border border-lt-200 bg-white pr-10 pl-10 text-[.82rem] text-lt-900 outline-none transition-[border-color,box-shadow] placeholder:text-lt-500 focus:border-brand focus:ring-3 focus:ring-brand/10"
           />
-          {query && <button type="button" onClick={() => setQuery('')} aria-label="Clear search" className="absolute top-1/2 right-2 grid size-8 -translate-y-1/2 place-items-center rounded-lg text-iq-500 hover:bg-iq-100 hover:text-iq-900"><X size={15}/></button>}
+          {query && <button type="button" onClick={() => setQuery('')} aria-label="Clear search" className="absolute top-1/2 right-2 grid size-8 -translate-y-1/2 place-items-center rounded-lg text-lt-500 hover:bg-lt-100 hover:text-lt-900"><X size={15}/></button>}
         </label>
 
         <label className="relative">
           <span className="sr-only">Filter by brief type</span>
-          <select value={goal} onChange={(event) => setGoal(event.target.value as GoalFilter)} className="h-11 w-full appearance-none rounded-control border border-iq-200 bg-white px-3.5 pr-9 text-[.82rem] text-iq-800 outline-none transition-[border-color,box-shadow] focus:border-brand focus:ring-3 focus:ring-brand/10">
+          <select value={goal} onChange={(event) => setGoal(event.target.value as GoalFilter)} className="h-11 w-full appearance-none rounded-control border border-lt-200 bg-white px-3.5 pr-9 text-[.82rem] text-lt-800 outline-none transition-[border-color,box-shadow] focus:border-brand focus:ring-3 focus:ring-brand/10">
             <option value="all">All brief types</option>
             <option value="meeting">Meeting briefs</option>
             <option value="outreach">Outreach drafts</option>
           </select>
-          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[.65rem] text-iq-500">▼</span>
+          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[.65rem] text-lt-500">▼</span>
         </label>
 
         <label className="relative">
           <span className="sr-only">Sort prospects</span>
-          <ArrowUpDown size={15} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-iq-500"/>
-          <select value={sort} onChange={(event) => setSort(event.target.value as SortOption)} className="h-11 w-full appearance-none rounded-control border border-iq-200 bg-white pr-9 pl-10 text-[.82rem] text-iq-800 outline-none transition-[border-color,box-shadow] focus:border-brand focus:ring-3 focus:ring-brand/10">
+          <ArrowUpDown size={15} className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-lt-500"/>
+          <select value={sort} onChange={(event) => setSort(event.target.value as SortOption)} className="h-11 w-full appearance-none rounded-control border border-lt-200 bg-white pr-9 pl-10 text-[.82rem] text-lt-800 outline-none transition-[border-color,box-shadow] focus:border-brand focus:ring-3 focus:ring-brand/10">
             <option value="newest">Newest first</option>
             <option value="oldest">Oldest first</option>
             <option value="prospect">Prospect A–Z</option>
             <option value="company">Company A–Z</option>
             <option value="evidence">Most cited signals</option>
           </select>
-          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[.65rem] text-iq-500">▼</span>
+          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[.65rem] text-lt-500">▼</span>
         </label>
       </div>
     </section>

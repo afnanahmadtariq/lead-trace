@@ -1,6 +1,6 @@
 import unittest
 
-from insightiq_worker.pipeline import CLAIM_SQL, next_stage
+from lead_trace_worker.pipeline import CLAIM_SQL, next_stage
 
 
 class NextStageTest(unittest.TestCase):
@@ -18,10 +18,10 @@ class NextStageTest(unittest.TestCase):
         self.assertIn('s."organizationId" = r."organizationId"', CLAIM_SQL)
 
     def test_prisma_schema_query_is_stripped_for_psycopg(self):
-        from insightiq_worker.db import postgres_url
+        from lead_trace_worker.db import postgres_url
         self.assertEqual(
-            postgres_url('postgresql://postgres:x@localhost:5432/insightiq?schema=public'),
-            'postgresql://postgres:x@localhost:5432/insightiq',
+            postgres_url('postgresql://postgres:x@localhost:5432/lead-trace?schema=public'),
+            'postgresql://postgres:x@localhost:5432/lead-trace',
         )
 
 

@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common'
-import { db, type Prisma } from '@insightiq/db'
+import { db, type Prisma } from '@lead-trace/db'
 import { AccountContextService, type AuthenticatedSession } from '../auth/account-context.service'
 import type { CreateResearchRunDto } from './dto/create-research-run.dto'
 

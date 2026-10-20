@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { createLocalAccountIssuer } from '@better-auth/core/db'
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 import { hashPassword } from 'better-auth/crypto'
 import { randomBytes } from 'node:crypto'
 
-const E2E_EMAIL = 'e2e@insightiq.test'
+const E2E_EMAIL = 'e2e@lead-trace.test'
 const E2E_PASSWORD = 'E2eTestPass1!'
 const SOURCE_URL = 'https://en.wikipedia.org/wiki/Tim_Cook'
 
@@ -33,7 +33,7 @@ export class E2eSeedService {
       xHandle: null as string | null,
     }
     const offer = {
-      name: 'InsightIQ Platform',
+      name: 'Lead Trace Platform',
       valueProposition: 'Evidence-backed deal briefs for every prospect conversation.',
       targetPersona: 'Revenue leaders',
     }
@@ -123,7 +123,7 @@ export class E2eSeedService {
           title: 'Deal brief · Tim Cook',
           status: 'ready',
           sections: {
-            summary: 'Tim Cook leads Apple as chief executive. Use that verified leadership context to test which strategic operating priorities matter most before positioning InsightIQ.',
+            summary: 'Tim Cook leads Apple as chief executive. Use that verified leadership context to test which strategic operating priorities matter most before positioning Lead Trace.',
             key_signals: [{ evidence_id: evidence.id, claim: evidence.claim, source_url: SOURCE_URL, signal_type: 'leadership' }],
             personalized_opener: 'Tim, I saw the latest leadership context around Apple. Which operating priority is getting the most attention from your team right now?',
             talking_points: [

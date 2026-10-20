@@ -76,7 +76,7 @@ test('worker receives brief-ready email configuration', () => {
 
 test('production release verifies worker code and backend integration tests', () => {
   assert.match(apiWorkflow, /npm run worker:setup/)
-  assert.match(apiWorkflow, /npm run test -- --filter=@insightiq\/worker/)
+  assert.match(apiWorkflow, /npm run test -- --filter=@lead-trace\/worker/)
   assert.match(apiWorkflow, /INTEGRATION_TESTS: ["']true["']/)
   assert.match(apiWorkflow, /node --test test\/\*\.integration\.test\.cjs/)
 })
@@ -97,21 +97,21 @@ test('production deploys cannot overlap', () => {
 
 test('API image generates Prisma Client before compiling the database package', () => {
   const dockerfile = readFileSync(resolve(repositoryRoot, 'apps/api/Dockerfile'), 'utf8')
-  const generate = dockerfile.indexOf('npm run generate --workspace=@insightiq/db')
-  const build = dockerfile.indexOf('npm run build --workspace=@insightiq/db')
+  const generate = dockerfile.indexOf('npm run generate --workspace=@lead-trace/db')
+  const build = dockerfile.indexOf('npm run build --workspace=@lead-trace/db')
   assert.ok(generate > 0 && build > generate)
   assert.match(dockerfile, /ENTRYPOINT \["apps\/api\/docker-entrypoint\.sh"\]/)
   assert.match(dockerfile, /CMD \["serve"\]/)
 })
 
 test('Cloudflare release validates an OpenNext artifact before deploy', () => {
-  assert.match(webWorkflow, /npm run cf:build --workspace=@insightiq\/web/)
+  assert.match(webWorkflow, /npm run cf:build --workspace=@lead-trace\/web/)
   assert.match(webWorkflow, /npx wrangler deploy --dry-run/)
   assert.match(webWorkflow, /NEXT_PUBLIC_API_URL must be a non-empty HTTPS URL/)
 })
 
 test('Cloudflare release builds once and deploys the validated artifact unchanged', () => {
-  assert.equal((webWorkflow.match(/npm run cf:build --workspace=@insightiq\/web/g) || []).length, 1)
+  assert.equal((webWorkflow.match(/npm run cf:build --workspace=@lead-trace\/web/g) || []).length, 1)
   assert.match(webWorkflow, /actions\/upload-artifact@v4/)
   assert.match(webWorkflow, /actions\/download-artifact@v5/)
   assert.match(webWorkflow, /path: apps\/web\/\.open-next/)

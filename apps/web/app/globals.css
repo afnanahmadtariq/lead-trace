@@ -2,15 +2,15 @@
 
 @theme {
   --font-sans: Outfit, ui-sans-serif, system-ui, sans-serif;
-  --color-iq-950: #10264f;
-  --color-iq-900: #12346f;
-  --color-iq-700: #3d5c87;
-  --color-iq-600: #617798;
-  --color-iq-500: #7890b5;
-  --color-iq-300: #c8d9ed;
-  --color-iq-200: #dceafa;
-  --color-iq-100: #edf6ff;
-  --color-iq-50: #f8fbff;
+  --color-lt-950: #10264f;
+  --color-lt-900: #12346f;
+  --color-lt-700: #3d5c87;
+  --color-lt-600: #617798;
+  --color-lt-500: #7890b5;
+  --color-lt-300: #c8d9ed;
+  --color-lt-200: #dceafa;
+  --color-lt-100: #edf6ff;
+  --color-lt-50: #f8fbff;
   --color-brand: #1768c7;
   --color-brand-bright: #168ce5;
   --color-sky: #55bdf2;
@@ -30,12 +30,12 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; overflow-x: clip; background: var(--color-iq-50); color: var(--color-iq-950); font-family: Outfit, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+body { margin: 0; overflow-x: clip; background: var(--color-lt-50); color: var(--color-lt-950); font-family: Outfit, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 button, input, textarea, select { font: inherit; }
 button:not(:disabled), [role='button']:not(:disabled) { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 img, svg { display: block; }
-::selection { background: #cfeeff; color: var(--color-iq-950); }
+::selection { background: #cfeeff; color: var(--color-lt-950); }
 :focus-visible { outline: 3px solid rgb(22 140 229 / 24%); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
