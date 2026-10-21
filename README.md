@@ -14,6 +14,12 @@
 
 ## From InsightIQ to Lead Trace
 
+<p align="center">
+  <img src="apps/web/public/legacy/insightiq-logo.svg" alt="Former InsightIQ logo" width="72" />
+  &nbsp; → &nbsp;
+  <img src="apps/web/public/lead-trace-logo.svg" alt="Lead Trace logo" width="72" />
+</p>
+
 We listened to feedback from industry professionals and used it to rethink the project's direction around the needs of sales teams. **InsightIQ is now Lead Trace.**
 
 The project began with AI-assisted prospect research and cited Deal Briefs. We are building on that foundation toward a broader sales workflow that brings lead generation, research, and CRM together. The new name reflects that direction: helping teams follow a lead from discovery through the sales relationship.
@@ -81,7 +87,7 @@ Click a preview to view the full desktop screenshot.
   </tr>
 </table>
 
-*The landing page uses an illustrative example. Product screenshots show actual local runs researching public Vercel information against a fictional developer-analytics offer. These are demonstrations, not measured sales results.*
+*The landing page uses an illustrative example. Product screenshots show the current local app with deterministic demonstration fixtures, including a Tim Cook / Apple example. They do not represent a live research run, customer adoption, or measured sales results.*
 
 ## The idea: research with a purpose
 
@@ -146,17 +152,19 @@ Planned capabilities do not yet represent a finalized feature list or a release 
 
 ## Supporting attachments
 
-A compact set of materials for exploring and presenting the project. The presentation, PDFs, screenshots, and narrated demo are being refreshed for the new product direction and incoming logo. Their current contents reflect the earlier research-focused version:
+The materials below use the new Lead Trace identity. The transition page shows the former InsightIQ logo alongside the new mark to explain the project’s evolution. Lead generation and CRM are identified as planned capabilities:
 
 | Attachment | What's inside |
 | --- | --- |
-| [PowerPoint pitch](presentation/Lead-Trace-pitch-enhanced.pptx) · [PDF pitch](supporting/Lead-Trace-pitch.pdf) | Product story, desktop screenshots, workflow, architecture, and team |
-| [Narrated product demo](video/Lead-Trace-demo.mp4) · [Captions](video/Lead-Trace-captions.srt) | A 78-second, 1080p story with an animated logo, actual app captures, conversational ElevenLabs narration, and original background music |
-| [Project overview](supporting/Lead-Trace-overview.pdf) | A concise introduction to the idea and what we built |
+| [PowerPoint pitch](presentation/Lead-Trace-pitch-enhanced.pptx) · [PDF pitch](supporting/Lead-Trace-pitch.pdf) | 12-slide pitch covering the industry-feedback transition, current product, planned direction, screenshots, workflow, architecture, and team |
+| [Narrated product demo](video/Lead-Trace-demo.mp4) · [Captions](video/Lead-Trace-captions.srt) | An 81-second, 1080p narrated walkthrough with the logo transition, current app captures, captions, and the planned product direction |
+| [Project overview](supporting/Lead-Trace-overview.pdf) | A three-page overview of the transition, current research workflow, and planned lead generation and CRM direction |
 | [Architecture diagram](supporting/Lead-Trace-architecture.png) | The system architecture shown above |
 | [Workflow diagram](supporting/Lead-Trace-workflow.png) | From prospect context to a reviewable Deal Brief |
 | [Demo inputs](supporting/Lead-Trace-demo-inputs.csv) | Fictional prospect and offer examples for demonstrations; not a benchmark or measured results |
 | [All attachments](supporting/Lead-Trace-attachments.zip) | The supporting materials in one download |
+
+The walkthrough uses the installed Samantha system voice. Its [narration script](video/Lead-Trace-narration.txt) is included for future voiceover revisions.
 
 ## Contributors
 
@@ -218,7 +226,7 @@ The public site is `https://leadtrace.online`. The checked-in API default is `ht
 
 The checked-in configuration uses Lead Trace names for the Cloudflare Worker, container images, deployment directory, and database defaults. Provision and verify the new DNS records, API origin, OAuth callbacks, email sender domain, TLS certificate, and Cloudflare route before deploying. These repository changes do not provision external infrastructure.
 
-For an existing deployment, retain the configured database name and URL, credentials, and Compose project/volume identity until you deliberately migrate them. Set `COMPOSE_PROJECT_NAME` to the existing project identity when moving the deployment directory so Compose reuses its database volume. Renaming a default does not rename a populated PostgreSQL database. Copy the existing environment and TLS files into the new deployment directory before a release.
+Compose uses the deployment directory name (`lead-trace`) as its project name. Copy the production environment and TLS files into the deployment directory before a release. When transferring existing data to a new VM, back up and restore PostgreSQL, retaining the configured database name and credentials. Renaming a default does not rename a populated PostgreSQL database.
 
 The authentication cookie prefix and browser storage keys now use `lead-trace`. Existing users will need to sign in again, and local UI preferences and resend cooldown state will restart. Existing authenticator enrollments continue to use their saved labels until re-enrolled. Existing database content and previously sent messages retain their historical content.
 

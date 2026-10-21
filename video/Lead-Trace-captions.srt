@@ -1,95 +1,91 @@
 1
-00:00:03,058 --> 00:00:04,556
-Your next meeting is coming up.
+00:00:00,000 --> 00:00:02,180
+InsightIQ is now Lead Trace.
 
 2
-00:00:05,136 --> 00:00:08,294
-You have a company website, a profile, and pages of
+00:00:02,340 --> 00:00:07,984
+We listened to feedback from industry professionals and used it to shape a broader
+direction for our project.
 
 3
-00:00:08,352 --> 00:00:11,916
-notes. But what is actually worth talking about?
+00:00:08,145 --> 00:00:13,729
+Today, Lead Trace brings prospect research, source evidence, and deal briefs
+together.
 
 4
-00:00:12,706 --> 00:00:16,305
-Meet Lead Trace. It connects public research to what you
+00:00:13,889 --> 00:00:20,033
+We are building toward lead generation, customer relationship management, and
+connected sales workflows.
 
 5
-00:00:16,375 --> 00:00:19,184
-sell, so you can prepare a conversation with a clear
+00:00:20,193 --> 00:00:23,744
+Those features are planned, and we will refine them as we progress.
 
 6
-00:00:19,265 --> 00:00:22,586
-reason to start. Add your prospect and describe the problem
+00:00:23,904 --> 00:00:26,657
+Start with a prospect and describe what you sell.
 
 7
-00:00:22,621 --> 00:00:26,615
-you solve. Choose meeting preparation or personalized outreach.
+00:00:26,817 --> 00:00:29,869
+Choose meeting preparation or personalized outreach.
 
 8
-00:00:26,847 --> 00:00:28,925
-Lead Trace takes it from there.
+00:00:30,029 --> 00:00:33,998
+The application keeps your prospect, offer, and goal together.
 
 9
-00:00:29,854 --> 00:00:31,560
+00:00:34,158 --> 00:00:36,104
 Research runs in the background.
 
 10
-00:00:31,932 --> 00:00:35,845
-The system finds public sources, extracts relevant claims, and builds
+00:00:36,264 --> 00:00:42,673
+The system finds public sources, extracts relevant claims, and builds a brief with
+the evidence attached.
 
 11
-00:00:35,891 --> 00:00:37,667
-a brief with the evidence attached.
+00:00:42,833 --> 00:00:47,324
+Each conversation angle connects a source claim to a possible fit for your offer.
 
 12
-00:00:38,167 --> 00:00:39,629
-Here is where it gets useful.
+00:00:47,484 --> 00:00:50,197
+A question helps you test whether that fit is real.
 
 13
-00:00:40,129 --> 00:00:42,892
-Each angle connects a source claim to a possible fit
+00:00:50,357 --> 00:00:52,885
+Hypotheses stay separate from facts.
 
 14
-00:00:42,938 --> 00:00:45,609
-for your offer, then gives you a question to test
+00:00:53,045 --> 00:00:57,078
+Open a source, check the gaps, and review the outreach draft.
 
 15
-00:00:45,667 --> 00:00:48,151
-it. You can see what is known, and what still
+00:00:57,238 --> 00:01:01,116
+Copy a question or download the complete brief for your own workflow.
 
 16
-00:00:48,198 --> 00:00:51,634
-needs a conversation. Open the source behind a claim.
+00:01:01,276 --> 00:01:03,538
+These screens use demonstration data.
 
 17
-00:00:52,064 --> 00:00:53,956
-Check the dates and research gaps.
+00:01:03,698 --> 00:01:08,629
+Our next stage expands that research foundation toward lead generation and CRM.
 
 18
-00:00:54,270 --> 00:00:57,068
-The reasoning stays visible, so you can decide what belongs
+00:01:08,789 --> 00:01:11,947
+The feature set and release plans are still taking shape.
 
 19
-00:00:57,103 --> 00:01:00,330
-in your conversation. Adapt the outreach draft.
+00:01:12,107 --> 00:01:13,040
+Lead Trace.
 
 20
-00:01:00,760 --> 00:01:03,186
-Copy a question, or download the full brief for your
+00:01:13,200 --> 00:01:14,630
+Follow the evidence.
 
 21
-00:01:03,233 --> 00:01:06,785
-CRM. When you refresh it, compare what changed and keep
+00:01:14,790 --> 00:01:16,768
+Move the conversation forward.
 
 22
-00:01:06,820 --> 00:01:10,222
-the useful work. Less time piecing context together.
-
-23
-00:01:10,535 --> 00:01:12,021
-A more thoughtful way to start.
-
-24
-00:01:12,393 --> 00:01:15,295
-Get ready for your next conversation with Lead Trace.
+00:01:16,928 --> 00:01:18,952
+Visit lead trace dot online.
