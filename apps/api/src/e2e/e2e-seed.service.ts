@@ -154,9 +154,21 @@ export class E2eSeedService {
         },
       })
 
+      const leadSearch = await transaction.leadSearch.create({ data: {
+        organizationId, createdById: userId, title: 'Seeded SaaS buyers', industry: 'SaaS', role: 'Head of Sales', location: 'London', status: 'completed', attemptCount: 1, startedAt: now, completedAt: now,
+      } })
+      const leadSource = await transaction.leadSource.create({ data: {
+        organizationId, searchId: leadSearch.id, url: 'https://northstar.example.com/team', title: 'Northstar leadership', publisher: 'northstar.example.com', excerpt: 'Maya Chen is Head of Sales at Northstar, a SaaS company in London.', queries: ['Head of Sales SaaS London'],
+      } })
+      const lead = await transaction.leadCandidate.create({ data: {
+        organizationId, searchId: leadSearch.id, sourceId: leadSource.id, identityKey: 'seeded-maya-northstar', name: 'Maya Chen', companyName: 'Northstar', jobTitle: 'Head of Sales', quote: leadSource.excerpt, matchedCriteria: ['industry', 'role', 'location'], missingCriteria: [],
+      } })
+
       return {
         email: E2E_EMAIL,
         password: E2E_PASSWORD,
+        leadSearchId: leadSearch.id,
+        leadCandidateId: lead.id,
         runId: run.id,
         briefId: brief.id,
         prospectName: prospect.name,
