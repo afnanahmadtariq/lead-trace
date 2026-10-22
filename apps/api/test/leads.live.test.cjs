@@ -1,0 +1,53 @@
+const { test } = require('node:test')
+const assert = require('node:assert/strict')
+const { randomUUID } = require('node:crypto')
+const { resolve } = require('node:path')
+
+// Opt-in: uses three Tavily searches and one model request on configured accounts.
+test('live providers discover a source-backed lead and carry it into CRM research', { skip: process.env.LIVE_PROVIDER_TESTS === 'true' ? false : 'Set LIVE_PROVIDER_TESTS=true against a disposable local database', timeout: 90000 }, async () => {
+  require('dotenv').config({ path: resolve(__dirname, '../../../.env') })
+  assert.ok(['127.0.0.1', 'localhost', '[::1]'].includes(new URL(process.env.DATABASE_URL).hostname), 'Live smoke tests require a local disposable database')
+  const { ConfigService } = require('@nestjs/config')
+  const { tavily } = require('@tavily/core')
+  const { db } = require('@lead-trace/db')
+  const { AccountContextService } = require('../dist/auth/account-context.service.js')
+  const { WorkspaceSettingsService } = require('../dist/auth/workspace-settings.service.js')
+  const { CrmService } = require('../dist/crm/crm.service.js')
+  const { LeadsService } = require('../dist/leads/leads.service.js')
+  const { TavilySearchService } = require('../dist/tavily/tavily-search.service.js')
+  const { LeadExtractionService } = require('../dist/leads/lead-extraction.service.js')
+  const { ResearchRunsService } = require('../dist/research/research-runs.service.js')
+  const { validateEnvironment } = require('../dist/config/env.validation.js')
+  const config = new ConfigService(validateEnvironment(process.env))
+  assert.ok(config.get('TAVILY_API_KEY') && config.get('DASHSCOPE_API_KEY'), 'Configure discovery and extraction providers')
+  const accounts = new AccountContextService(), crm = new CrmService(accounts)
+  const leads = new LeadsService(crm, new TavilySearchService(tavily({ apiKey: config.get('TAVILY_API_KEY'), clientSource: 'lead-trace-live-smoke' }), config), new LeadExtractionService(config), config)
+  const id = randomUUID(), organizationId = `live-leads-${id}`, userId = `live-leads-user-${id}`
+  const session = { user: { id: userId, name: 'Lead Trace live smoke' }, session: { id: `live-session-${id}`, activeOrganizationId: organizationId } }
+  try {
+    await db.user.create({ data: { id: userId, name: 'Live smoke', email: `live-${id}@example.test` } })
+    await db.organization.create({ data: { id: organizationId, name: 'Leadgen live smoke', slug: organizationId, createdAt: new Date() } })
+    await db.member.create({ data: { id: randomUUID(), organizationId, userId, role: 'owner', createdAt: new Date() } })
+    const search = await leads.create(session, { title: 'CRM software leaders live check', industry: 'software', role: 'CEO', location: 'United States', keywords: 'Salesforce' })
+    await leads.discover(session, search.id)
+    const result = await leads.get(session, search.id)
+    console.log(`Live discovery: ${result.sources.length} sources; ${result.candidates.length} grounded leads; ${result.rejectedCandidates} rejected extractions; ${result.failedQueries} failed queries`)
+    assert.equal(result.status, 'completed')
+    assert.ok(result.sources.length > 0, 'Live provider must return source pages')
+    assert.ok(result.candidates.length > 0, 'Live extraction must return at least one grounded person/company')
+    const candidate = result.candidates[0]
+    await leads.review(session, candidate.id, 'qualified')
+    const converted = await leads.convert(session, candidate.id, { name: candidate.name, companyName: candidate.companyName })
+    const contact = await crm.detail(session, converted.prospectId)
+    assert.equal(contact.leadCandidates[0].source.url, candidate.source.url)
+    const run = await new ResearchRunsService(accounts).create(session, { prospectId: contact.id, prospectName: contact.name, offerName: 'Lead Trace', offerContext: 'Evidence-backed lead discovery, prospect research and a sales CRM.', goal: 'meeting' })
+    assert.equal(run.prospectId, contact.id)
+    await new WorkspaceSettingsService(accounts).deleteWorkspace(session, 'Leadgen live smoke')
+  } finally {
+    await db.researchRun.deleteMany({ where: { organizationId } })
+    await db.offer.deleteMany({ where: { organizationId } })
+    await db.organization.deleteMany({ where: { id: organizationId } })
+    await db.user.deleteMany({ where: { id: userId } })
+    await db.$disconnect()
+  }
+})

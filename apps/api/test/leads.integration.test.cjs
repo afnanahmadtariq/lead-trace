@@ -87,6 +87,9 @@ test('lead search to qualified CRM contact preserves provenance and tenant isola
     await db.leadSearch.update({ where: { id: expired.id }, data: { status: 'running', lockExpiresAt: new Date(0), attemptToken: 'dead-process' } })
     await leads.discover(a, expired.id)
     assert.equal((await leads.get(a, expired.id)).status, 'completed')
+    const concurrentSearches = await Promise.allSettled(Array.from({ length: 4 }, () => leads.create(a, input)))
+    assert.equal(concurrentSearches.filter((result) => result.status === 'fulfilled').length, 3)
+    assert.equal(concurrentSearches.filter((result) => result.status === 'rejected').length, 1)
     await db.organization.deleteMany({ where: { id: { in: [orgA, orgB] } } })
     assert.equal(await db.leadCandidate.count({ where: { searchId: search.id } }), 0)
   } finally {

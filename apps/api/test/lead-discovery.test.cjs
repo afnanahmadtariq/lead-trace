@@ -23,7 +23,7 @@ test('extracted leads retain exact quotes, grounded identities and explicit miss
   assert.equal(result.candidates[0].quote, candidate.quote)
 })
 test('hallucinated names, roles, companies, quotes, source IDs and unrelated quotes are rejected', () => {
-  const variants = [{ ...candidate, name: 'Invented Person' }, { ...candidate, companyName: 'Unrelated' }, { ...candidate, jobTitle: 'CEO' }, { ...candidate, quote: 'Maya Chen is a CEO who has a very large budget at Northstar.' }, { ...candidate, sourceId: 'missing' }, { ...candidate, quote: 'Her team serves enterprise clients.' }]
+  const variants = [{ ...candidate, name: '!!!' }, { ...candidate, companyName: '???' }, { ...candidate, name: 'Invented Person' }, { ...candidate, companyName: 'Unrelated' }, { ...candidate, jobTitle: 'CEO' }, { ...candidate, quote: 'Maya Chen is a CEO who has a very large budget at Northstar.' }, { ...candidate, sourceId: 'missing' }, { ...candidate, quote: 'Her team serves enterprise clients.' }]
   // Unrelated quotes are rejected even when the name and company exist elsewhere in the snippet.
   const unrelatedSource = { ...source, title: 'Leadership team' }
   const result = validateExtractedLeads({ candidates: variants }, [unrelatedSource], criteria)

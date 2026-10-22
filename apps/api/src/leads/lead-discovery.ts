@@ -40,7 +40,7 @@ export function validateExtractedLeads(payload: unknown, sources: LeadSourceInpu
     const source = sources.find((source) => source.id === candidate.sourceId)
     const evidence = source ? normalizeIdentity(`${source.title} ${quote}`) : ''
     const quoteText = normalizeIdentity(quote)
-    if (!source || !name || !companyName || quoteText.length < 20 || !source.excerpt.replace(/\s+/g, ' ').includes(quote.replace(/\s+/g, ' ')) || !evidence.includes(normalizeIdentity(name)) || !evidence.includes(normalizeIdentity(companyName)) || (jobTitle && !evidence.includes(normalizeIdentity(jobTitle)))) { rejected++; continue }
+    if (!source || normalizeIdentity(name).length < 2 || normalizeIdentity(companyName).length < 2 || !/[\p{L}]/u.test(name) || !/[\p{L}]/u.test(companyName) || quoteText.length < 20 || !source.excerpt.replace(/\s+/g, ' ').includes(quote.replace(/\s+/g, ' ')) || !evidence.includes(normalizeIdentity(name)) || !evidence.includes(normalizeIdentity(companyName)) || (jobTitle && !evidence.includes(normalizeIdentity(jobTitle)))) { rejected++; continue }
     const matchedCriteria: string[] = [], missingCriteria: string[] = []
     for (const [key, value] of Object.entries(criteria)) {
       if (!value) continue

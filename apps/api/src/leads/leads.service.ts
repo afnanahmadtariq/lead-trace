@@ -23,9 +23,13 @@ export class LeadsService {
     const organizationId = await this.crm.scope(session)
     const capabilities = await this.capabilities(session)
     if (!capabilities.discoveryConfigured || !capabilities.extractionConfigured) throw new ServiceUnavailableException('Configure Tavily and the model provider before generating leads')
-    const active = await db.leadSearch.count({ where: { organizationId, status: { in: ['queued', 'running'] }, createdAt: { gt: new Date(Date.now() - 30 * 60000) } } })
-    if (active >= 3) throw new ConflictException('Finish or cancel an active search before starting another')
-    return db.leadSearch.create({ data: { ...input, organizationId, createdById: session.user.id } })
+    return db.$transaction(async (tx) => {
+      // Serialize the quota check across API instances without locking CRM records.
+      await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`lead-search:${organizationId}`}, 0))`
+      const active = await tx.leadSearch.count({ where: { organizationId, status: { in: ['queued', 'running'] }, createdAt: { gt: new Date(Date.now() - 30 * 60000) } } })
+      if (active >= 3) throw new ConflictException('Finish or cancel an active search before starting another')
+      return tx.leadSearch.create({ data: { ...input, organizationId, createdById: session.user.id } })
+    })
   }
 
   async list(session: AuthenticatedSession, page = 1) {
