@@ -12,6 +12,7 @@ export type Deal = { id: string; prospectId: string; title: string; stage: strin
 export type Task = { id: string; prospectId: string; title: string; dueAt: string; completedAt: string | null; owner: Person | null; prospect?: Person }
 export type Meeting = { id: string; prospectId: string; organizerId: string; title: string; startsAt: string; endsAt: string; inviteContact: boolean; status: string; htmlLink: string | null }
 export type ContactDetail = Contact & {
+  leadCandidates?: { id: string; quote: string; source: { title: string; url: string }; search: { id: string; title: string } }[]
   researchRuns: { id: string; goal: string; status: string; requestedAt: string; brief: { id: string; title: string } | null }[]
   deals: Deal[]; notes: { id: string; body: string; createdAt: string; author: Person | null }[]; tasks: Task[]; meetings: Meeting[]
 }

@@ -17,7 +17,7 @@ export default function AboutPage() {
         <div className="grid justify-items-center gap-3"><Image src="/lead-trace-logo.svg" alt="Lead Trace logo" width={72} height={72}/><span className="text-sm font-semibold text-brand">Lead Trace</span></div>
       </div>
       <p>We listened to feedback from industry professionals and used it to shape the next stage of our project. InsightIQ is now Lead Trace, with a broader direction built around the needs of sales teams.</p>
-      <p>Our research and briefing tools form the foundation. We plan to bring lead generation, CRM, and related sales workflows together as we refine the product with further feedback. The feature set and release plans are still taking shape.</p>
+      <p>Our research and briefing tools now connect with lead discovery and a built-in CRM. Teams can review source-linked leads, save contacts, track deals and follow-ups, and prepare for the next conversation. We continue to refine the workflow with industry feedback.</p>
     </Section>
     <Section title="What we build">
       <div className="flex items-center gap-6 max-sm:flex-col">

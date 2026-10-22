@@ -1,11 +1,12 @@
 'use client'
 
-import { House, Search, Sparkles, UsersRound, Kanban, ListChecks, Plug } from 'lucide-react'
+import { House, Search, Sparkles, UsersRound, Kanban, ListChecks, Plug, Radar } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navigation = [
   { href: '/dashboard', label: 'Home', icon: House, exact: true },
+  { href: '/dashboard/leads', label: 'Find leads', icon: Radar },
   { href: '/dashboard/contacts', label: 'Contacts', icon: UsersRound },
   { href: '/dashboard/pipeline', label: 'Pipeline', icon: Kanban },
   { href: '/dashboard/tasks', label: 'Follow-ups', icon: ListChecks },
