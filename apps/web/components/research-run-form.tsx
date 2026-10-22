@@ -4,6 +4,7 @@ import { ArrowRight, BriefcaseBusiness, Building2, Link2, Mail, MessageSquareTex
 import { useRouter } from 'next/navigation'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { apiRequest } from '../lib/api-client'
+import type { Contact } from '../lib/crm'
 import type { ResearchRunSummary } from '../lib/research'
 import { Button } from './ui/button'
 import { Field } from './ui/form-field'
@@ -15,7 +16,7 @@ export type OfferDefaults = {
   targetPersona?: string | null
 }
 
-export function ResearchRunForm({ initialOffer }: { initialOffer?: OfferDefaults }) {
+export function ResearchRunForm({ initialOffer, contact }: { initialOffer?: OfferDefaults; contact?: Contact }) {
   const router = useRouter()
   const [goal, setGoal] = useState<'meeting' | 'outreach'>('meeting')
   const [pending, setPending] = useState(false)
@@ -32,6 +33,7 @@ export function ResearchRunForm({ initialOffer }: { initialOffer?: OfferDefaults
       const run = await apiRequest<ResearchRunSummary>('/research-runs', {
         method: 'POST',
         body: JSON.stringify({
+          prospectId: contact?.id,
           prospectName: optional('prospectName'),
           prospectEmail: optional('prospectEmail'),
           companyName: optional('companyName'),
@@ -73,16 +75,16 @@ export function ResearchRunForm({ initialOffer }: { initialOffer?: OfferDefaults
     <section className={cardClass}>
       <FormSectionHeader icon={<UsersRound/>} title="Add the prospect" description="Name and company are enough to start. Add a domain or LinkedIn URL for sharper matching."/>
       <div className={gridClass}>
-        <Field id="prospect-name" name="prospectName" label="Prospect name" placeholder="Maya Chen" required/>
-        <Field id="company-name" name="companyName" label="Company" placeholder="Northstar Labs" required icon={<Building2 size={18}/>}/>
-        <Field id="company-domain" name="companyDomain" label="Company domain" placeholder="northstar.com"/>
-        <Field id="linkedin-url" name="linkedinUrl" type="url" label="LinkedIn profile" placeholder="https://linkedin.com/in/…" icon={<Link2 size={18}/>}/>
+        <Field id="prospect-name" name="prospectName" defaultValue={contact?.name ?? ''} readOnly={Boolean(contact)} label="Prospect name" placeholder="Maya Chen" required/>
+        <Field id="company-name" name="companyName" defaultValue={contact?.companyName ?? ''} readOnly={Boolean(contact)} label="Company" placeholder="Northstar Labs" required={!contact} icon={<Building2 size={18}/>}/>
+        <Field id="company-domain" name="companyDomain" defaultValue={contact?.companyDomain ?? ''} readOnly={Boolean(contact)} label="Company domain" placeholder="northstar.com"/>
+        <Field id="linkedin-url" name="linkedinUrl" defaultValue={contact?.linkedinUrl ?? ''} readOnly={Boolean(contact)} type="url" label="LinkedIn profile" placeholder="https://linkedin.com/in/…" icon={<Link2 size={18}/>}/>
       </div>
       <details className="mt-4 rounded-xl border border-lt-200 bg-lt-50/60 px-4 py-3">
         <summary className="cursor-pointer text-sm font-semibold text-lt-700">Add email or social handle</summary>
         <div className={`${gridClass} mt-4`}>
-          <Field id="prospect-email" name="prospectEmail" type="email" label="Work email" placeholder="maya@company.com" icon={<Mail size={18}/>}/>
-          <Field id="x-handle" name="xHandle" label="X handle" placeholder="@mayachen"/>
+          <Field id="prospect-email" name="prospectEmail" defaultValue={contact?.email ?? ''} readOnly={Boolean(contact)} type="email" label="Work email" placeholder="maya@company.com" icon={<Mail size={18}/>}/>
+          <Field id="x-handle" name="xHandle" defaultValue={contact?.xHandle ?? ''} readOnly={Boolean(contact)} label="X handle" placeholder="@mayachen"/>
         </div>
       </details>
     </section>

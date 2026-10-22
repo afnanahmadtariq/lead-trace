@@ -6,6 +6,11 @@ function trimmed({ value }: { value: unknown }) {
 }
 
 export class CreateResearchRunDto {
+  @IsOptional()
+  @IsString()
+  @Length(1, 128)
+  prospectId?: string
+
   @Transform(trimmed)
   @IsString()
   @Length(2, 120)

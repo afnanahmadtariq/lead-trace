@@ -83,7 +83,7 @@ export class WorkspaceSettingsService {
       const evidence = await tx.evidence.deleteMany({ where: { organizationId } })
       const sources = await tx.evidenceSource.deleteMany({ where: { organizationId } })
       const runs = await tx.researchRun.deleteMany({ where: { organizationId } })
-      const prospects = await tx.prospect.deleteMany({ where: { organizationId } })
+      // Contacts are CRM records now; a research wipe must preserve relationships.
       const offers = await tx.offer.deleteMany({ where: { organizationId } })
       return {
         notifications: notifications.count,
@@ -91,7 +91,7 @@ export class WorkspaceSettingsService {
         evidence: evidence.count,
         sources: sources.count,
         runs: runs.count,
-        prospects: prospects.count,
+        prospects: 0,
         offers: offers.count,
       }
     })

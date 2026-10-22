@@ -44,6 +44,8 @@
         "LISTEN_HOST",
         "PORT",
         "GOOGLE_CLIENT_*",
+        "GOOGLE_CALENDAR_*",
+        "INTEGRATION_ENCRYPTION_KEY",
         "RESEND_*",
         "TAVILY_*",
         "DASHSCOPE_*",

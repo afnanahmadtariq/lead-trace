@@ -1,3 +1,5 @@
+import { CalendarConnection } from '../../../components/crm/calendar'
+import type { CalendarStatus } from '../../../lib/crm'
 import { Check, CircleDashed, Plug, Search, Sparkles } from 'lucide-react'
 import { StatusBadge } from '../../../components/ui/status-badge'
 import { WorkspaceHeader, WorkspacePage, WorkspaceSection, WorkspaceSplit } from '../../../components/workspace/workspace-page'
@@ -12,12 +14,15 @@ const descriptions: Record<string, string> = {
   'notification-delivery': 'In-app notifications tell the owner when a conversation brief is ready.',
 }
 
-export default async function Page() {
+export default async function Page({ searchParams }: { searchParams: Promise<{ calendar?: string }> }) {
+  const result = (await searchParams).calendar
+  const calendar = await authenticatedFetch<CalendarStatus>('/crm/calendar')
   const capabilities = await authenticatedFetch<IntegrationCapabilities>('/integrations')
   if (!capabilities) return null
 
   return <WorkspacePage>
-    <WorkspaceHeader eyebrow="Data sources" title="Know what powers each brief." lead="Provider status and evidence safeguards for this workspace."/>
+    <WorkspaceHeader eyebrow="Integrations" title="Connect your sales workflow." lead="Calendar meetings, research providers, and workspace connection status."/>
+    {calendar && <CalendarConnection status={calendar} result={typeof result === 'string' ? result : undefined}/>}
     <WorkspaceSplit>
       <section className="rounded-[17px] border border-lt-200 bg-white p-[23px]"><header className="flex items-center justify-between gap-4"><span className="grid size-[42px] place-items-center rounded-xl bg-[linear-gradient(135deg,#dff4ff,#e2ecff)] text-brand"><Search size={20}/></span><StatusBadge status={capabilities.webDiscovery.status}/></header><h2 className="mt-5 mb-[7px] text-[1.08rem] text-lt-900">{capabilities.webDiscovery.provider} web discovery</h2><p className="m-0 text-[.83rem] leading-[1.6] text-lt-600">{capabilities.webDiscovery.status === 'configured' ? 'A dedicated API key is configured for reliable production discovery.' : 'The SDK is active in shared keyless evaluation mode. Add TAVILY_API_KEY to production before sustained usage.'}</p><dl className="mt-5 mb-0 grid grid-cols-2 gap-2.5"><CapabilityStat label="Search depth" value={capabilities.webDiscovery.searchDepth}/><CapabilityStat label="Results per query" value={capabilities.webDiscovery.maxResults}/></dl></section>
       <WorkspaceSection title="Architecture boundary" description="The next services consume the records already stored by the API."><div className="grid min-h-[186px] content-between rounded-[17px] border border-lt-200 bg-white p-[21px]"><span className="grid size-[38px] place-items-center rounded-[11px] bg-lt-100 text-brand"><Plug size={19}/></span><div><h3 className="mt-[22px] mb-[7px] text-[1.03rem] text-lt-900">Worker contract</h3><p className="m-0 text-[.87rem] leading-[1.55] text-lt-600">Research runs, sources, evidence, briefs, and notifications already share tenant-safe compound relationships.</p></div><footer className="mt-[22px] flex items-center justify-between gap-2.5 text-[.77rem] font-[650] text-brand">PostgreSQL is the current handoff <Sparkles size={15}/></footer></div></WorkspaceSection>
