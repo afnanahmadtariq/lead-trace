@@ -11,7 +11,7 @@ export function parseContactsCsv(input: string) {
       if (char === '"') {
         if (source[i + 1] === '"') { field += '"'; i++ } else { quoted = false; closed = true }
       } else field += char
-    } else if (char === '"' && !field && !closed) quoted = true
+    } else if (char === '"' && !field.trim() && !closed) { quoted = true; field = '' }
     else if (char === ',' || char === '\n' || char === '\r') {
       row.push(field.trim()); field = ''; closed = false
       if (char !== ',') {
@@ -20,6 +20,7 @@ export function parseContactsCsv(input: string) {
         row = []
       }
     } else {
+      if (closed && (char === ' ' || char === '	')) continue
       if (closed || char === '"') throw new BadRequestException('Malformed CSV quoting')
       field += char
     }
@@ -34,7 +35,8 @@ export function parseContactsCsv(input: string) {
   if (!rows.length || rows.length > 500) throw new BadRequestException('Import between 1 and 500 contacts at a time')
   return rows.map((values, index) => {
     if (values.length !== headers.length) throw new BadRequestException(`CSV row ${index + 2} has the wrong number of columns`)
-    return Object.fromEntries(headers.map((key, i) => [key, values[i]!]))
+    // Blank cells are omitted so optional contact fields are never stored as ''.
+    return Object.fromEntries(headers.flatMap((key, i) => values[i] ? [[key, values[i]!]] : []))
   })
 }
 

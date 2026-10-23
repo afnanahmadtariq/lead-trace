@@ -125,9 +125,17 @@ test('CRM lifecycle, tenant isolation, research reuse and Google Calendar retrie
     await db.calendarConnection.create({ data: { organizationId: orgB, userId: userB, encryptedTokens: encrypt({ access_token: 'test' }, `${orgB}:${userB}`) } })
     await db.member.delete({ where: { organizationId_userId: { organizationId: orgB, userId: userB } } })
     assert.equal(await db.calendarConnection.count({ where: { organizationId: orgB } }), 0)
+    // Google rejecting the refresh token means access was revoked: drop the stale connection.
+    const live = await db.calendarConnection.findUnique({ where: { id: connection.id } })
+    await db.calendarConnection.update({ where: { id: connection.id }, data: { encryptedTokens: encrypt({ ...decrypt(live.encryptedTokens, `${orgA}:${userA}`), expiresAt: 0 }, `${orgA}:${userA}`) } })
+    const fetchBeforeRevoke = global.fetch
+    global.fetch = async (url, init) => url === 'https://oauth2.googleapis.com/token' ? Response.json({ error: 'invalid_grant' }, { status: 400 }) : fetchBeforeRevoke(url, init)
+    await assert.rejects(() => calendar.meeting(a, { ...meeting, id: randomUUID(), startsAt: '2027-02-01T12:00:00Z', endsAt: '2027-02-01T12:30:00Z' }), /revoked/)
+    global.fetch = fetchBeforeRevoke
+    assert.equal((await calendar.status(a)).connected, false)
     await calendar.disconnect(a)
     assert.equal((await calendar.status(a)).connected, false)
-    assert.equal((await crm.detail(a, contact.id)).meetings.length, 4)
+    assert.equal((await crm.detail(a, contact.id)).meetings.length, 5)
     const settings = new WorkspaceSettingsService(new AccountContextService())
     await settings.wipeWorkspaceResearchData(a, 'A')
     const preserved = await crm.detail(a, contact.id)
@@ -135,7 +143,7 @@ test('CRM lifecycle, tenant isolation, research reuse and Google Calendar retrie
     assert.equal(preserved.deals.length, 1)
     assert.equal(preserved.tasks.length, 1)
     assert.equal(preserved.notes.length, 1)
-    assert.equal(preserved.meetings.length, 4)
+    assert.equal(preserved.meetings.length, 5)
     // Workspace deletion safely cascades all CRM records.
     await db.researchRun.deleteMany({ where: { organizationId: { in: [orgA, orgB] } } })
     await db.organization.deleteMany({ where: { id: { in: [orgA, orgB] } } })

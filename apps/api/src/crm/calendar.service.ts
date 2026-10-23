@@ -72,10 +72,14 @@ export class CalendarService {
     return this.destination('connected')
   }
 
-  private async token(body: URLSearchParams): Promise<TokenResponse> {
+  private async token(body: URLSearchParams, revoked?: () => Promise<unknown>): Promise<TokenResponse> {
     let response: Response
     try { response = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', body, signal: AbortSignal.timeout(15000) }) }
     catch { throw new BadGatewayException('Google Calendar could not be reached; try again') }
+    if (revoked && response.status === 400 && (await response.json().catch(() => null) as { error?: string } | null)?.error === 'invalid_grant') {
+      await revoked()
+      throw new BadRequestException('Google Calendar access was revoked; connect your Calendar again')
+    }
     if (!response.ok) throw new BadRequestException('Calendar authorization is unavailable; reconnect your Google account')
     const tokens = await response.json() as TokenResponse
     if (!tokens.access_token || !Number.isFinite(tokens.expires_in) || tokens.expires_in! <= 0) throw new BadGatewayException('Google returned an incomplete authorization response')
@@ -89,7 +93,7 @@ export class CalendarService {
     const tokens = decrypt<Tokens>(connection.encryptedTokens, context)
     if (tokens.expiresAt > Date.now() + 60000) return tokens.access_token
     const config = this.config()
-    const result = await this.token(new URLSearchParams({ client_id: config.clientId, client_secret: config.clientSecret, grant_type: 'refresh_token', refresh_token: tokens.refresh_token }))
+    const result = await this.token(new URLSearchParams({ client_id: config.clientId, client_secret: config.clientSecret, grant_type: 'refresh_token', refresh_token: tokens.refresh_token }), () => db.calendarConnection.deleteMany({ where: { organizationId, userId } }))
     const updated = { access_token: result.access_token!, refresh_token: result.refresh_token || tokens.refresh_token, expiresAt: Date.now() + result.expires_in! * 1000 }
     // Compare-and-swap avoids recreating a disconnected connection.
     const saved = await db.calendarConnection.updateMany({ where: { id: connection.id, encryptedTokens: connection.encryptedTokens }, data: { encryptedTokens: encrypt(updated, context) } })

@@ -68,6 +68,9 @@ export function Modal({
     })
 
     function handleKeyDown(event: KeyboardEvent) {
+      // A nested dialog (e.g. a delete confirmation) owns the keyboard while focus is inside it.
+      const active = document.activeElement
+      if (active?.closest('[role="dialog"]') && !dialogRef.current?.contains(active)) return
       if (event.key === 'Escape' && dismissible) {
         event.preventDefault()
         onCloseRef.current()

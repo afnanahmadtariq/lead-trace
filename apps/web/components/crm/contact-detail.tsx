@@ -9,6 +9,7 @@ import { Button, ButtonLink } from '../ui/button'
 import { Modal } from '../ui/modal'
 import { WorkspaceHeader, WorkspacePage, WorkspaceSection } from '../workspace/workspace-page'
 import { MeetingForm, MeetingList } from './calendar'
+import { DeleteButton } from './delete-button'
 import { ContactForm, DealForm, NoteForm, TaskForm } from './forms'
 import { LocalTime } from './local-time'
 import { TaskList } from './task-list'
@@ -26,7 +27,7 @@ export function ContactDetail({ contact, members, calendar, userId }: { contact:
 
   return <WorkspacePage>
     <Link className="inline-flex w-fit items-center gap-2 text-sm font-semibold text-lt-600 hover:text-brand" href="/dashboard/contacts"><ArrowLeft size={15}/>All contacts</Link>
-    <WorkspaceHeader eyebrow={label(contact.lifecycle)} title={contact.name} lead={[contact.jobTitle, contact.companyName].filter(Boolean).join(' · ') || 'Add context as the relationship develops.'} action={<div className="flex flex-wrap gap-2"><Button variant="secondary" onClick={() => setAction('edit')}>Edit contact</Button><ButtonLink href={`/dashboard/research/new?contact=${contact.id}`}><Search size={16}/>Research contact</ButtonLink></div>}/>
+    <WorkspaceHeader eyebrow={label(contact.lifecycle)} title={contact.name} lead={[contact.jobTitle, contact.companyName].filter(Boolean).join(' · ') || 'Add context as the relationship develops.'} action={<div className="flex flex-wrap gap-2"><Button variant="secondary" onClick={() => setAction('edit')}>Edit contact</Button><ButtonLink href={`/dashboard/research/new?contact=${contact.id}`}><Search size={16}/>Research contact</ButtonLink><DeleteButton noun="contact" path={`/crm/contacts/${contact.id}`} href="/dashboard/contacts" description={`${contact.name} and all of its deals, notes, follow-ups and meeting records will be deleted. Google Calendar events stay in Google Calendar. Contacts with research history cannot be deleted.`}/></div>}/>
 
     <div className={`${cardClass} grid gap-5`}>
       <div className="flex flex-wrap gap-x-7 gap-y-3 text-sm text-lt-600">
@@ -63,7 +64,7 @@ export function ContactDetail({ contact, members, calendar, userId }: { contact:
 
         <div className="max-[900px]:order-3"><WorkspaceSection title="Conversation notes" description="What you learned, discussed, and agreed to.">
           <div className={`${cardClass} grid gap-4`}>
-            {contact.notes.map((note) => <article key={note.id} className="border-b border-lt-100 pb-4 last:border-0 last:pb-0"><p className="m-0 whitespace-pre-wrap break-words text-sm leading-relaxed text-lt-700">{note.body}</p><p className="mt-2 mb-0 text-xs text-lt-500">{note.author?.name || 'Former member'} · <LocalTime value={note.createdAt}/></p></article>)}
+            {contact.notes.map((note) => <article key={note.id} className="flex items-start justify-between gap-3 border-b border-lt-100 pb-4 last:border-0 last:pb-0"><div className="min-w-0"><p className="m-0 whitespace-pre-wrap break-words text-sm leading-relaxed text-lt-700">{note.body}</p><p className="mt-2 mb-0 text-xs text-lt-500">{note.author?.name || 'Former member'} · <LocalTime value={note.createdAt}/></p></div><DeleteButton noun="note" path={`/crm/notes/${note.id}`} description="This conversation note will be removed from the contact."/></article>)}
             {!contact.notes.length && <p className="m-0 text-sm text-lt-600">No notes yet. Capture the useful details from your first conversation.</p>}
           </div>
         </WorkspaceSection></div>
