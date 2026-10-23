@@ -44,6 +44,15 @@ export async function handleCrm({ req, res, pathname, url, json, readBody, runs,
     const id = randomUUID(), contact = { id, ...body, owner: body.ownerId ? owner : null, _count: { researchRuns: 0, deals: 0 } }; contacts.set(id, contact); return json(res, 201, contact)
   }
   const id = pathname.split('/')[3]
+  if (req.method === 'DELETE') {
+    const store = { contacts, deals, notes, tasks }[pathname.split('/')[2]]
+    if (!store?.has(id)) return json(res, 404, { message: 'Record not found' })
+    if (store === contacts) {
+      if ([...runs.values()].some((run) => run.prospect.id === id)) return json(res, 409, { message: 'This contact has research history. Delete is unavailable while research runs exist.' })
+      for (const child of [deals, notes, tasks, meetings]) for (const [key, value] of child) if (value.prospectId === id) child.delete(key)
+    }
+    store.delete(id); return json(res, 200, { id })
+  }
   if (/^\/crm\/contacts\/[^/]+\/notes$/.test(pathname)) { const note = { id: randomUUID(), prospectId: id, body: body.body, author: owner, createdAt: new Date().toISOString() }; notes.set(note.id, note); return json(res, 201, note) }
   if (/^\/crm\/contacts\/[^/]+$/.test(pathname)) {
     const contact = contacts.get(id); if (!contact) return json(res, 404, { message: 'Contact not found' })

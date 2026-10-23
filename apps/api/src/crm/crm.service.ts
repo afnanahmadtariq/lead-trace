@@ -23,8 +23,9 @@ export class CrmService {
     return contact
   }
 
-  async owner(organizationId: string, ownerId?: string | null) {
-    if (ownerId && !await db.member.findUnique({ where: { organizationId_userId: { organizationId, userId: ownerId } } })) {
+  // An unchanged owner stays valid after they leave the workspace, so editing other fields never clears it.
+  async owner(organizationId: string, ownerId?: string | null, current?: string | null) {
+    if (ownerId && ownerId !== current && !await db.member.findUnique({ where: { organizationId_userId: { organizationId, userId: ownerId } } })) {
       throw new BadRequestException('Choose an owner from this workspace')
     }
     return ownerId || null
@@ -67,8 +68,8 @@ export class CrmService {
 
   async saveContact(session: AuthenticatedSession, input: ContactDto, id?: string) {
     const organizationId = await this.scope(session)
-    if (id) await this.contact(organizationId, id)
-    const ownerId = await this.owner(organizationId, input.ownerId === undefined ? (id ? undefined : session.user.id) : input.ownerId)
+    const existing = id ? await this.contact(organizationId, id) : null
+    const ownerId = await this.owner(organizationId, input.ownerId === undefined ? (id ? undefined : session.user.id) : input.ownerId, existing?.ownerId)
     const email = input.email?.trim().toLowerCase() || null
     try {
       const data = { name: input.name, email, emailKey: email, companyName: input.companyName || null, companyDomain: input.companyDomain || null, jobTitle: input.jobTitle || null, phone: input.phone || null, lifecycle: input.lifecycle ?? 'lead', ...(input.ownerId !== undefined || !id ? { ownerId } : {}) }
@@ -118,7 +119,9 @@ export class CrmService {
   async saveDeal(session: AuthenticatedSession, input: DealDto, id?: string) {
     const organizationId = await this.scope(session)
     await this.contact(organizationId, input.prospectId)
-    const ownerId = await this.owner(organizationId, input.ownerId === undefined ? session.user.id : input.ownerId)
+    const existing = id ? await db.crmDeal.findFirst({ where: { id, organizationId }, select: { ownerId: true } }) : null
+    if (id && !existing) throw new NotFoundException('Deal not found')
+    const ownerId = await this.owner(organizationId, input.ownerId === undefined ? session.user.id : input.ownerId, existing?.ownerId)
     const data = { ...input, organizationId, ownerId, expectedCloseAt: input.expectedCloseAt ? new Date(input.expectedCloseAt) : null }
     if (id) {
       const updated = await db.crmDeal.updateMany({ where: { id, organizationId }, data })
@@ -151,5 +154,32 @@ export class CrmService {
     const updated = await db.crmTask.updateMany({ where: { id, organizationId }, data: { completedAt: completed ? new Date() : null } })
     if (!updated.count) throw new NotFoundException('Follow-up not found')
     return { id, completed }
+  }
+
+  async deleteContact(session: AuthenticatedSession, id: string) {
+    const organizationId = await this.scope(session)
+    await this.contact(organizationId, id)
+    // Research runs own Deal Briefs and public share links, so the filter keeps a concurrent new run from being cascaded away.
+    const deleted = await db.prospect.deleteMany({ where: { id, organizationId, researchRuns: { none: {} } } })
+    if (!deleted.count) throw new ConflictException('This contact has research history. Delete is unavailable while research runs exist.')
+    return { id }
+  }
+
+  async deleteDeal(session: AuthenticatedSession, id: string) {
+    const organizationId = await this.scope(session)
+    if (!(await db.crmDeal.deleteMany({ where: { id, organizationId } })).count) throw new NotFoundException('Deal not found')
+    return { id }
+  }
+
+  async deleteNote(session: AuthenticatedSession, id: string) {
+    const organizationId = await this.scope(session)
+    if (!(await db.crmNote.deleteMany({ where: { id, organizationId } })).count) throw new NotFoundException('Note not found')
+    return { id }
+  }
+
+  async deleteTask(session: AuthenticatedSession, id: string) {
+    const organizationId = await this.scope(session)
+    if (!(await db.crmTask.deleteMany({ where: { id, organizationId } })).count) throw new NotFoundException('Follow-up not found')
+    return { id }
   }
 }

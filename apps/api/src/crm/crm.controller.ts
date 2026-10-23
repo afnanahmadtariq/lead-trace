@@ -15,10 +15,14 @@ export class CrmController {
   @Get('contacts/export') exportContacts(@Session() s: AuthenticatedSession) { return this.crm.exportContacts(s) }
   @Get('contacts/:id') contact(@Session() s: AuthenticatedSession, @Param('id') id: string) { return this.crm.detail(s, id) }
   @Patch('contacts/:id') saveContact(@Session() s: AuthenticatedSession, @Param('id') id: string, @Body() body: ContactDto) { return this.crm.saveContact(s, body, id) }
+  @Delete('contacts/:id') deleteContact(@Session() s: AuthenticatedSession, @Param('id') id: string) { return this.crm.deleteContact(s, id) }
   @Post('contacts/:id/notes') note(@Session() s: AuthenticatedSession, @Param('id') id: string, @Body() body: NoteDto) { return this.crm.note(s, id, body.body) }
   @Get('deals') deals(@Session() s: AuthenticatedSession) { return this.crm.deals(s) }
   @Post('deals') createDeal(@Session() s: AuthenticatedSession, @Body() body: DealDto) { return this.crm.saveDeal(s, body) }
   @Patch('deals/:id') saveDeal(@Session() s: AuthenticatedSession, @Param('id') id: string, @Body() body: DealDto) { return this.crm.saveDeal(s, body, id) }
+  @Delete('deals/:id') deleteDeal(@Session() s: AuthenticatedSession, @Param('id') id: string) { return this.crm.deleteDeal(s, id) }
+  @Delete('notes/:id') deleteNote(@Session() s: AuthenticatedSession, @Param('id') id: string) { return this.crm.deleteNote(s, id) }
+  @Delete('tasks/:id') deleteTask(@Session() s: AuthenticatedSession, @Param('id') id: string) { return this.crm.deleteTask(s, id) }
   @Get('tasks') tasks(@Session() s: AuthenticatedSession) { return this.crm.tasks(s) }
   @Post('tasks') task(@Session() s: AuthenticatedSession, @Body() body: TaskDto) { return this.crm.task(s, body) }
   @Patch('tasks/:id') completeTask(@Session() s: AuthenticatedSession, @Param('id') id: string, @Body() body: CompleteTaskDto) { return this.crm.completeTask(s, id, body.completed) }
