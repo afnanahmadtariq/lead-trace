@@ -1,22 +1,16 @@
-import { BadGatewayException, BadRequestException, ConflictException, Injectable, NotFoundException, Optional, ServiceUnavailableException } from '@nestjs/common'
+import { BadGatewayException, BadRequestException, ConflictException, Injectable, NotFoundException, ServiceUnavailableException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { db, type Prisma } from '@lead-trace/db'
 import { randomUUID } from 'node:crypto'
 import type { AuthenticatedSession } from '../auth/account-context.service'
 import { CrmService } from '../crm/crm.service'
-import { TavilySearchService } from '../tavily/tavily-search.service'
 import { LeadDeepDiscoveryService } from './lead-deep-discovery.service'
-import { LeadCompanyPlanner } from './lead-company-planner.service'
-import { LeadRegistriesService } from './lead-registries.service'
 import { LeadExtractionService } from './lead-extraction.service'
 import type { ConvertLeadDto, CreateLeadSearchDto, ReviewLeadDto } from './leads.dto'
 
 @Injectable()
 export class LeadsService {
-  private readonly discovery: LeadDeepDiscoveryService
-  constructor(private readonly crm: CrmService, tavily: TavilySearchService, private readonly extraction: LeadExtractionService, private readonly config: ConfigService, @Optional() discovery?: LeadDeepDiscoveryService) {
-    this.discovery = discovery || new LeadDeepDiscoveryService(tavily, extraction, new LeadRegistriesService(), new LeadCompanyPlanner(config))
-  }
+  constructor(private readonly crm: CrmService, private readonly extraction: LeadExtractionService, private readonly config: ConfigService, private readonly discovery: LeadDeepDiscoveryService) {}
 
   async capabilities(session: AuthenticatedSession) {
     await this.crm.scope(session)
@@ -25,8 +19,7 @@ export class LeadsService {
 
   async create(session: AuthenticatedSession, input: CreateLeadSearchDto) {
     const organizationId = await this.crm.scope(session)
-    const capabilities = await this.capabilities(session)
-    if (!capabilities.discoveryConfigured || !capabilities.extractionConfigured) throw new ServiceUnavailableException('Configure Tavily and the model provider before generating leads')
+    if (!this.config.get<string>('TAVILY_API_KEY')?.trim() || !this.extraction.configured()) throw new ServiceUnavailableException('Configure Tavily and the model provider before generating leads')
     return db.$transaction(async (tx) => {
       // Serialize the quota check across API instances without locking CRM records.
       await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`lead-search:${organizationId}`}, 0))`
@@ -97,7 +90,7 @@ export class LeadsService {
         if (!updated.count) throw new ConflictException('Search was cancelled or superseded. Refresh to see its current state.')
       })
       return await db.$transaction(async (tx) => {
-        const saved = await tx.leadSearch.updateMany({ where: { ...guard, lockExpiresAt: { gt: new Date() } }, data: { status: 'completed', phase: 'completed', completedAt: new Date(), lockExpiresAt: null, attemptToken: null, queries: extracted.queries as unknown as Prisma.InputJsonValue, failedQueries: extracted.failedQueries, rejectedCandidates: extracted.rejected, diagnostics: { activity: extracted.activity, totalQueries: extracted.queries.length } as unknown as Prisma.InputJsonValue, companySnapshots: extracted.companies as unknown as Prisma.InputJsonValue } })
+        const saved = await tx.leadSearch.updateMany({ where: { ...guard, lockExpiresAt: { gt: new Date() } }, data: { status: 'completed', phase: 'completed', completedAt: new Date(), lockExpiresAt: null, attemptToken: null, queries: extracted.queries as unknown as Prisma.InputJsonValue, failedQueries: extracted.failedQueries, rejectedCandidates: extracted.rejected, diagnostics: { activity: extracted.activity, totalQueries: extracted.queries.length } as unknown as Prisma.InputJsonValue } })
         if (!saved.count) throw new ConflictException('Search was cancelled or superseded. Refresh to see its current state.')
         const sourceIds = new Map<string, string>()
         for (const source of extracted.sources) {
@@ -152,7 +145,7 @@ export class LeadsService {
           const companyName = input.companyName || candidate.companyName, email = input.email?.toLowerCase() || null
           const matches = input.existingContactId
             ? await tx.prospect.findMany({ where: { id: input.existingContactId, organizationId }, take: 1 })
-            : await tx.prospect.findMany({ where: { organizationId, OR: [ ...(email ? [{ emailKey: email }] : []), { name: { equals: input.name, mode: 'insensitive' }, companyName: { equals: companyName, mode: 'insensitive' } } ] }, take: 2 })
+            : await tx.prospect.findMany({ where: { organizationId, OR: [ ...(email ? [{ emailKey: email }] : [{ name: { equals: input.name, mode: 'insensitive' as const }, companyName: { equals: companyName, mode: 'insensitive' as const } }]) ] }, take: 2 })
           if (input.existingContactId && !matches.length) throw new NotFoundException('Contact not found')
           if (matches.length > 1) throw new ConflictException('Multiple CRM contacts match. Choose the existing contact to link.')
           const prospect = matches[0] ?? await tx.prospect.create({ data: { organizationId, createdById: session.user.id, ownerId, name: input.name, email, emailKey: email, companyName, companyDomain: input.companyDomain || null, jobTitle: input.jobTitle || candidate.jobTitle, phone: input.phone || null, lifecycle: input.lifecycle || 'qualified' } })

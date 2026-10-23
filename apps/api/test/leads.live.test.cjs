@@ -16,12 +16,16 @@ test('live providers discover a source-backed lead and carry it into CRM researc
   const { LeadsService } = require('../dist/leads/leads.service.js')
   const { TavilySearchService } = require('../dist/tavily/tavily-search.service.js')
   const { LeadExtractionService } = require('../dist/leads/lead-extraction.service.js')
+  const { LeadDeepDiscoveryService } = require('../dist/leads/lead-deep-discovery.service.js')
+  const { LeadRegistriesService } = require('../dist/leads/lead-registries.service.js')
+  const { LeadCompanyPlanner } = require('../dist/leads/lead-company-planner.service.js')
   const { ResearchRunsService } = require('../dist/research/research-runs.service.js')
   const { validateEnvironment } = require('../dist/config/env.validation.js')
   const config = new ConfigService(validateEnvironment(process.env))
   assert.ok(config.get('TAVILY_API_KEY') && config.get('DASHSCOPE_API_KEY'), 'Configure discovery and extraction providers')
   const accounts = new AccountContextService(), crm = new CrmService(accounts)
-  const leads = new LeadsService(crm, new TavilySearchService(tavily({ apiKey: config.get('TAVILY_API_KEY'), clientSource: 'lead-trace-live-smoke' }), config), new LeadExtractionService(config), config)
+  const search = new TavilySearchService(tavily({ apiKey: config.get('TAVILY_API_KEY'), clientSource: 'lead-trace-live-smoke' }), config), extraction = new LeadExtractionService(config)
+  const leads = new LeadsService(crm, extraction, config, new LeadDeepDiscoveryService(search, extraction, new LeadRegistriesService(), new LeadCompanyPlanner(config)))
   const id = randomUUID(), organizationId = `live-leads-${id}`, userId = `live-leads-user-${id}`
   const session = { user: { id: userId, name: 'Lead Trace live smoke' }, session: { id: `live-session-${id}`, activeOrganizationId: organizationId } }
   try {

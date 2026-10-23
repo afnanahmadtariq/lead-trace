@@ -46,7 +46,7 @@ export function LeadSearchResults({ search, members, capabilities }: { search: L
     catch (error) { setError(error instanceof Error ? error.message : 'Could not review lead') }
     finally { setBusy('') }
   }
-  const inFilter = (candidate: LeadCandidate, view: typeof filters[number]) => view === 'all' || (view === 'matches' ? sourceSupported(candidate) : view === 'review' ? !sourceSupported(candidate) : candidate.status === view)
+  const inFilter = (candidate: LeadCandidate, view: typeof filters[number]) => view === 'all' || (view === 'matches' ? sourceSupported(candidate) && candidate.status !== 'dismissed' : view === 'review' ? !sourceSupported(candidate) && !['dismissed', 'converted'].includes(candidate.status) : candidate.status === view)
   const candidates = search.candidates.filter((candidate) => inFilter(candidate, filter))
   const supported = search.candidates.filter(sourceSupported).length
   return <>
