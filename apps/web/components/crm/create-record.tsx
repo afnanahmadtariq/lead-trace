@@ -1,11 +1,13 @@
 'use client'
 
-import { ArrowLeft, ChevronRight, Plus, Search, UserRound } from 'lucide-react'
+import { ArrowLeft, ChevronRight, Plus, Search } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { apiRequest } from '../../lib/api-client'
-import { controlClass, type Contact, type ContactPage, type Person } from '../../lib/crm'
+import { controlClass, labelClass, type Contact, type ContactPage, type Person } from '../../lib/crm'
 import { Button, ButtonLink } from '../ui/button'
+import { FormMessage } from '../ui/form-message'
 import { Modal } from '../ui/modal'
+import { Avatar } from './badges'
 import { DealForm, TaskForm } from './forms'
 
 function ContactPicker({ onSelect }: { onSelect: (contact: Contact) => void }) {
@@ -26,16 +28,16 @@ function ContactPicker({ onSelect }: { onSelect: (contact: Contact) => void }) {
 
   const loading = result?.query !== search
   return <div className="grid gap-4">
-    <label className="grid gap-2 text-sm font-semibold text-lt-700">Choose a contact
-      <span className="relative"><Search className="pointer-events-none absolute top-3 left-3 text-lt-500" size={17}/><input data-autofocus className={`${controlClass} pl-10`} placeholder="Search name, email, or company" value={search} onChange={(event) => setSearch(event.target.value)}/></span>
+    <label className={labelClass}>Choose a contact
+      <span className="relative"><Search className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-lt-500" size={17}/><input data-autofocus className={`${controlClass} pl-10!`} placeholder="Search name, email, or company" value={search} onChange={(event) => setSearch(event.target.value)}/></span>
     </label>
     <div className="grid max-h-64 gap-1 overflow-y-auto" aria-live="polite" aria-busy={loading}>
-      {loading ? <p className="text-sm text-lt-500">Loading contacts…</p> : result?.error ? <p role="alert" className="text-sm text-danger">{result.error}</p> : result?.data?.items.length ? <>
-        {result.data.items.map((contact) => <button type="button" key={contact.id} onClick={() => onSelect(contact)} className="flex items-center gap-3 rounded-xl border border-lt-200 p-3 text-left hover:border-brand/40 hover:bg-lt-50">
-          <UserRound size={18} className="shrink-0 text-brand"/><span className="grid min-w-0 flex-1 gap-1"><strong className="truncate text-sm text-lt-900">{contact.name}</strong><span className="truncate text-xs text-lt-600">{contact.companyName || contact.email || 'Contact'}</span></span><ChevronRight size={16} className="text-lt-500"/>
+      {loading ? <p className="m-0 text-sm text-lt-500">Loading contacts…</p> : result?.error ? <FormMessage tone="error" role="alert">{result.error}</FormMessage> : result?.data?.items.length ? <>
+        {result.data.items.map((contact) => <button type="button" key={contact.id} onClick={() => onSelect(contact)} className="flex items-center gap-3 rounded-xl border border-lt-200 p-3 text-left transition-colors hover:border-lt-300 hover:bg-lt-50 motion-reduce:transition-none">
+          <Avatar name={contact.name}/><span className="grid min-w-0 flex-1 gap-1"><strong className="truncate text-sm text-lt-900">{contact.name}</strong><span className="truncate text-xs text-lt-600">{contact.companyName || contact.email || 'Contact'}</span></span><ChevronRight size={16} className="text-lt-500"/>
         </button>)}
-        {result.data.total > result.data.items.length && <p className="text-xs text-lt-500">Showing the first {result.data.items.length} matches. Search to narrow the list.</p>}
-      </> : <p className="text-sm text-lt-600">{search ? 'No contacts match that search.' : 'Add your first contact to get started.'}</p>}
+        {result.data.total > result.data.items.length && <p className="m-0 text-xs text-lt-500">Showing the first {result.data.items.length} matches. Search to narrow the list.</p>}
+      </> : <p className="m-0 text-sm text-lt-600">{search ? 'No contacts match that search.' : 'Add your first contact to get started.'}</p>}
     </div>
     <div className="border-t border-lt-100 pt-4"><ButtonLink href="/dashboard/contacts?add=1" variant="secondary" size="xs"><Plus size={15}/>Add a new contact</ButtonLink></div>
   </div>
