@@ -23,8 +23,11 @@ test('real lead shortlist qualifies, saves to CRM, and preserves its evidence', 
   await expect(page.getByText('Northstar leadership', { exact: true }).first()).toBeVisible()
   await expect(page.getByRole('link', { name: 'Northstar leadership' }).first()).toHaveAttribute('href', 'https://northstar.example.com/team')
   await page.getByRole('button', { name: 'Dismiss', exact: true }).click()
-  await expect(page.getByRole('button', { name: 'Restore', exact: true })).toBeVisible()
+  // Dismissed leads leave the matches list; restore them from the Dismissed view.
+  await expect(page.getByRole('heading', { name: 'Maya Chen', exact: true })).toBeHidden()
+  await page.getByRole('button', { name: /^Dismissed · / }).click()
   await page.getByRole('button', { name: 'Restore', exact: true }).click()
+  await page.getByRole('button', { name: /^Source-supported matches · / }).click()
   await page.getByRole('button', { name: 'Qualify lead', exact: true }).click()
   await expect(page.getByRole('button', { name: 'Save to CRM', exact: true })).toBeVisible()
   await page.reload()

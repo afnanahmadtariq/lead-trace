@@ -9,6 +9,9 @@ test('lead search to qualified CRM contact preserves provenance and tenant isola
   const { CrmService } = require('../dist/crm/crm.service.js')
   const { LeadsService } = require('../dist/leads/leads.service.js')
   const { LeadExtractionService } = require('../dist/leads/lead-extraction.service.js')
+  const { LeadDeepDiscoveryService } = require('../dist/leads/lead-deep-discovery.service.js')
+  const { LeadRegistriesService } = require('../dist/leads/lead-registries.service.js')
+  const { LeadCompanyPlanner } = require('../dist/leads/lead-company-planner.service.js')
   const id = randomUUID(), orgA = `leads-a-${id}`, orgB = `leads-b-${id}`, userA = `leads-user-a-${id}`, userB = `leads-user-b-${id}`
   const originalFetch = global.fetch, state = { fail: false, pause: null, pending: null, name: 'Maya Chen', company: 'Northstar' }
   const config = { get: (key) => ({ TAVILY_API_KEY: 'test-key', DASHSCOPE_API_KEY: 'test-key', DASHSCOPE_MODEL: 'qwen-test' })[key] }
@@ -18,7 +21,8 @@ test('lead search to qualified CRM contact preserves provenance and tenant isola
     if (state.pause) await state.pause
     return { query: input.query, kind: input.kind, requestId: 'test-request', responseTimeMs: 1, credits: 1, sources: [{ url: 'https://northstar.example.com/team', title: 'Northstar leadership', publisher: 'northstar.example.com', score: 0.9, excerpt: `${state.name} is Head of Sales at ${state.company}, a SaaS company in London.`, publishedAt: null }] }
   } }
-  const leads = new LeadsService(crm, tavily, new LeadExtractionService(config), config)
+  const extraction = new LeadExtractionService(config)
+  const leads = new LeadsService(crm, extraction, config, new LeadDeepDiscoveryService(tavily, extraction, new LeadRegistriesService(), new LeadCompanyPlanner(config)))
   const session = (user, org) => ({ user: { id: user, name: 'Lead Tester' }, session: { id: `s-${user}`, activeOrganizationId: org } })
   const a = session(userA, orgA), b = session(userB, orgB)
   const input = { depth: 'quick', roleMatch: 'exact', title: 'London SaaS sales leaders', industry: 'SaaS', role: 'Head of Sales', location: 'London' }
@@ -70,6 +74,15 @@ test('lead search to qualified CRM contact preserves provenance and tenant isola
     assert.equal(saved[0].prospectId, saved[1].prospectId)
     assert.notEqual(saved[0].prospectId, converted.prospectId)
     assert.equal((await crm.list(a)).total, 2)
+    // A different email must create a contact even when the name and company match an existing one.
+    state.name = 'Maya Chen'; state.company = 'Northstar'
+    const namesake = await leads.create(a, input); await leads.discover(a, namesake.id)
+    const namesakeLead = (await leads.get(a, namesake.id)).candidates[0]
+    await leads.review(a, namesakeLead.id, 'qualified')
+    const distinct = await leads.convert(a, namesakeLead.id, { name: 'Maya Chen', companyName: 'Northstar', email: 'm.chen@northstar.io' })
+    assert.equal(distinct.reused, false); assert.notEqual(distinct.prospectId, converted.prospectId)
+    assert.equal((await crm.list(a)).total, 3)
+    state.name = 'Alex River'; state.company = 'Southstar'
     const wrongSource = (await leads.get(a, third.id)).sources[0]
     await assert.rejects(() => db.leadCandidate.create({ data: { organizationId: orgB, searchId: search.id, sourceId: wrongSource.id, identityKey: 'illegal', name: 'Other', companyName: 'Other', quote: 'Illegal', matchedCriteria: [], missingCriteria: [] } }), (error) => error.code === 'P2003')
     // Provider failures are persisted and retryable; cancellation invalidates an in-flight attempt.
@@ -95,6 +108,12 @@ test('lead search to qualified CRM contact preserves provenance and tenant isola
     const concurrentSearches = await Promise.allSettled(Array.from({ length: 4 }, () => leads.create(a, input)))
     assert.equal(concurrentSearches.filter((result) => result.status === 'fulfilled').length, 3)
     assert.equal(concurrentSearches.filter((result) => result.status === 'rejected').length, 1)
+    // Wiping research data removes scraped lead pages and candidates but keeps converted CRM contacts.
+    const { WorkspaceSettingsService } = require('../dist/auth/workspace-settings.service.js')
+    const wiped = await new WorkspaceSettingsService(new AccountContextService()).wipeWorkspaceResearchData(a, 'A')
+    assert.ok(wiped.deleted.leadSearches >= 4)
+    assert.equal(await db.leadSearch.count({ where: { organizationId: orgA } }) + await db.leadSource.count({ where: { organizationId: orgA } }) + await db.leadCandidate.count({ where: { organizationId: orgA } }), 0)
+    assert.equal((await crm.list(a)).total, 3)
     await db.organization.deleteMany({ where: { id: { in: [orgA, orgB] } } })
     assert.equal(await db.leadCandidate.count({ where: { searchId: search.id } }), 0)
   } finally {
@@ -127,7 +146,7 @@ test('background deep discovery persists progress, registry provenance, recovery
     await progress({ phase: 'extracting', message: 'Checking people', sources: 2, companies: 1, queries: 9 })
     return { ...validateExtractedLeads({ candidates: [{ sourceId: 'team', name: 'Maya Chen', companyName: 'Northstar', jobTitle: 'Head of Sales', quote: sources[0].excerpt }] }, sources, criteria), sources, companies: [{ name: 'Northstar', sourceId: 'team', quote: sources[0].excerpt, domain: 'northstar.example.com', registries: [{ provider: 'Wikidata', id: 'Q123' }] }], activity: [{ provider: 'Tavily', operation: 'company-site crawl', requests: 1, records: 1, credits: 1, status: 'ok' }], queries: [{ kind: 'company-team', query: 'Northstar team' }], failedQueries: 0 }
   } }
-  const leads = new LeadsService(new CrmService(new AccountContextService()), {}, { configured: () => true }, config, discovery)
+  const leads = new LeadsService(new CrmService(new AccountContextService()), { configured: () => true }, config, discovery)
   const input = { title: 'Deep background fixture', industry: 'B2B SaaS', role: 'Head of Sales', location: 'London' }
   try {
     await db.user.create({ data: { id: user, email: `${user}@example.test`, name: 'Deep Tester' } })
