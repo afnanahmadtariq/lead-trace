@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react'
 
-export function Eyebrow({ children, inverse = false }: { children: ReactNode; inverse?: boolean }) {
-  return <p className={`mb-4 flex items-center gap-2 text-[.68rem] font-semibold tracking-[.13em] uppercase ${inverse ? 'text-sky' : 'text-brand-bright'}`}>
-    <span className={`h-0.5 w-[18px] rounded-full ${inverse ? 'bg-sky' : 'bg-brand-bright'}`}/>{children}
-  </p>
+export function Eyebrow({ children }: { children: ReactNode }) {
+  return <p className="mt-0 mb-5 text-sm font-semibold text-brand">{children}</p>
 }

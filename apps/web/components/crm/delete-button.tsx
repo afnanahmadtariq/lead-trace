@@ -7,7 +7,7 @@ import { Button } from '../ui/button'
 import { FormMessage } from '../ui/form-message'
 import { Modal } from '../ui/modal'
 
-export function DeleteButton({ noun, path, description, name, href, onDeleted }: { noun: string; path: string; description: string; name?: string; href?: string; onDeleted?: () => void }) {
+export function DeleteButton({ noun, path, description, name, href, onDeleted, quiet = false }: { quiet?: boolean; noun: string; path: string; description: string; name?: string; href?: string; onDeleted?: () => void }) {
   const router = useRouter()
   const [open, setOpen] = useState(false), [pending, setPending] = useState(false), [error, setError] = useState('')
   const close = () => { if (!pending) { setOpen(false); setError('') } }
@@ -18,8 +18,8 @@ export function DeleteButton({ noun, path, description, name, href, onDeleted }:
     finally { setPending(false) }
   }
   return <>
-    <Button type="button" size="xs" variant="danger" aria-label={name ?? `Delete ${noun}`} onClick={() => setOpen(true)}>Delete</Button>
-    <Modal open={open} onClose={close} size="sm" title={`Delete ${noun}?`} description={description} footer={<><Button type="button" variant="secondary" size="xs" disabled={pending} onClick={close}>Cancel</Button><Button type="button" size="xs" variant="danger" data-autofocus disabled={pending} onClick={remove}>{pending ? 'Deleting…' : 'Delete'}</Button></>}>
+    <Button type="button" size="xs" variant="danger" className={quiet ? 'text-lt-500! hover:text-danger!' : ''} aria-label={name ?? `Delete ${noun}`} onClick={() => setOpen(true)}>Delete</Button>
+    <Modal open={open} onClose={close} size="sm" title={`Delete ${noun}?`} description={description} footer={<><Button type="button" variant="secondary" size="xs" disabled={pending} onClick={close}>Cancel</Button><Button type="button" size="xs" variant="danger" className="bg-danger! text-white! hover:bg-danger/90!" data-autofocus disabled={pending} onClick={remove}>{pending ? 'Deleting…' : 'Delete'}</Button></>}>
       {error ? <FormMessage tone="error" role="alert">{error}</FormMessage> : <p className="m-0 text-sm text-lt-600">This cannot be undone.</p>}
     </Modal>
   </>
