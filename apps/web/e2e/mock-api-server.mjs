@@ -1,5 +1,6 @@
 import http from 'node:http'
 import { randomUUID } from 'node:crypto'
+import { handleCrm, crmResearchContact } from './crm-mock.mjs'
 import { e2eFixtures } from './fixtures.mjs'
 
 const PORT = Number(process.env.E2E_API_PORT || 3001)
@@ -178,6 +179,14 @@ const server = http.createServer(async (req, res) => {
       res.writeHead(204, corsHeaders)
       return res.end()
     }
+    if (pathname.startsWith('/crm/')) {
+      if (!ensureAuthenticated(req, res)) return
+      return handleCrm({ req, res, pathname, url, json, readBody, runs: state.runs, webOrigin: WEB_ORIGIN })
+    }
+    if (pathname === '/integrations') {
+      if (!ensureAuthenticated(req, res)) return
+      return json(res, 200, { webDiscovery: { provider: 'Tavily', status: 'configured', searchDepth: 'advanced', maxResults: 6 }, stages: [] })
+    }
     if (req.method === 'GET' && pathname === '/health') return json(res, 200, { status: 'ok' })
     if (req.method === 'GET' && pathname === '/auth-config') return json(res, 200, { googleEnabled: false })
     if (req.method === 'GET' && pathname === '/notifications') {
@@ -261,14 +270,7 @@ const server = http.createServer(async (req, res) => {
         status: 'running',
         goal: body.goal || 'meeting',
         requestedAt: new Date().toISOString(),
-        prospect: {
-          name: body.prospectName,
-          email: body.prospectEmail || null,
-          companyName: body.companyName || null,
-          companyDomain: body.companyDomain || null,
-          linkedinUrl: body.linkedinUrl || null,
-          xHandle: body.xHandle || null,
-        },
+        prospect: crmResearchContact(body),
         offer: {
           name: body.offerName,
           valueProposition: body.offerContext,

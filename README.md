@@ -24,13 +24,38 @@ We listened to feedback from industry professionals and used it to rethink the p
 
 The project began with AI-assisted prospect research and cited Deal Briefs. We are building on that foundation toward a broader sales workflow that brings lead generation, research, and CRM together. The new name reflects that direction: helping teams follow a lead from discovery through the sales relationship.
 
-Lead generation, CRM, and related capabilities are planned. We will refine the feature set, priorities, pitch, and documentation as development progresses and we gather further feedback. The working product described below provides the research and briefing foundation.
+The repository now includes the first built-in CRM slice: persistent contacts, a deal pipeline, notes, follow-ups, CSV import/export, and Google Calendar meeting creation. Lead generation and deeper integrations remain planned. We will refine the feature set and pitch as development progresses. The existing pitch and narrated demo show the research foundation and the original expansion roadmap.
 
 ## Meet Lead Trace
 
 Lead Trace currently provides an AI sales research assistant for **B2B sales teams, agencies, and founders**. Give it a prospect and describe what you sell. It finds public signals and turns them into a **cited Deal Brief** for meeting preparation or personalized outreach—with source links and visible research gaps.
 
 We built the complete journey: a shared workspace, public-source discovery, AI evidence extraction, and briefs you can review and reuse. Its central feature is a **conversation angle**: a source claim, a clearly labeled hypothesis about your offer, and a question that tests whether the fit is real.
+
+## Built-in CRM
+
+Open **Contacts** to add or import a contact. Contact pages bring together company details, ownership, lifecycle, research history, deals, notes, follow-ups, and meetings. Existing research prospects remain available as contacts; new research can reuse a saved contact rather than create another record.
+
+- **Pipeline:** new → qualified → proposal → negotiation → won/lost, with value, currency, owner, and expected close. Totals stay separate by currency. Up to 500 recent deals are shown.
+- **Follow-ups:** due dates, workspace owners, completion/reopening, and an open-action list. These are tracked actions; automatic reminders are not implemented.
+- **CSV:** import up to 500 contacts per batch using `name,email,company,domain,title,phone`; only `name` is required. The batch validates before writing. Email matches within a workspace are skipped without overwriting existing data. Export supports up to 10,000 contacts and neutralizes spreadsheet formulas. Names without emails are separate contacts.
+- **Research:** open a contact and choose **Research contact**. The saved identity is used and each research run retains its immutable snapshot. Email matching is case-insensitive. Historical duplicate prospects are preserved with their research; the oldest matching record becomes the canonical email identity during migration.
+- **Permissions:** workspace members collaborate on CRM records. Owners/assignees must be members of the active workspace. Contacts and their deals, notes, tasks, and meetings share compound tenant relationships. Wiping research data preserves CRM records; deleting a workspace removes its CRM records.
+
+Company details are currently stored on contacts. Shared company records, custom pipelines, contact merging/deletion, email integration, automatic lead sourcing, and two-way Calendar sync are future work. Contact pages display the latest 50 research runs and up to 100 of each other history type; the follow-up list shows up to 500 actions, open first.
+
+### Google Calendar setup
+
+The first connected integration creates meetings in the connecting member's **primary Google Calendar**. It does not import calendar history, check availability, generate Meet links, or synchronize later edits/cancellations. Each member connects separately in each workspace.
+
+1. Apply the database migration with `npm run db:migrate`, then run `npm run db:generate`. Deploy the API and web changes together. Back up existing production data before applying migrations as usual.
+2. Create a dedicated Google OAuth **Web application** client and enable the **Google Calendar API** in that Google Cloud project. Keep this client separate from the optional Google sign-in client.
+3. Register `https://api.leadtrace.online/crm/calendar/callback` as an authorized redirect URI. For local development register `http://localhost:3001/crm/calendar/callback`. The API derives this URI from `BETTER_AUTH_URL`; the return page uses the first `WEB_ORIGIN`.
+4. Set all three API environment variables: `GOOGLE_CALENDAR_CLIENT_ID`, `GOOGLE_CALENDAR_CLIENT_SECRET`, and `INTEGRATION_ENCRYPTION_KEY`. Generate the encryption key with `openssl rand -base64 32`. Keep this key stable and backed up with your deployment secrets; changing it makes existing connections unreadable until users reconnect. Docker Compose forwards these values to the API.
+5. Configure the OAuth consent screen for `https://www.googleapis.com/auth/calendar.events.owned`. Add test users while the app is in testing; complete Google's verification requirements before public rollout. See [Google's scope guidance](https://developers.google.com/workspace/calendar/api/auth).
+6. Open **Integrations → Connect Google Calendar**, approve access, then schedule from a contact. Times are entered in the browser's local timezone and stored as UTC. **Email a calendar invitation** is unchecked by default; selecting it sends an invitation to the contact's saved email through Google Calendar.
+
+OAuth state expires after ten minutes, is bound to the user/session/workspace, and is consumed once. Credentials are encrypted with AES-256-GCM and scoped to the member's workspace; access tokens refresh server-side. Meeting IDs make retries reuse the same Google event when a response is lost. A pending meeting exposes **Retry confirmation** to its organizer. Disconnect removes local credentials while retaining scheduled events. Members can revoke Google-side access from their Google account settings; removing workspace membership also removes stored Calendar credentials.
 
 ## Product tour
 

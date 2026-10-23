@@ -85,6 +85,15 @@ function tavilyConfiguration(config: Record<string, unknown>) {
   }
 }
 
+function calendarConfiguration(config: Record<string, unknown>) {
+  const keys = ['GOOGLE_CALENDAR_CLIENT_ID', 'GOOGLE_CALENDAR_CLIENT_SECRET', 'INTEGRATION_ENCRYPTION_KEY'] as const
+  const values = keys.map((key) => optionalString(config[key]))
+  if (values.some(Boolean) && !values.every(Boolean)) throw new Error('Google Calendar credentials and INTEGRATION_ENCRYPTION_KEY must be configured together')
+  const key = values[2]
+  if (key && (Buffer.from(key, 'base64').length !== 32 || Buffer.from(key, 'base64').toString('base64') !== key)) throw new Error('INTEGRATION_ENCRYPTION_KEY must be 32 random bytes encoded as base64')
+  return Object.fromEntries(keys.map((key, index) => [key, values[index] ?? '']))
+}
+
 export function validateEnvironment(config: Record<string, unknown>) {
-  return { ...config, ...authConfiguration(config), ...emailConfiguration(config), ...tavilyConfiguration(config) }
+  return { ...config, ...authConfiguration(config), ...emailConfiguration(config), ...tavilyConfiguration(config), ...calendarConfiguration(config) }
 }

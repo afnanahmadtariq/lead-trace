@@ -8,27 +8,27 @@ export class ResearchRunsService {
   constructor(private readonly accounts: AccountContextService) {}
 
   async create(session: AuthenticatedSession, input: CreateResearchRunDto) {
-    if (![input.companyName, input.companyDomain, input.linkedinUrl, input.xHandle].some((value) => value?.trim())) {
-      throw new BadRequestException(
-        'Add at least one identity anchor: company, company domain, LinkedIn URL, or X handle',
-      )
-    }
     const membership = await this.accounts.assertActiveWorkspace(session)
     const organizationId = membership.organizationId
 
     return db.$transaction(async (transaction) => {
-      const prospect = await transaction.prospect.create({
-        data: {
-          organizationId,
-          createdById: session.user.id,
-          name: input.prospectName,
-          email: input.prospectEmail,
-          companyName: input.companyName,
-          companyDomain: input.companyDomain,
-          linkedinUrl: input.linkedinUrl,
-          xHandle: input.xHandle,
-        },
-      })
+      const emailKey = input.prospectEmail?.trim().toLowerCase() || null
+      const existing = input.prospectId
+        ? await transaction.prospect.findUnique({ where: { id_organizationId: { id: input.prospectId, organizationId } } })
+        : null
+      if (input.prospectId && !existing) throw new NotFoundException('Contact not found')
+      const contactData = {
+        organizationId, createdById: session.user.id, ownerId: session.user.id,
+        name: input.prospectName, email: emailKey, emailKey,
+        companyName: input.companyName, companyDomain: input.companyDomain,
+        linkedinUrl: input.linkedinUrl, xHandle: input.xHandle,
+      }
+      const prospect = existing ?? (emailKey
+        ? await transaction.prospect.upsert({ where: { organizationId_emailKey: { organizationId, emailKey } }, create: contactData, update: {} })
+        : await transaction.prospect.create({ data: contactData }))
+      if (![prospect.companyName, prospect.companyDomain, prospect.linkedinUrl, prospect.xHandle].some((value) => value?.trim())) {
+        throw new BadRequestException('Add at least one identity anchor: company, company domain, LinkedIn URL, or X handle')
+      }
       const offer = await transaction.offer.create({
         data: {
           organizationId,

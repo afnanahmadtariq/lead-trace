@@ -1,13 +1,17 @@
 'use client'
 
-import { House, Search, Sparkles } from 'lucide-react'
+import { House, Search, Sparkles, UsersRound, Kanban, ListChecks, Plug } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 const navigation = [
   { href: '/dashboard', label: 'Home', icon: House, exact: true },
-  { href: '/dashboard/research', label: 'Prospects', icon: Search },
+  { href: '/dashboard/contacts', label: 'Contacts', icon: UsersRound },
+  { href: '/dashboard/pipeline', label: 'Pipeline', icon: Kanban },
+  { href: '/dashboard/tasks', label: 'Follow-ups', icon: ListChecks },
+  { href: '/dashboard/research', label: 'Research', icon: Search },
   { href: '/dashboard/briefs', label: 'Briefs', icon: Sparkles },
+  { href: '/dashboard/integrations', label: 'Integrations', icon: Plug },
 ]
 
 export function DashboardNav({ collapsed = false }: { collapsed?: boolean }) {

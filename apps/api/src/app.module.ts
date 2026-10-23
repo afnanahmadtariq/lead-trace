@@ -8,6 +8,7 @@ import { auth } from './auth/auth'
 import { LeadTraceAuthModule } from './auth/lead-trace-auth.module'
 import { validateEnvironment } from './config/env.validation'
 import { E2eModule } from './e2e/e2e.module'
+import { CrmModule } from './crm/crm.module'
 import { ResearchModule } from './research/research.module'
 
 const e2eEnabled = process.env.E2E_ENABLED === 'true'
@@ -39,6 +40,7 @@ class HealthController {
     }),
     LeadTraceAuthModule,
     ResearchModule,
+    CrmModule,
     ...(e2eEnabled ? [E2eModule] : []),
   ],
   controllers: [HealthController],

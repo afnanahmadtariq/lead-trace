@@ -8,24 +8,29 @@ datasource db {
 }
 
 model User {
-  id               String         @id
-  name             String
-  email            String         @unique
-  emailVerified    Boolean        @default(false)
-  image            String?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  twoFactorEnabled Boolean?       @default(false)
-  sessions         Session[]
-  accounts         Account[]
-  twoFactors       TwoFactor[]
-  members          Member[]
-  invitations      Invitation[]
-  createdProspects Prospect[]
-  createdOffers    Offer[]
-  researchRuns     ResearchRun[]
-  notifications    Notification[]
-  briefShares      BriefShare[]
+  id                  String               @id
+  name                String
+  email               String               @unique
+  emailVerified       Boolean              @default(false)
+  image               String?
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  twoFactorEnabled    Boolean?             @default(false)
+  sessions            Session[]
+  accounts            Account[]
+  twoFactors          TwoFactor[]
+  members             Member[]
+  invitations         Invitation[]
+  createdProspects    Prospect[]
+  createdOffers       Offer[]
+  researchRuns        ResearchRun[]
+  notifications       Notification[]
+  briefShares         BriefShare[]
+  ownedContacts       Prospect[]           @relation("ContactOwner")
+  ownedDeals          CrmDeal[]
+  assignedTasks       CrmTask[]
+  crmNotes            CrmNote[]
+  calendarConnections CalendarConnection[]
 
   @@map("user")
 }
@@ -101,35 +106,41 @@ model TwoFactor {
 // Better Auth organizations are Lead Trace workspaces and the tenant boundary
 // for all prospect, research, evidence, and brief data added later.
 model Organization {
-  id              String           @id
-  name            String
-  slug            String           @unique
-  logo            String?
-  createdAt       DateTime
-  metadata        String?
-  activeSessions  Session[]
-  members         Member[]
-  invitations     Invitation[]
-  prospects       Prospect[]
-  offers          Offer[]
-  researchRuns    ResearchRun[]
-  evidenceSources EvidenceSource[]
-  evidenceItems   Evidence[]
-  dealBriefs      DealBrief[]
-  notifications   Notification[]
-  briefShares     BriefShare[]
+  id                  String               @id
+  name                String
+  slug                String               @unique
+  logo                String?
+  createdAt           DateTime
+  metadata            String?
+  activeSessions      Session[]
+  members             Member[]
+  invitations         Invitation[]
+  prospects           Prospect[]
+  offers              Offer[]
+  researchRuns        ResearchRun[]
+  evidenceSources     EvidenceSource[]
+  evidenceItems       Evidence[]
+  dealBriefs          DealBrief[]
+  notifications       Notification[]
+  briefShares         BriefShare[]
+  crmDeals            CrmDeal[]
+  crmNotes            CrmNote[]
+  crmTasks            CrmTask[]
+  calendarConnections CalendarConnection[]
+  calendarMeetings    CalendarMeeting[]
 
   @@map("organization")
 }
 
 model Member {
-  id             String       @id
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String
-  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  role           String       @default("member")
-  createdAt      DateTime
+  id                  String               @id
+  organizationId      String
+  organization        Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId              String
+  user                User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendarConnections CalendarConnection[]
+  role                String               @default("member")
+  createdAt           DateTime
 
   @@unique([organizationId, userId])
   @@index([organizationId])
@@ -165,22 +176,34 @@ model WaitlistSignup {
 }
 
 model Prospect {
-  id             String        @id @default(cuid())
+  id             String            @id @default(cuid())
   organizationId String
-  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdById    String?
-  createdBy      User?         @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdBy      User?             @relation(fields: [createdById], references: [id], onDelete: SetNull)
   name           String
   email          String?
   companyName    String?
   companyDomain  String?
   linkedinUrl    String?
   xHandle        String?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt      DateTime          @default(now())
+  updatedAt      DateTime          @updatedAt
   researchRuns   ResearchRun[]
+  emailKey       String?
+  ownerId        String?
+  owner          User?             @relation("ContactOwner", fields: [ownerId], references: [id], onDelete: SetNull)
+  jobTitle       String?
+  phone          String?
+  lifecycle      String            @default("lead")
+  deals          CrmDeal[]
+  notes          CrmNote[]
+  tasks          CrmTask[]
+  meetings       CalendarMeeting[]
 
+  @@unique([organizationId, emailKey])
   @@unique([id, organizationId])
+  @@index([ownerId])
   @@index([organizationId, updatedAt])
   @@index([createdById])
   @@map("prospect")
@@ -288,18 +311,18 @@ model Evidence {
 }
 
 model DealBrief {
-  id                String       @id @default(cuid())
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  researchRunId     String
-  researchRun       ResearchRun  @relation(fields: [researchRunId, organizationId], references: [id, organizationId], onDelete: Cascade)
-  title             String
-  status            String       @default("draft")
-  sections          Json
-  previousSections  Json?
-  generatedAt       DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  share             BriefShare?
+  id               String       @id @default(cuid())
+  organizationId   String
+  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  researchRunId    String
+  researchRun      ResearchRun  @relation(fields: [researchRunId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  title            String
+  status           String       @default("draft")
+  sections         Json
+  previousSections Json?
+  generatedAt      DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  share            BriefShare?
 
   @@unique([researchRunId, organizationId])
   @@index([organizationId, updatedAt])
@@ -341,4 +364,102 @@ model Notification {
   @@index([organizationId, createdAt])
   @@index([researchRunId, organizationId])
   @@map("notification")
+}
+
+// CRM extends existing prospects so earlier research remains attached.
+model CrmDeal {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  prospectId      String
+  prospect        Prospect     @relation(fields: [prospectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  ownerId         String?
+  owner           User?        @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  title           String
+  stage           String       @default("new")
+  value           Decimal      @default(0) @db.Decimal(14, 2)
+  currency        String       @default("USD")
+  expectedCloseAt DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([organizationId, stage, updatedAt])
+  @@index([prospectId, organizationId])
+  @@index([ownerId])
+  @@map("crm_deal")
+}
+
+model CrmNote {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  prospectId     String
+  prospect       Prospect     @relation(fields: [prospectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  authorId       String?
+  author         User?        @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  body           String
+  createdAt      DateTime     @default(now())
+
+  @@index([prospectId, organizationId, createdAt])
+  @@index([organizationId])
+  @@index([authorId])
+  @@map("crm_note")
+}
+
+model CrmTask {
+  id             String       @id @default(cuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  prospectId     String
+  prospect       Prospect     @relation(fields: [prospectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  ownerId        String?
+  owner          User?        @relation(fields: [ownerId], references: [id], onDelete: SetNull)
+  title          String
+  dueAt          DateTime
+  completedAt    DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId, completedAt, dueAt])
+  @@index([prospectId, organizationId])
+  @@index([ownerId])
+  @@map("crm_task")
+}
+
+model CalendarConnection {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  membership      Member       @relation(fields: [organizationId, userId], references: [organizationId, userId], onDelete: Cascade, map: "calendar_connection_membership_fkey")
+  encryptedTokens String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("calendar_connection")
+}
+
+model CalendarMeeting {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  prospectId     String
+  prospect       Prospect     @relation(fields: [prospectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organizerId    String
+  title          String
+  startsAt       DateTime
+  endsAt         DateTime
+  inviteContact  Boolean      @default(false)
+  attendeeEmail  String?
+  googleEventId  String
+  htmlLink       String?
+  status         String       @default("pending")
+  createdAt      DateTime     @default(now())
+
+  @@index([prospectId, organizationId, startsAt])
+  @@index([organizationId, organizerId])
+  @@map("calendar_meeting")
 }
