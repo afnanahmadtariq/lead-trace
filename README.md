@@ -79,6 +79,8 @@ E2E_USE_REAL_STACK=true npm run test:e2e --workspace=@lead-trace/web -- --grep '
 
 Use a disposable local PostgreSQL database for browser tests: their development-only seed endpoint resets the fixture identity. `DATABASE_URL`, `E2E_WEB_PORT`, and `E2E_API_PORT` can isolate the test stack. Real-stack CRM/lead tests use deterministic discovery fixtures and do not send Calendar invitations or consume discovery credits. To check the configured Tavily and model services against a disposable local database, explicitly run `LIVE_PROVIDER_TESTS=true node --test apps/api/test/leads.live.test.cjs`; this makes live provider requests. The complete opt-in browser path is `E2E_USE_REAL_STACK=true LIVE_PROVIDER_TESTS=true npm run test:e2e --workspace=@lead-trace/web -- --grep 'live browser creates'`.
 
+To test an already-running local web app, API, and research worker through live discovery, CRM actions, and a completed cited brief, run `LIVE_LOCAL_RELEASE_TEST=true E2E_USE_REAL_STACK=true PLAYWRIGHT_BASE_URL=http://localhost:3000 PLAYWRIGHT_API_URL=http://localhost:3001 npm run test:e2e --workspace=@lead-trace/web -- e2e/leads-live-local.spec.ts`. Apply migrations first. This opt-in test requires a local database and paid provider keys; it creates and removes its own workspace without resetting existing accounts. Its research fixture has no notification recipient.
+
 ### Google Calendar setup
 
 The first connected integration creates meetings in the connecting member's **primary Google Calendar**. It does not import calendar history, check availability, generate Meet links, or synchronize later edits/cancellations. Each member connects separately in each workspace.

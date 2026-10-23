@@ -46,8 +46,11 @@ export function Modal({
   closeLabel = 'Close dialog',
 }: ModalProps) {
   const dialogRef = useRef<HTMLElement>(null)
+  const onCloseRef = useRef(onClose)
   const titleId = useId()
   const descriptionId = useId()
+
+  useEffect(() => { onCloseRef.current = onClose }, [onClose])
 
   useEffect(() => {
     if (!open) return
@@ -61,13 +64,13 @@ export function Modal({
       const preferredTarget = dialog?.querySelector<HTMLElement>('[data-autofocus]')
       const firstTarget = dialog?.querySelector<HTMLElement>(focusableSelector)
       const target = preferredTarget || firstTarget || dialog
-      target?.focus()
+      if (!dialog?.contains(document.activeElement)) target?.focus()
     })
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape' && dismissible) {
         event.preventDefault()
-        onClose()
+        onCloseRef.current()
         return
       }
       if (event.key !== 'Tab') return
@@ -97,7 +100,7 @@ export function Modal({
       document.body.style.overflow = previousOverflow
       previouslyFocused?.focus()
     }
-  }, [dismissible, onClose, open])
+  }, [dismissible, open])
 
   if (!open || typeof document === 'undefined') return null
 
