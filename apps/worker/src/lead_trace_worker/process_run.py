@@ -49,14 +49,18 @@ def process_run(connection, run_id: str, organization_id: str) -> dict:
         _, _, sources, evidence, has_brief = row
         stage = next_stage('running', sources, evidence, bool(has_brief))
         if stage == 'brief':
-            brief_id = process_brief_stage(connection, run_id, organization_id)
+            brief_id, send_email = process_brief_stage(connection, run_id, organization_id)
             connection.commit()
+            if send_email:
+                send_email()
             return {'run_id': run_id, 'stage': 'brief', 'brief_id': brief_id, 'claims': inserted, 'completed': True}
         return {'run_id': run_id, 'stage': 'evidence', 'claims': inserted, 'completed': False}
 
     if stage == 'brief':
-        brief_id = process_brief_stage(connection, run_id, organization_id)
+        brief_id, send_email = process_brief_stage(connection, run_id, organization_id)
         connection.commit()
+        if send_email:
+            send_email()
         return {'run_id': run_id, 'stage': 'brief', 'brief_id': brief_id, 'completed': True}
 
     return {'run_id': run_id, 'stage': stage or 'none', 'completed': False}

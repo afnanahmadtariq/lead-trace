@@ -8,14 +8,16 @@ from lead_trace_worker.models import ExtractedClaim, RunContext, SignalType
 
 SENTENCE_SPLIT = re.compile(r'(?<=[.!?])\s+')
 JUNK = re.compile(
-    r'1[- ]?800|call us|copyright|©|all rights reserved|privacy policy|terms of use|cookie|'
-    r'liked by|view post|view profile|activity image|report this|sign in|agree\s*(?:&|and)\s*join|'
-    r'join now|see all profiles|people also viewed|image \d+ of \d+|uploaded by|ai-enhanced description|'
+    r'\b1-800\b|\b1[- ]?800[- ]?\d{3}|\bcall us\b|\bcopyright\b|©|\ball rights reserved\b|\bprivacy policy\b|'
+    r'\bterms of use\b|\bcookies?\b|\bliked by\b|\bview post\b|\bview profile\b|\bactivity image\b|'
+    r'\breport this\b|\bsign in\b|\bagree\s*(?:&|and)\s*join\b|\bjoin now\b|\bsee all profiles\b|'
+    r'\bpeople also viewed\b|\bimage \d+ of \d+\b|\buploaded by\b|\bai-enhanced description\b|'
     r'\bconnections?\b|\bfollowers?\b|\bn\/a\b',
     re.I,
 )
+# Only a lowercase dangling word marks a cut-off sentence; "Series A." is a real ending.
 TRUNCATED = re.compile(
-    r'(?:\.{3}|…)|(?:\b(?:and|or|a|an|the|to|for|with|of|at|in|as|by)\s*[.!?]?$)',
+    r'(?:\.{3}|…)|(?-i:\b(?:and|or|a|an|the|to|for|with|of|at|in|as|by)\s*[.!?]?$)',
     re.I,
 )
 FRUIT_CONTEXT = re.compile(

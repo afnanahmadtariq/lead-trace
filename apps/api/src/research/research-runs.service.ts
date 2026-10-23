@@ -26,7 +26,10 @@ export class ResearchRunsService {
       const prospect = existing ?? (emailKey
         ? await transaction.prospect.upsert({ where: { organizationId_emailKey: { organizationId, emailKey } }, create: contactData, update: {} })
         : await transaction.prospect.create({ data: contactData }))
-      if (![prospect.companyName, prospect.companyDomain, prospect.linkedinUrl, prospect.xHandle].some((value) => value?.trim())) {
+      // An email match links the existing contact without overwriting CRM data, but this run researches what was just submitted.
+      const pick = (value: string | null | undefined, stored: string | null) => value?.trim() || stored
+      const subject = existing ? prospect : { ...prospect, name: pick(input.prospectName, prospect.name) as string, companyName: pick(input.companyName, prospect.companyName), companyDomain: pick(input.companyDomain, prospect.companyDomain), linkedinUrl: pick(input.linkedinUrl, prospect.linkedinUrl), xHandle: pick(input.xHandle, prospect.xHandle) }
+      if (![subject.companyName, subject.companyDomain, subject.linkedinUrl, subject.xHandle].some((value) => value?.trim())) {
         throw new BadRequestException('Add at least one identity anchor: company, company domain, LinkedIn URL, or X handle')
       }
       const offer = await transaction.offer.create({
@@ -50,12 +53,12 @@ export class ResearchRunsService {
               name: session.user.name,
             },
             prospect: {
-              name: prospect.name,
-              email: prospect.email,
-              companyName: prospect.companyName,
-              companyDomain: prospect.companyDomain,
-              linkedinUrl: prospect.linkedinUrl,
-              xHandle: prospect.xHandle,
+              name: subject.name,
+              email: subject.email,
+              companyName: subject.companyName,
+              companyDomain: subject.companyDomain,
+              linkedinUrl: subject.linkedinUrl,
+              xHandle: subject.xHandle,
             },
             offer: {
               name: offer.name,
@@ -70,8 +73,14 @@ export class ResearchRunsService {
     })
   }
 
+  // Discovery marks a run running before its Tavily calls; if the API dies there, no worker ever claims it (no sources), so surface it as retryable.
+  private failInterrupted(organizationId: string) {
+    return db.researchRun.updateMany({ where: { organizationId, status: 'running', startedAt: { lt: new Date(Date.now() - 600000) }, sources: { none: {} } }, data: { status: 'failed', errorMessage: 'Source discovery was interrupted. Retry this research.' } })
+  }
+
   async list(session: AuthenticatedSession) {
     const membership = await this.accounts.assertActiveWorkspace(session)
+    await this.failInterrupted(membership.organizationId)
     return db.researchRun.findMany({
       where: { organizationId: membership.organizationId },
       include: {
@@ -87,6 +96,7 @@ export class ResearchRunsService {
 
   async get(session: AuthenticatedSession, id: string) {
     const membership = await this.accounts.assertActiveWorkspace(session)
+    await this.failInterrupted(membership.organizationId)
     const run = await db.researchRun.findUnique({
       where: { id_organizationId: { id, organizationId: membership.organizationId } },
       include: {

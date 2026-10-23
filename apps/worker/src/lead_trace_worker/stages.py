@@ -10,7 +10,7 @@ from lead_trace_worker import evidence
 from lead_trace_worker.graph_brief import build_brief_graph, new_id
 from lead_trace_worker.graph_evidence import build_evidence_graph
 from lead_trace_worker.email import send_brief_ready_email
-from lead_trace_worker.model_gateway import ModelGatewayConfig, StructuredOutputError, build_client
+from lead_trace_worker.model_gateway import ModelGatewayConfig, build_client
 from lead_trace_worker.models import EvidenceDraft, RunContext, SourceBundle
 from lead_trace_worker.pipeline import FETCH_SOURCES_SQL, INSERT_EVIDENCE_SQL
 
@@ -22,8 +22,8 @@ SELECT
   r."organizationId",
   r.goal,
   r."createdById",
-  p.name,
-  p."companyName",
+  COALESCE(NULLIF(r."inputSnapshot" #>> '{prospect,name}', ''), p.name),
+  COALESCE(NULLIF(r."inputSnapshot" #>> '{prospect,companyName}', ''), p."companyName"),
   o.name,
   o."valueProposition",
   COALESCE(NULLIF(r."inputSnapshot" #>> '{sender,name}', ''), creator.name)
@@ -167,6 +167,8 @@ def _process_evidence_gateway(
     ]
     if not sources:
         raise RuntimeError('no sources to normalize')
+    # End the read transaction so none stays open across model calls; the run lease guards the work.
+    connection.commit()
 
     config = ModelGatewayConfig.from_env()
     client = (model_client_factory or build_client)(config)
@@ -182,7 +184,8 @@ def _process_evidence_gateway(
             continue
         try:
             extracted = evidence.extract_claims_for_source(client, config, source, context)
-        except StructuredOutputError as error:
+        except Exception as error:
+            # One source's timeout or API error must not discard claims from the others.
             log.warning(
                 'evidence extraction failed for source run_id=%s source_id=%s error=%s',
                 run_id,
@@ -247,6 +250,8 @@ def _process_evidence_langgraph(connection, run_id: str, organization_id: str, c
     source_rows = connection.execute(LOAD_SOURCES_SQL, (run_id, organization_id)).fetchall()
     if not source_rows:
         raise RuntimeError('no sources to normalize')
+    # End the read transaction so none stays open across page fetches and model calls.
+    connection.commit()
 
     sources = [
         {
@@ -268,10 +273,7 @@ def _process_evidence_langgraph(connection, run_id: str, organization_id: str, c
         )
         for source_id, url, title, excerpt, metadata, published_at in source_rows
     ]
-    prefer_crawl4ai = os.environ.get('WORKER_USE_CRAWL4AI', '').lower() in {'1', 'true', 'yes'}
-    result = build_evidence_graph().invoke(
-        {'context': context, 'sources': bundles, 'drafts': [], 'prefer_crawl4ai': prefer_crawl4ai}
-    )
+    result = build_evidence_graph().invoke({'context': context, 'sources': bundles, 'drafts': []})
     drafts = result['drafts']
     evidence_rows = _assemble_langgraph_evidence(drafts, sources)
     if not evidence_rows:
@@ -336,7 +338,10 @@ def _format_observed_at(value: Any) -> Optional[str]:
     return str(value)[:10]
 
 
-def process_brief_stage(connection, run_id: str, organization_id: str) -> str:
+def process_brief_stage(
+    connection, run_id: str, organization_id: str
+) -> tuple[str, Optional[Callable[[], None]]]:
+    """Returns the brief id and an email sender the caller must invoke only after committing."""
     row = connection.execute(LOAD_RUN_SQL, (run_id, organization_id)).fetchone()
     if not row:
         raise RuntimeError('research run not found')
@@ -347,11 +352,13 @@ def process_brief_stage(connection, run_id: str, organization_id: str) -> str:
     if existing and existing[1] != 'refreshing':
         connection.execute(COMPLETE_RUN_SQL, (run_id, organization_id))
         log.info('brief stage skipped run_id=%s existing_brief_id=%s', run_id, existing[0])
-        return str(existing[0])
+        return str(existing[0]), None
     context = run_context_from_row(row)
     evidence_rows = connection.execute(LOAD_EVIDENCE_SQL, (run_id, organization_id)).fetchall()
     if not evidence_rows:
         raise RuntimeError('no evidence to synthesize')
+    # End the read transaction so none stays open across brief synthesis model calls.
+    connection.commit()
 
     stored = [
         {
@@ -374,6 +381,7 @@ def process_brief_stage(connection, run_id: str, organization_id: str) -> str:
 
     title = f"Deal brief · {context.prospect_name}"
     sections_json = json.dumps(sections.model_dump())
+    send_email: Optional[Callable[[], None]] = None
     if existing and existing[1] == 'refreshing':
         brief_id = str(existing[0])
         connection.execute(UPDATE_BRIEF_SQL, (title, sections_json, brief_id, organization_id))
@@ -397,15 +405,19 @@ def process_brief_stage(connection, run_id: str, organization_id: str) -> str:
             )
             user_row = connection.execute(LOAD_USER_EMAIL_SQL, (context.created_by_id,)).fetchone()
             if user_row and user_row[0]:
-                try:
-                    send_brief_ready_email(
-                        to=str(user_row[0]),
-                        prospect_name=context.prospect_name,
-                        brief_id=brief_id,
-                        recipient_name=str(user_row[1]) if user_row[1] else None,
-                    )
-                except Exception as error:
-                    log.warning('brief-ready email failed run_id=%s error=%s', run_id, str(error)[:500])
+                to = str(user_row[0])
+                recipient_name = str(user_row[1]) if user_row[1] else None
+
+                def send_email() -> None:
+                    try:
+                        send_brief_ready_email(
+                            to=to,
+                            prospect_name=context.prospect_name,
+                            brief_id=brief_id,
+                            recipient_name=recipient_name,
+                        )
+                    except Exception as error:
+                        log.warning('brief-ready email failed run_id=%s error=%s', run_id, str(error)[:500])
     connection.execute(COMPLETE_RUN_SQL, (run_id, organization_id))
     log.info('brief stage complete run_id=%s brief_id=%s', run_id, brief_id)
-    return brief_id
+    return brief_id, send_email

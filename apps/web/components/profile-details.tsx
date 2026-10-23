@@ -4,14 +4,11 @@ import { CheckCircle2, Pencil, UserRound } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, type FormEvent } from 'react'
 import type { AccountContext, WorkspaceSummary } from '../lib/account-context'
+import { errorMessage } from '../lib/api-client'
 import { authClient, webCallbackURL } from '../lib/auth-client'
 import { Button } from './ui/button'
 import { Field } from './ui/form-field'
 import { FormMessage } from './ui/form-message'
-
-function errorMessage(error: { message?: string } | null, fallback: string) {
-  return error?.message || fallback
-}
 
 export function ProfileDetails({ user, workspace }: { user: AccountContext['user']; workspace: WorkspaceSummary }) {
   const router = useRouter()

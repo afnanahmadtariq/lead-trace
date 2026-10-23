@@ -14,7 +14,6 @@ class EvidenceState(TypedDict):
     context: RunContext
     sources: list[SourceBundle]
     drafts: list[EvidenceDraft]
-    prefer_crawl4ai: bool
 
 
 def enrich_sources(state: EvidenceState) -> EvidenceState:
@@ -22,7 +21,7 @@ def enrich_sources(state: EvidenceState) -> EvidenceState:
     for source in state['sources']:
         text = source.text.strip()
         if len(text) < 120:
-            fetched = fetch_page_text(source.url, prefer_crawl4ai=state['prefer_crawl4ai'])
+            fetched = fetch_page_text(source.url)
             if fetched:
                 text = fetched
         enriched.append(source.model_copy(update={'text': text}))

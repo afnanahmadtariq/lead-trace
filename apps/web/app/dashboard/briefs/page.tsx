@@ -8,10 +8,10 @@ import { briefCitations, briefUrgencyLabel } from '../../../lib/brief'
 import { formatDate } from '../../../lib/format'
 import type { DealBriefSummary } from '../../../lib/research'
 import { UrgencyBadge } from '../../../components/urgency-badge'
-import { authenticatedFetch } from '../../../lib/server-auth'
+import { requireFetch } from '../../../lib/server-auth'
 
 export default async function Page() {
-  const briefs = await authenticatedFetch<DealBriefSummary[]>('/deal-briefs') ?? []
+  const briefs = await requireFetch<DealBriefSummary[]>('/deal-briefs')
   return <WorkspacePage>
     <WorkspaceHeader eyebrow="Conversation briefs" title="Ready when the prospect is." lead="Open a meeting plan or outreach draft with the strongest signal, recommended message, and proof in one place." action={<ButtonLink href="/dashboard/research/new"><Plus size={17}/>Research a prospect</ButtonLink>}/>
     <WorkspaceSection title="Ready to use" description={`${briefs.length} conversation brief${briefs.length === 1 ? '' : 's'} in this workspace.`}>

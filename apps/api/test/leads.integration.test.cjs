@@ -154,6 +154,12 @@ test('background deep discovery persists progress, registry provenance, recovery
     await db.leadSearch.update({ where: { id: interrupted.id }, data: { status: 'running', attemptToken: 'old-process', lockExpiresAt: new Date(0), attemptCount: 1 } })
     assert.equal(await leads.processNext(), true)
     assert.equal((await leads.get(session, interrupted.id)).attemptCount, 2)
+    // A crash on the 5th attempt must settle as failed instead of staying running forever.
+    const exhausted = await leads.create(session, input)
+    await db.leadSearch.update({ where: { id: exhausted.id }, data: { status: 'running', attemptToken: 'dead', lockExpiresAt: new Date(0), attemptCount: 5 } })
+    await leads.processNext()
+    const settled = await leads.get(session, exhausted.id)
+    assert.equal(settled.status, 'failed'); assert.equal(settled.errorMessage, 'Lead generation could not finish after 5 attempts.'); assert.equal(settled.attemptToken, null); assert.equal(settled.lockExpiresAt, null); assert.equal(settled.interrupted, false)
     const cancelled = await leads.create(session, input)
     pause = new Promise((resolve) => { release = resolve })
     const cancellationJob = leads.processNext()

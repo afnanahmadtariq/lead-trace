@@ -9,18 +9,8 @@ from lead_trace_worker.llm import (
     resolve_llm_config,
 )
 from lead_trace_worker.models import SourceBundle
-from lead_trace_worker.tavily import build_discovery_queries, tavily_configured
 from lead_trace_worker.graph_brief import build_brief_graph, citation_gate, new_id
 from lead_trace_worker.models import BriefCitation, BriefSections, RunContext
-
-
-class TavilyTest(unittest.TestCase):
-    def test_builds_bounded_discovery_queries(self):
-        queries = build_discovery_queries('Jane Doe', 'Northstar', 'northstar.io')
-        self.assertGreaterEqual(len(queries), 2)
-        joined = ' '.join(item['query'] for item in queries)
-        self.assertIn('Jane Doe', joined)
-        self.assertIn('Northstar', joined)
 
 
 class LlmTest(unittest.TestCase):

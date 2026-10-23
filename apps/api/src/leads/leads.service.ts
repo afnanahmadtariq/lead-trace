@@ -68,6 +68,8 @@ export class LeadsService {
   }
 
   async processNext() {
+    // A crash on the final attempt leaves an expired lease that no claim or retry accepts; settle it so the search is not stuck running.
+    await db.leadSearch.updateMany({ where: { status: 'running', lockExpiresAt: { lte: new Date() }, attemptCount: { gte: 5 } }, data: { status: 'failed', phase: 'failed', errorMessage: 'Lead generation could not finish after 5 attempts.', lockExpiresAt: null, attemptToken: null } })
     const search = await db.leadSearch.findFirst({ where: { attemptCount: { lt: 5 }, OR: [{ status: 'queued' }, { status: 'running', lockExpiresAt: { lte: new Date() } }] }, orderBy: [{ createdAt: 'asc' }, { id: 'asc' }], select: { id: true, organizationId: true } })
     if (!search) return false
     await this.executeDiscovery(search.id, search.organizationId)

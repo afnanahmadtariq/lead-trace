@@ -61,16 +61,12 @@ services:
       WORKER_HEARTBEAT_SECONDS: ${WORKER_HEARTBEAT_SECONDS:-60}
       WORKER_LOCK_INTERVAL: ${WORKER_LOCK_INTERVAL:-10 minutes}
       WORKER_BACKOFF_INTERVAL: ${WORKER_BACKOFF_INTERVAL:-30 seconds}
-      TAVILY_MAX_RESULTS: ${TAVILY_MAX_RESULTS:-6}
-      TAVILY_API_KEY: ${TAVILY_API_KEY:-}
-      TAVILY_SEARCH_DEPTH: ${TAVILY_SEARCH_DEPTH:-advanced}
       DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
       DASHSCOPE_BASE_URL: ${DASHSCOPE_BASE_URL:-https://dashscope-intl.aliyuncs.com/compatible-mode/v1}
       DASHSCOPE_MODEL: ${DASHSCOPE_MODEL:-qwen3.8-max}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-Lead Trace <onboarding@resend.dev>}
       WEB_ORIGIN: https://${PRIMARY_DOMAIN:-leadtrace.online}
-      WORKER_USE_CRAWL4AI: ${WORKER_USE_CRAWL4AI:-false}
     depends_on:
       postgres:
         condition: service_healthy

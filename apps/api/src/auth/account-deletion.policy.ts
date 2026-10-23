@@ -3,7 +3,7 @@ import { db } from '@lead-trace/db'
 export interface AccountDeletionPolicy {
   soleWorkspaceIds: string[]
   soleWorkspaceNames: string[]
-  successorPromotions: Array<{ memberId: string; organizationId: string }>
+  successorPromotions: Array<{ memberId: string; organizationId: string; role: 'owner' | 'admin' }>
   sharedWorkspaceSuccessors: Array<{ organizationId: string; userId: string }>
 }
 
@@ -35,12 +35,18 @@ export async function getAccountDeletionPolicy(userId: string): Promise<AccountD
     const successor = otherMembers.find((member) => member.role === 'owner' || member.role === 'admin') || otherMembers[0]
     return [{ organizationId: membership.organizationId, userId: successor.userId }]
   })
-  const successorPromotions = memberships.flatMap((membership) => {
+  const successorPromotions = memberships.flatMap<AccountDeletionPolicy['successorPromotions'][number]>((membership) => {
     const otherMembers = membersByWorkspace.get(membership.organizationId) || []
-    const deletingAnAdmin = membership.role === 'owner' || membership.role === 'admin'
+    if (!otherMembers.length) return []
+    // Only an owner can delete a workspace, so the last owner hands that role on (to an admin if there is one).
+    if (membership.role === 'owner' && !otherMembers.some((otherMember) => otherMember.role === 'owner')) {
+      const successor = otherMembers.find((otherMember) => otherMember.role === 'admin') || otherMembers[0]
+      return [{ memberId: successor.id, organizationId: membership.organizationId, role: 'owner' }]
+    }
+    const deletingAnAdmin = membership.role === 'admin'
     const hasAnotherAdmin = otherMembers.some((otherMember) => otherMember.role === 'owner' || otherMember.role === 'admin')
-    if (!deletingAnAdmin || !otherMembers.length || hasAnotherAdmin) return []
-    return [{ memberId: otherMembers[0].id, organizationId: membership.organizationId }]
+    if (!deletingAnAdmin || hasAnotherAdmin) return []
+    return [{ memberId: otherMembers[0].id, organizationId: membership.organizationId, role: 'admin' }]
   })
 
   return {
