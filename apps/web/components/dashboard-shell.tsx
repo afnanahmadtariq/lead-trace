@@ -97,7 +97,7 @@ export function DashboardShell({
   }
 
   return <div className={`grid min-h-screen bg-lt-50 bg-[radial-gradient(circle_at_92%_0%,#e7f5ff_0,transparent_26%)] transition-[grid-template-columns] duration-300 ease-fluid motion-reduce:transition-none ${collapsed ? 'grid-cols-[84px_minmax(0,1fr)] max-[900px]:grid-cols-1' : 'grid-cols-[252px_minmax(0,1fr)] max-[900px]:grid-cols-1'}`}>
-    <aside className={`sticky top-0 z-5 flex h-screen flex-col border-r border-lt-200 bg-white/88 py-5 pt-[25px] backdrop-blur-2xl transition-[padding] duration-300 ease-fluid motion-reduce:transition-none max-[900px]:static max-[900px]:block max-[900px]:h-auto max-[900px]:w-full max-[900px]:border-r-0 max-[900px]:border-b max-[900px]:p-[18px] ${collapsed ? 'px-0' : 'px-[18px]'}`}>
+    <aside className={`sticky top-0 z-30 flex h-screen flex-col border-r border-lt-200 bg-white/88 py-5 pt-[25px] backdrop-blur-2xl transition-[padding] duration-300 ease-fluid motion-reduce:transition-none max-[900px]:static max-[900px]:block max-[900px]:h-auto max-[900px]:w-full max-[900px]:border-r-0 max-[900px]:border-b max-[900px]:p-[18px] ${collapsed ? 'px-0' : 'px-[18px]'}`}>
       <div className={`relative flex min-h-9 items-center justify-between text-lt-900 max-[900px]:m-0 ${collapsed ? 'mb-6 w-full justify-center' : 'mx-2 mb-7'}`}>
         <Brand href="/dashboard" compact={collapsed}/>
         <Button type="button" variant="ghost" size="icon-sm" className={`max-[900px]:hidden ${collapsed ? 'absolute top-6 -right-3.5 z-10 size-7! bg-white' : ''}`} onClick={toggleSidebar} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
@@ -133,9 +133,9 @@ export function DashboardShell({
     </aside>
 
     <div className="min-w-0">
-      <header className="flex h-[68px] items-center justify-between gap-5 border-b border-lt-200 bg-lt-50/72 px-[34px] backdrop-blur-xl max-[900px]:h-16 max-[900px]:px-5">
-        <div className="grid gap-0.5 max-[560px]:max-w-[150px]"><small className="text-[.66rem] tracking-[.07em] text-lt-500 uppercase">Sales workspace</small><strong className="truncate text-[.86rem] text-lt-900">{context.activeWorkspace.name}</strong></div>
-        <div className="flex items-center gap-[9px]">
+      <header className="sticky top-0 z-20 flex h-[68px] items-center justify-between gap-5 border-b border-lt-200 bg-lt-50/95 px-[34px] backdrop-blur-xl max-[900px]:h-16 max-[900px]:gap-3 max-[900px]:px-5">
+        <div className="grid min-w-0 flex-1 gap-0.5"><small className="truncate text-[.66rem] tracking-[.07em] text-lt-500 uppercase">Sales workspace</small><strong className="truncate text-[.86rem] text-lt-900">{context.activeWorkspace.name}</strong></div>
+        <div className="flex shrink-0 items-center gap-[9px]">
           <ButtonLink href="/dashboard/research/new" size="xs" className="max-[520px]:px-3"><Search size={15}/><span className="max-[520px]:hidden">Research prospect</span><span className="hidden max-[520px]:inline">New brief</span></ButtonLink>
           <Popover.Root open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <Popover.Trigger asChild>
