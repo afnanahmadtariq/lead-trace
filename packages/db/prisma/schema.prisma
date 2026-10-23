@@ -26,6 +26,8 @@ model User {
   researchRuns        ResearchRun[]
   notifications       Notification[]
   briefShares         BriefShare[]
+  leadSearches        LeadSearch[]
+  reviewedLeads       LeadCandidate[]
   ownedContacts       Prospect[]           @relation("ContactOwner")
   ownedDeals          CrmDeal[]
   assignedTasks       CrmTask[]
@@ -129,6 +131,10 @@ model Organization {
   calendarConnections CalendarConnection[]
   calendarMeetings    CalendarMeeting[]
 
+  leadSearches   LeadSearch[]
+  leadSources    LeadSource[]
+  leadCandidates LeadCandidate[]
+
   @@map("organization")
 }
 
@@ -200,6 +206,8 @@ model Prospect {
   notes          CrmNote[]
   tasks          CrmTask[]
   meetings       CalendarMeeting[]
+
+  leadCandidates LeadCandidate[]
 
   @@unique([organizationId, emailKey])
   @@unique([id, organizationId])
@@ -462,4 +470,97 @@ model CalendarMeeting {
   @@index([prospectId, organizationId, startsAt])
   @@index([organizationId, organizerId])
   @@map("calendar_meeting")
+}
+
+// Immutable search criteria and source snapshots support review before CRM import.
+model LeadSearch {
+  id                 String          @id @default(cuid())
+  organizationId     String
+  organization       Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdById        String?
+  createdBy          User?           @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  title              String
+  industry           String
+  role               String
+  location           String?
+  keywords           String?
+  depth              String          @default("deep")
+  roleMatch          String          @default("function")
+  phase              String?
+  progress           Json?
+  diagnostics        Json?
+  companySnapshots   Json?
+  status             String          @default("queued")
+  errorMessage       String?
+  queries            Json?
+  failedQueries      Int             @default(0)
+  rejectedCandidates Int             @default(0)
+  attemptCount       Int             @default(0)
+  attemptToken       String?
+  lockExpiresAt      DateTime?
+  createdAt          DateTime        @default(now())
+  startedAt          DateTime?
+  completedAt        DateTime?
+  sources            LeadSource[]
+  candidates         LeadCandidate[]
+
+  @@unique([id, organizationId])
+  @@index([organizationId, createdAt])
+  @@index([createdById])
+  @@map("lead_search")
+}
+
+model LeadSource {
+  id             String          @id @default(cuid())
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  searchId       String
+  search         LeadSearch      @relation(fields: [searchId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  url            String
+  title          String
+  excerpt        String
+  publisher      String
+  provider       String          @default("tavily")
+  sourceKind     String          @default("search")
+  queries        String[]
+  retrievedAt    DateTime        @default(now())
+  candidates     LeadCandidate[]
+
+  @@unique([id, searchId, organizationId])
+  @@unique([searchId, organizationId, url])
+  @@index([organizationId])
+  @@map("lead_source")
+}
+
+model LeadCandidate {
+  id              String       @id @default(cuid())
+  organizationId  String
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  searchId        String
+  search          LeadSearch   @relation(fields: [searchId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  sourceId        String
+  source          LeadSource   @relation(fields: [sourceId, searchId, organizationId], references: [id, searchId, organizationId], onDelete: Cascade)
+  identityKey     String
+  name            String
+  companyName     String
+  jobTitle        String?
+  quote           String
+  matchedCriteria String[]
+  missingCriteria String[]
+  qualification   Json?
+  status          String       @default("new")
+  reviewedById    String?
+  reviewedBy      User?        @relation(fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt      DateTime?
+  prospectId      String?
+  prospect        Prospect?    @relation(fields: [prospectId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  createdAt       DateTime     @default(now())
+
+  @@unique([id, organizationId])
+  @@unique([searchId, identityKey])
+  @@index([organizationId, status, createdAt])
+  @@index([sourceId, searchId, organizationId])
+  @@index([prospectId, organizationId])
+  @@index([reviewedById])
+  @@map("lead_candidate")
 }

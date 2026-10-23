@@ -4,5 +4,5 @@ import { CalendarService } from './calendar.service'
 import { CrmController } from './crm.controller'
 import { CrmService } from './crm.service'
 
-@Module({ imports: [LeadTraceAuthModule], controllers: [CrmController], providers: [CrmService, CalendarService] })
+@Module({ imports: [LeadTraceAuthModule], controllers: [CrmController], providers: [CrmService, CalendarService], exports: [CrmService] })
 export class CrmModule {}

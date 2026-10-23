@@ -53,6 +53,7 @@ export class CrmService {
       where: { id_organizationId: { id, organizationId } },
       include: {
         ...contactInclude,
+        leadCandidates: { where: { status: 'converted' }, include: { source: true, search: { select: { id: true, title: true } } }, orderBy: { reviewedAt: 'desc' }, take: 20 },
         researchRuns: { orderBy: { requestedAt: 'desc' }, take: 50, include: { brief: { select: { id: true, title: true } } } },
         deals: { orderBy: { updatedAt: 'desc' }, take: 100, include: { owner: person } },
         notes: { orderBy: { createdAt: 'desc' }, take: 100, include: { author: person } },

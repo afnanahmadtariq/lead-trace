@@ -24,11 +24,11 @@ We listened to feedback from industry professionals and used it to rethink the p
 
 The project began with AI-assisted prospect research and cited Deal Briefs. We are building on that foundation toward a broader sales workflow that brings lead generation, research, and CRM together. The new name reflects that direction: helping teams follow a lead from discovery through the sales relationship.
 
-The repository now includes the first built-in CRM slice: persistent contacts, a deal pipeline, notes, follow-ups, CSV import/export, and Google Calendar meeting creation. Lead generation and deeper integrations remain planned. We will refine the feature set and pitch as development progresses. The existing pitch and narrated demo show the research foundation and the original expansion roadmap.
+The repository now includes built-in CRM and source-linked lead generation: persistent contacts, a deal pipeline, notes, follow-ups, CSV import/export, Google Calendar meeting creation, and a reviewed discovery-to-CRM workflow. Deeper integrations remain planned. We will refine the feature set and pitch as development progresses. The existing pitch and narrated demo show the research foundation and the original expansion roadmap.
 
 ## Meet Lead Trace
 
-Lead Trace currently provides an AI sales research assistant for **B2B sales teams, agencies, and founders**. Give it a prospect and describe what you sell. It finds public signals and turns them into a **cited Deal Brief** for meeting preparation or personalized outreach—with source links and visible research gaps.
+Lead Trace connects source-linked lead generation, a built-in CRM, and AI sales research for **B2B sales teams, agencies, and founders**. Discover and review leads, track contacts and deals, then describe what you sell. It finds public signals and turns them into a **cited Deal Brief** for meeting preparation or personalized outreach—with source links and visible research gaps.
 
 We built the complete journey: a shared workspace, public-source discovery, AI evidence extraction, and briefs you can review and reuse. Its central feature is a **conversation angle**: a source claim, a clearly labeled hypothesis about your offer, and a question that tests whether the fit is real.
 
@@ -44,7 +44,44 @@ The everyday flow is **add a contact → prepare with research → track an oppo
 - **Research:** open a contact and choose **Research contact**. The saved identity is used and each research run retains its immutable snapshot. Email matching is case-insensitive. Historical duplicate prospects are preserved with their research; the oldest matching record becomes the canonical email identity during migration.
 - **Permissions:** workspace members collaborate on CRM records. Owners/assignees must be members of the active workspace. Contacts and their deals, notes, tasks, and meetings share compound tenant relationships. Wiping research data preserves CRM records; deleting a workspace removes its CRM records.
 
-Company details are currently stored on contacts. Shared company records, custom pipelines, contact merging/deletion, email integration, automatic lead sourcing, and two-way Calendar sync are future work. Contact pages display the latest 50 research runs and up to 100 of each other history type; the follow-up list shows up to 500 actions, open first.
+Company details are currently stored on contacts. Shared company records, custom pipelines, contact merging/deletion, email integration, recurring lead searches, and two-way Calendar sync are future work. Contact pages display the latest 50 research runs and up to 100 of each other history type; the follow-up list shows up to 500 actions, open first.
+
+## Lead generation
+
+Open **Find leads** and describe the buyer role, industry/market, optional location, and additional keywords. Deep discovery first identifies companies, then searches their teams, reads full pages, and checks public registries. It investigates up to eight companies using at most 30 Tavily searches, full-page extraction for up to 16 URLs, and up to four company-site crawls of three pages each. Up to 64 source snapshots support up to 40 professional prospects. Quick discovery remains available with three searches and up to 18 snippets. Both modes use the existing Qwen model; no additional data subscription is required.
+
+1. Start a search. A database-backed API worker continues discovery when you leave the page; return to see phase progress, sourced companies, registry records, and provider activity. Completed searches remain in the workspace's saved search list.
+2. Review **Source-supported matches** first. These candidates have exact quoted evidence for every requested criterion and no detected source-age issue. **Needs review** holds missing evidence, old dated sources, and candidates saved before the evidence checks. Expand **Why this person matches** to inspect each criterion and its source. A source-supported match does not establish buying intent or verified contact details.
+3. Qualify or dismiss candidates. A dismissed lead can be restored. Only qualified candidates can be saved to CRM.
+4. Choose **Save to CRM**, review the name/company/role, and optionally add an independently known email or company domain. Emails are never guessed. Matching contacts by email or exact name/company are reused without overwriting their existing CRM data. Ambiguous matches require choosing the existing contact. Concurrent saves retry serialization conflicts to avoid duplicate contacts.
+5. Open the CRM contact to see the original search and quote, then start research, a deal, or a follow-up from that record. Converted leads link back to the contact and cannot be accidentally reverted to an unreviewed state.
+
+The model receives bounded source text, the current date, and criteria as untrusted data. The optional equivalent-role setting includes related senior sales titles while retaining each person's actual title. Switch it off for exact title matching. Company industry evidence must describe the company's own offering; an employee's SaaS career history or a customer's industry cannot establish its business model. Identity and role quotes must be grounded in supplied sources. Explicit former positions, ended work history, conflicting structured current roles, incomplete names, unsupported identities, and fabricated quotes are rejected. Role matching uses the actual quoted role; search titles cannot establish criteria. Industry and geographic evidence can come from another supplied page for the same company. A person’s surname cannot establish geography, and merely serving customers in a city cannot establish a base there. Limited aliases include CEO/Chief Executive Officer, SaaS/software as a service, and UAE/United Arab Emirates (including its emirates). Missing evidence is retained as unconfirmed; dated older sources require review. These conservative checks can miss valid buyers and cannot guarantee that every published page is up to date. Search results remain prospects for human qualification; no outreach is sent.
+
+Public registry checks use [GLEIF](https://www.gleif.org/en/lei-data/gleif-api/) for legal identities and reported headquarters, [Wikidata](https://www.wikidata.org/) to corroborate official websites, and [SEC EDGAR](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) for US public-company identities and reported business addresses. Coverage varies: many private businesses have no matching record. Registry records alone cannot establish industry fit, current employment, or buyer intent. A registered address is not a person's work location. Location fit can use a person's work location or an explicitly reported company headquarters. Partial provider failures stay visible; a total web-search outage fails the search rather than reporting a successful empty result. Tavily [Extract](https://docs.tavily.com/documentation/api-reference/endpoint/extract) and [Crawl](https://docs.tavily.com/documentation/api-reference/endpoint/crawl) complement search snippets.
+
+**Configuration:** apply migrations and regenerate Prisma Client, then configure `TAVILY_API_KEY`, `DASHSCOPE_API_KEY`, `DASHSCOPE_BASE_URL`, and `DASHSCOPE_MODEL` on the API. The API uses the same model settings as the research worker; Docker Compose forwards them to both services. The feature shows setup status when providers are missing. Keys stay on the server. See [Tavily Search](https://docs.tavily.com/documentation/api-reference/endpoint/search) and [Qwen structured output](https://www.alibabacloud.com/help/en/model-studio/qwen-structured-output).
+
+Searches persist queued/running/completed/failed/cancelled states. Failures can be retried up to five attempts. A renewable five-minute lease allows the background worker to recover interrupted jobs after an API restart; cancellation invalidates a pending attempt so late results cannot overwrite it. The authenticated discovery endpoint returns promptly while a worker processes one job per API instance. This is an on-demand saved search, not a recurring campaign. Existing searches preserve their original quick/exact settings; new searches default to deep discovery and equivalent senior titles. The workspace allows up to three recent active searches, and search creation/discovery have API rate limits. Provider usage is charged to the configured accounts.
+
+Lead-source history survives a research-data wipe. Deleting a workspace removes its searches, sources, and candidates. Existing contacts, research runs, and prior migrations are preserved when deploying this feature.
+
+### Verification
+
+The API suite covers snippet grounding, former-job and surname/location regressions, criterion evidence, unsafe URLs, CSV handling, encrypted Calendar tokens, and request validation. The [live audit](docs/lead-generation-live-audit.html) records real buyer profiles, independently checked company sources, and deployment limitations from October 23, 2026. PostgreSQL integration tests cover tenant isolation, retries/cancellation, concurrent lead conversion, CRM reuse, and workspace deletion:
+
+```sh
+npm run db:generate
+npm run db:migrate
+npm run build --workspace=@lead-trace/db
+npm run build --workspace=@lead-trace/api
+INTEGRATION_TESTS=true npm run test --workspace=@lead-trace/api
+E2E_USE_REAL_STACK=true npm run test:e2e --workspace=@lead-trace/web -- --grep 'real CRM|real lead|seeded auth'
+```
+
+Use a disposable local PostgreSQL database for browser tests: their development-only seed endpoint resets the fixture identity. `DATABASE_URL`, `E2E_WEB_PORT`, and `E2E_API_PORT` can isolate the test stack. Real-stack CRM/lead tests use deterministic discovery fixtures and do not send Calendar invitations or consume discovery credits. To check the configured Tavily and model services against a disposable local database, explicitly run `LIVE_PROVIDER_TESTS=true node --test apps/api/test/leads.live.test.cjs`; this makes live provider requests. The complete opt-in browser path is `E2E_USE_REAL_STACK=true LIVE_PROVIDER_TESTS=true npm run test:e2e --workspace=@lead-trace/web -- --grep 'live browser creates'`.
+
+To test an already-running local web app, API, and research worker through live discovery, CRM actions, and a completed cited brief, run `LIVE_LOCAL_RELEASE_TEST=true E2E_USE_REAL_STACK=true PLAYWRIGHT_BASE_URL=http://localhost:3000 PLAYWRIGHT_API_URL=http://localhost:3001 npm run test:e2e --workspace=@lead-trace/web -- e2e/leads-live-local.spec.ts`. Apply migrations first. This opt-in test requires a local database and paid provider keys; it creates and removes its own workspace without resetting existing accounts. Its research fixture has no notification recipient.
 
 ### Google Calendar setup
 
