@@ -1,6 +1,7 @@
 import { ArrowRight, Clock3, Search, Sparkles, UsersRound } from 'lucide-react'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
+import { CrmOverview } from '../../components/crm/workspace-overview'
 import { ButtonLink } from '../../components/ui/button'
 import { EmptyState } from '../../components/ui/empty-state'
 import { StatusBadge } from '../../components/ui/status-badge'
@@ -9,20 +10,26 @@ import { ItemBody, ItemIcon, ItemMeta, WorkspaceList, WorkspaceListLink } from '
 import { UrgencyBadge } from '../../components/urgency-badge'
 import { briefCitations, briefUrgencyLabel } from '../../lib/brief'
 import { formatDate } from '../../lib/format'
+import type { ContactPage, Deal, Task } from '../../lib/crm'
 import type { ResearchRunSummary } from '../../lib/research'
 import { authenticatedFetch, requireWorkspace } from '../../lib/server-auth'
 
 export default async function Page() {
-  const [context, runs] = await Promise.all([
+  const [context, runs, contacts, deals, tasks] = await Promise.all([
     requireWorkspace(),
     authenticatedFetch<ResearchRunSummary[]>('/research-runs').then((value) => value ?? []),
+    authenticatedFetch<ContactPage>('/crm/contacts'),
+    authenticatedFetch<{ items: Deal[] }>('/crm/deals'),
+    authenticatedFetch<Task[]>('/crm/tasks'),
   ])
   const readyRuns = runs.filter((run) => run.brief)
   const activeRuns = runs.filter((run) => run.status === 'queued' || run.status === 'running')
   const latestReady = readyRuns[0]
 
   return <WorkspacePage>
-    <WorkspaceHeader eyebrow={`Welcome, ${context.user.name.split(' ')[0]}`} title="Your next conversation starts here." lead="Turn public account signals into a focused meeting plan or a personalized outreach draft." action={<ButtonLink href="/dashboard/research/new"><Search size={17}/>Research a prospect</ButtonLink>}/>
+    <WorkspaceHeader eyebrow={`Welcome, ${context.user.name.split(' ')[0]}`} title="Make your next move." lead="Your contacts, opportunities, and follow-ups in one place. Start with the next conversation that needs your attention." action={<ButtonLink href="/dashboard/contacts?add=1"><UsersRound size={17}/>Add contact</ButtonLink>}/>
+
+    <CrmOverview contacts={contacts?.total ?? 0} deals={deals?.items ?? []} tasks={tasks ?? []}/>
 
     <section className="grid grid-cols-[minmax(0,1.45fr)_minmax(240px,.55fr)] gap-3 max-[760px]:grid-cols-1" aria-label="Sales workspace summary">
       {latestReady ? <article className="relative overflow-hidden rounded-[20px] bg-lt-950 p-7 text-white shadow-panel max-[620px]:p-5">

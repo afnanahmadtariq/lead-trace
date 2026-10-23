@@ -7,6 +7,7 @@ export interface ResearchRunSummary {
   completedAt?: string | null
   errorMessage?: string | null
   prospect: {
+    id?: string
     name: string
     companyName?: string | null
     companyDomain?: string | null

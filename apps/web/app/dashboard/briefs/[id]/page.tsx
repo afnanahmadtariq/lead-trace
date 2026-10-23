@@ -8,6 +8,7 @@ import { ConversationPackButton } from '../../../../components/conversation-pack
 import { BriefStatusPoller } from '../../../../components/research-run-poller'
 import { SignalTimeline } from '../../../../components/signal-timeline'
 import { StatusBadge } from '../../../../components/ui/status-badge'
+import { ButtonLink } from '../../../../components/ui/button'
 import { UrgencyBadge } from '../../../../components/urgency-badge'
 import { WorkspaceHeader, WorkspacePage } from '../../../../components/workspace/workspace-page'
 import { briefCitations, briefUrgencyLabel } from '../../../../lib/brief'
@@ -68,6 +69,8 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
       </div>
 
       {brief.status === 'ready' && <BriefRefreshButton runId={brief.researchRun.id} previousSections={brief.previousSections} currentSections={brief.sections}/>}
+
+      {prospect.id && <section className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-brand/20 bg-lt-100/60 p-5"><div><h2 className="m-0 text-lg text-lt-900">Keep the conversation moving</h2><p className="mt-2 mb-0 max-w-xl text-sm leading-relaxed text-lt-600">After you use this brief, return to {prospect.name} to capture a note, track a deal, or set your next follow-up.</p></div><ButtonLink href={`/dashboard/contacts/${encodeURIComponent(prospect.id)}`} variant="secondary">Open contact & next steps<ArrowUpRight size={15}/></ButtonLink></section>}
 
       <Link className="inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-lt-600 hover:text-brand" href={`/dashboard/research/${brief.researchRun.id}`}>View research process<ArrowUpRight size={14}/></Link>
     </main>
