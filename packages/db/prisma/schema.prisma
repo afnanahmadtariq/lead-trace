@@ -484,6 +484,12 @@ model LeadSearch {
   role               String
   location           String?
   keywords           String?
+  depth              String          @default("deep")
+  roleMatch          String          @default("function")
+  phase              String?
+  progress           Json?
+  diagnostics        Json?
+  companySnapshots   Json?
   status             String          @default("queued")
   errorMessage       String?
   queries            Json?
@@ -514,6 +520,8 @@ model LeadSource {
   title          String
   excerpt        String
   publisher      String
+  provider       String          @default("tavily")
+  sourceKind     String          @default("search")
   queries        String[]
   retrievedAt    DateTime        @default(now())
   candidates     LeadCandidate[]

@@ -85,6 +85,16 @@ export class TavilySearchService {
     private readonly config: ConfigService,
   ) {}
 
+  async extractPages(urls: string[], query: string, sessionId: string) {
+    const response = await this.client.extract(urls.slice(0, 16), { extractDepth: 'advanced', format: 'text', query: query.slice(0, 400), chunksPerSource: 5, includeUsage: true, timeout: 20, sessionId })
+    return { sources: response.results.map((result) => ({ url: result.url, title: result.title || new URL(result.url).hostname, publisher: new URL(result.url).hostname.replace(/^www\./, ''), excerpt: result.rawContent.slice(0, 10000), publishedAt: null, score: 1 })), failed: response.failedResults.length, credits: response.usage?.credits ?? null }
+  }
+
+  async crawlCompany(url: string, role: string, sessionId: string) {
+    const response = await this.client.crawl(url, { maxDepth: 1, maxBreadth: 3, limit: 3, instructions: `Find current leadership, management, team, about and sales leadership pages. Relevant role: ${role.slice(0, 100)}.`, allowExternal: false, extractDepth: 'advanced', format: 'text', includeUsage: true, timeout: 25, sessionId })
+    return { sources: response.results.map((result) => ({ url: result.url, title: `${new URL(result.url).hostname} ${new URL(result.url).pathname}`, publisher: new URL(result.url).hostname.replace(/^www\./, ''), excerpt: result.rawContent.slice(0, 10000), publishedAt: null, score: 1 })), credits: response.usage?.credits ?? null }
+  }
+
   async search(input: TavilyDiscoveryQuery): Promise<TavilySearchBatch> {
     const query = input.query.trim()
     if (!query || query.length > 400) throw new Error('Tavily queries must contain between 1 and 400 characters')
@@ -100,7 +110,7 @@ export class TavilySearchService {
         includeRawContent: false,
         includeUsage: true,
         sessionId: input.sessionId,
-        timeout: 20_000,
+        timeout: 20,
       })
 
       return {

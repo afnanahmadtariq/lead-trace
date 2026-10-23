@@ -9,6 +9,9 @@ export class CreateLeadSearchDto {
   @Transform(trim) @IsString() @Length(2, 100) role!: string
   @Transform(trim) @IsOptional() @IsString() @MaxLength(100) location?: string
   @Transform(trim) @IsOptional() @IsString() @MaxLength(100) keywords?: string
+  // Optional for older clients; defaults are applied when a saved search is created.
+  @IsOptional() @IsIn(['quick', 'deep']) depth?: 'quick' | 'deep'
+  @IsOptional() @IsIn(['exact', 'function']) roleMatch?: 'exact' | 'function'
 }
 export class ReviewLeadDto {
   @IsIn(['new', 'qualified', 'dismissed']) status!: 'new' | 'qualified' | 'dismissed'
