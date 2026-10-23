@@ -26,7 +26,7 @@ function CitationChip({ citation, index }: { citation: BriefCitation; index: num
   }
 
   return <button type="button" onClick={openEvidence} className="inline-flex max-w-full items-center gap-1 rounded-full border border-brand/20 bg-[#f4faff] px-2.5 py-1 text-[.68rem] font-semibold text-brand transition hover:border-brand/40" title={citation.claim} aria-label={`View source ${index + 1}: ${citation.claim}`}>
-    <span className="text-[.62rem] text-iq-500">[{index + 1}]</span>
+    <span className="text-[.62rem] text-lt-500">[{index + 1}]</span>
     <span className="truncate capitalize">{citation.signal_type.replace(/-/g, ' ')}</span>
   </button>
 }
@@ -42,7 +42,7 @@ export function BriefSections({
 }) {
   const brief = parseBriefSections(sections)
   if (!brief) {
-    return <div className="rounded-[15px] border border-dashed border-iq-300 p-[30px] text-center text-iq-600">This brief is still being prepared.</div>
+    return <div className="rounded-[15px] border border-dashed border-lt-300 p-[30px] text-center text-lt-600">This brief is still being prepared.</div>
   }
 
   const summary = text(brief.summary)
@@ -56,7 +56,7 @@ export function BriefSections({
   const citations = briefCitations(sections, evidence)
 
   return <div className="grid gap-4">
-    <section className="relative overflow-hidden rounded-[20px] bg-iq-950 p-7 text-white shadow-panel max-[620px]:p-5">
+    <section className="relative overflow-hidden rounded-[20px] bg-lt-950 p-7 text-white shadow-panel max-[620px]:p-5">
       <span className="absolute -top-24 -right-14 size-72 rounded-full bg-sky/15 blur-3xl"/>
       <div className="relative z-1">
         <p className="mt-0 mb-3 flex items-center gap-2 text-[.7rem] font-bold tracking-[.12em] text-sky uppercase"><Sparkles size={15}/>Why this conversation matters</p>
@@ -64,7 +64,7 @@ export function BriefSections({
         {citations.length > 0 && <div className="mt-4 flex flex-wrap gap-2">{citations.map((citation, index) => <CitationChip citation={citation} index={index} key={citation.evidence_id}/>)}</div>}
         {opener && <div className="mt-6 rounded-2xl border border-white/12 bg-white/8 p-4">
           <div className="mb-2 flex items-center justify-between gap-3"><span className="text-[.68rem] font-bold tracking-[.1em] text-sky uppercase">Open with this</span><CopyButton value={opener} label="Copy opener"/></div>
-          <blockquote className="m-0 text-sm leading-relaxed text-iq-100">“{opener}”</blockquote>
+          <blockquote className="m-0 text-sm leading-relaxed text-lt-100">“{opener}”</blockquote>
         </div>}
       </div>
     </section>
@@ -73,7 +73,7 @@ export function BriefSections({
 
     {goal === 'outreach' && outreach && <section className="rounded-[18px] border border-brand-bright/25 bg-[#f4faff] p-6 max-[620px]:p-5">
       <div className="mb-4 flex items-center justify-between gap-3"><SectionTitle icon={<Mail size={18}/>} title="Your outreach draft"/><CopyButton value={outreach} label="Copy email"/></div>
-      <p className="m-0 whitespace-pre-wrap text-sm leading-[1.75] text-iq-700">{outreach}</p>
+      <p className="m-0 whitespace-pre-wrap text-sm leading-[1.75] text-lt-700">{outreach}</p>
     </section>}
 
     <div className="grid grid-cols-2 gap-4 max-[760px]:grid-cols-1">
@@ -90,13 +90,13 @@ export function BriefSections({
 }
 
 function SectionTitle({ icon, title }: { icon: ReactNode; title: string }) {
-  return <div className="flex items-center gap-2.5 text-brand"><span className="grid size-9 place-items-center rounded-[11px] bg-iq-100">{icon}</span><h2 className="m-0 text-base text-iq-900">{title}</h2></div>
+  return <div className="flex items-center gap-2.5 text-brand"><span className="grid size-9 place-items-center rounded-[11px] bg-lt-100">{icon}</span><h2 className="m-0 text-base text-lt-900">{title}</h2></div>
 }
 
 function ActionSection({ icon, title, items }: { icon: ReactNode; title: string; items: string[] }) {
-  return <section className="rounded-[18px] border border-iq-200 bg-white p-5">
+  return <section className="rounded-[18px] border border-lt-200 bg-white p-5">
     <SectionTitle icon={icon} title={title}/>
-    {items.length ? <ol className="mt-5 mb-0 grid gap-3 p-0">{items.map((item, index) => <li className="grid grid-cols-[26px_1fr] gap-2.5 text-sm leading-relaxed text-iq-700" key={`${title}-${item}`}><span className="grid size-[26px] place-items-center rounded-lg bg-iq-100 text-[.7rem] font-bold text-brand">{index + 1}</span><span>{item}</span></li>)}</ol> : <p className="mt-5 mb-0 text-sm text-iq-500">No recommendation was generated from the available evidence.</p>}
+    {items.length ? <ol className="mt-5 mb-0 grid gap-3 p-0">{items.map((item, index) => <li className="grid grid-cols-[26px_1fr] gap-2.5 text-sm leading-relaxed text-lt-700" key={`${title}-${item}`}><span className="grid size-[26px] place-items-center rounded-lg bg-lt-100 text-[.7rem] font-bold text-brand">{index + 1}</span><span>{item}</span></li>)}</ol> : <p className="mt-5 mb-0 text-sm text-lt-500">No recommendation was generated from the available evidence.</p>}
     {items.length > 0 && <div className="mt-5 flex justify-end"><CopyButton value={items.map((item, index) => `${index + 1}. ${item}`).join('\n')} label={`Copy ${title.toLowerCase()}`}/></div>}
   </section>
 }

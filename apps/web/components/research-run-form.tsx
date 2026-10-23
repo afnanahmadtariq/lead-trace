@@ -56,10 +56,10 @@ export function ResearchRunForm({ initialOffer }: { initialOffer?: OfferDefaults
     }
   }
 
-  const cardClass = 'rounded-[18px] border border-iq-200 bg-white p-6 shadow-card max-[700px]:p-5'
+  const cardClass = 'rounded-[18px] border border-lt-200 bg-white p-6 shadow-card max-[700px]:p-5'
   const gridClass = 'grid grid-cols-2 gap-4 max-[700px]:grid-cols-1'
-  const labelClass = 'col-span-full grid gap-2 text-sm font-semibold text-iq-700'
-  const controlClass = 'w-full rounded-xl border border-iq-300 bg-white px-3.5 py-3 text-iq-950 outline-none transition focus:border-brand-bright focus:ring-3 focus:ring-brand-bright/10'
+  const labelClass = 'col-span-full grid gap-2 text-sm font-semibold text-lt-700'
+  const controlClass = 'w-full rounded-xl border border-lt-300 bg-white px-3.5 py-3 text-lt-950 outline-none transition focus:border-brand-bright focus:ring-3 focus:ring-brand-bright/10'
 
   return <form className="grid gap-4" onSubmit={submit}>
     <section className={cardClass}>
@@ -78,8 +78,8 @@ export function ResearchRunForm({ initialOffer }: { initialOffer?: OfferDefaults
         <Field id="company-domain" name="companyDomain" label="Company domain" placeholder="northstar.com"/>
         <Field id="linkedin-url" name="linkedinUrl" type="url" label="LinkedIn profile" placeholder="https://linkedin.com/in/…" icon={<Link2 size={18}/>}/>
       </div>
-      <details className="mt-4 rounded-xl border border-iq-200 bg-iq-50/60 px-4 py-3">
-        <summary className="cursor-pointer text-sm font-semibold text-iq-700">Add email or social handle</summary>
+      <details className="mt-4 rounded-xl border border-lt-200 bg-lt-50/60 px-4 py-3">
+        <summary className="cursor-pointer text-sm font-semibold text-lt-700">Add email or social handle</summary>
         <div className={`${gridClass} mt-4`}>
           <Field id="prospect-email" name="prospectEmail" type="email" label="Work email" placeholder="maya@company.com" icon={<Mail size={18}/>}/>
           <Field id="x-handle" name="xHandle" label="X handle" placeholder="@mayachen"/>
@@ -88,7 +88,7 @@ export function ResearchRunForm({ initialOffer }: { initialOffer?: OfferDefaults
     </section>
 
     <section className={cardClass}>
-      <FormSectionHeader icon={<BriefcaseBusiness/>} title="Connect your offer" description={initialOffer ? 'Reusing your latest offer—edit only what changed.' : 'Give InsightIQ enough context to connect signals to a credible outcome.'}/>
+      <FormSectionHeader icon={<BriefcaseBusiness/>} title="Connect your offer" description={initialOffer ? 'Reusing your latest offer—edit only what changed.' : 'Give Lead Trace enough context to connect signals to a credible outcome.'}/>
       <div className={gridClass}>
         <Field id="offer-name" name="offerName" label="Offer" placeholder="Enterprise analytics platform" defaultValue={initialOffer?.name} required/>
         <Field id="target-persona" name="targetPersona" label="Best-fit buyer" placeholder="VP Sales at B2B SaaS" defaultValue={initialOffer?.targetPersona || ''}/>
@@ -97,20 +97,20 @@ export function ResearchRunForm({ initialOffer }: { initialOffer?: OfferDefaults
     </section>
 
     {error && <FormMessage tone="error" className="text-[.8rem]">{error}</FormMessage>}
-    <div className="sticky bottom-4 z-2 flex items-center justify-between gap-4 rounded-2xl border border-iq-200 bg-white/94 p-3 shadow-panel backdrop-blur-xl max-[620px]:items-stretch">
-      <p className="m-0 pl-2 text-xs leading-normal text-iq-500 max-[620px]:hidden">Research starts immediately. Key signals link back to their sources.</p>
+    <div className="sticky bottom-4 z-2 flex items-center justify-between gap-4 rounded-2xl border border-lt-200 bg-white/94 p-3 shadow-panel backdrop-blur-xl max-[620px]:items-stretch">
+      <p className="m-0 pl-2 text-xs leading-normal text-lt-500 max-[620px]:hidden">Research starts immediately. Key signals link back to their sources.</p>
       <Button className="min-w-[220px] max-[620px]:w-full" type="submit" disabled={pending}>{pending ? 'Starting research…' : goal === 'meeting' ? 'Build meeting brief' : 'Build outreach draft'}{!pending && <ArrowRight size={18}/>}</Button>
     </div>
   </form>
 }
 
 function GoalOption({ value, selected, title, description, onSelect }: { value: 'meeting' | 'outreach'; selected: boolean; title: string; description: string; onSelect: (value: 'meeting' | 'outreach') => void }) {
-  return <label className={`flex cursor-pointer items-start gap-3 rounded-[15px] border p-4 transition ${selected ? 'border-brand-bright bg-iq-100 shadow-card' : 'border-iq-200 bg-white hover:border-iq-300'}`}>
+  return <label className={`flex cursor-pointer items-start gap-3 rounded-[15px] border p-4 transition ${selected ? 'border-brand-bright bg-lt-100 shadow-card' : 'border-lt-200 bg-white hover:border-lt-300'}`}>
     <input className="mt-1 size-4 accent-brand" type="radio" name="goal" value={value} checked={selected} onChange={() => onSelect(value)}/>
-    <span><strong className="block text-sm text-iq-900">{title}</strong><small className="mt-1 block text-xs leading-normal text-iq-500">{description}</small></span>
+    <span><strong className="block text-sm text-lt-900">{title}</strong><small className="mt-1 block text-xs leading-normal text-lt-500">{description}</small></span>
   </label>
 }
 
 function FormSectionHeader({ icon, title, description }: { icon: ReactNode; title: string; description: string }) {
-  return <header className="mb-5 flex gap-3 text-brand-bright"><span>{icon}</span><div><h2 className="m-0 text-lg text-iq-900">{title}</h2><p className="mt-1 mb-0 text-sm text-iq-600">{description}</p></div></header>
+  return <header className="mb-5 flex gap-3 text-brand-bright"><span>{icon}</span><div><h2 className="m-0 text-lg text-lt-900">{title}</h2><p className="mt-1 mb-0 text-sm text-lt-600">{description}</p></div></header>
 }

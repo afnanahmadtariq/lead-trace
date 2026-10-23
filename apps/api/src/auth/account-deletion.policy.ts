@@ -1,4 +1,4 @@
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 
 export interface AccountDeletionPolicy {
   soleWorkspaceIds: string[]

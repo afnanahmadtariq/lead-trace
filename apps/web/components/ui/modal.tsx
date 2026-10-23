@@ -103,7 +103,7 @@ export function Modal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-100 grid min-h-dvh place-items-center overflow-y-auto bg-iq-950/40 px-4 py-6"
+      className="fixed inset-0 z-100 grid min-h-dvh place-items-center overflow-y-auto bg-lt-950/40 px-4 py-6"
       role="presentation"
       onMouseDown={(event) => {
         if (dismissible && event.target === event.currentTarget) onClose()
@@ -116,18 +116,18 @@ export function Modal({
         aria-labelledby={titleId}
         aria-describedby={description ? descriptionId : undefined}
         tabIndex={-1}
-        className={`my-auto flex max-h-[calc(100dvh-3rem)] w-full flex-col overflow-hidden rounded-[20px] border border-iq-200 bg-white shadow-[0_28px_70px_rgba(16,38,79,.24)] outline-none ${sizes[size]}`}
+        className={`my-auto flex max-h-[calc(100dvh-3rem)] w-full flex-col overflow-hidden rounded-[20px] border border-lt-200 bg-white shadow-[0_28px_70px_rgba(16,38,79,.24)] outline-none ${sizes[size]}`}
         onMouseDown={(event) => event.stopPropagation()}
       >
-        <header className="flex shrink-0 items-start gap-4 border-b border-iq-100 px-6 py-5 max-[520px]:px-5">
+        <header className="flex shrink-0 items-start gap-4 border-b border-lt-100 px-6 py-5 max-[520px]:px-5">
           <div className="min-w-0 flex-1">
-            <h2 id={titleId} className="m-0 text-[1.12rem] tracking-[-.02em] text-iq-900">{title}</h2>
-            {description && <p id={descriptionId} className="mt-1.5 mb-0 text-[.8rem] leading-[1.5] text-iq-600">{description}</p>}
+            <h2 id={titleId} className="m-0 text-[1.12rem] tracking-[-.02em] text-lt-900">{title}</h2>
+            {description && <p id={descriptionId} className="mt-1.5 mb-0 text-[.8rem] leading-[1.5] text-lt-600">{description}</p>}
           </div>
-          {dismissible && <button type="button" onClick={onClose} className="grid size-9 shrink-0 place-items-center rounded-xl text-iq-500 transition-colors hover:bg-iq-50 hover:text-iq-900" aria-label={closeLabel}><X size={19}/></button>}
+          {dismissible && <button type="button" onClick={onClose} className="grid size-9 shrink-0 place-items-center rounded-xl text-lt-500 transition-colors hover:bg-lt-50 hover:text-lt-900" aria-label={closeLabel}><X size={19}/></button>}
         </header>
         <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5 max-[520px]:px-5">{children}</div>
-        {footer && <footer className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-iq-100 px-6 py-4 max-[520px]:px-5">{footer}</footer>}
+        {footer && <footer className="flex shrink-0 flex-wrap items-center justify-end gap-2 border-t border-lt-100 px-6 py-4 max-[520px]:px-5">{footer}</footer>}
       </section>
     </div>,
     document.body,

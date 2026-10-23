@@ -98,7 +98,7 @@ model TwoFactor {
   @@map("twoFactor")
 }
 
-// Better Auth organizations are InsightIQ workspaces and the tenant boundary
+// Better Auth organizations are Lead Trace workspaces and the tenant boundary
 // for all prospect, research, evidence, and brief data added later.
 model Organization {
   id              String           @id

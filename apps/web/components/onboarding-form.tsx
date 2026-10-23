@@ -39,11 +39,11 @@ export function OnboardingForm({ context }: { context: AccountContext }) {
     router.refresh()
   }
 
-  return <div className="grid gap-5 rounded-[22px] border border-iq-200 bg-white p-7 shadow-panel max-[560px]:p-5">
+  return <div className="grid gap-5 rounded-[22px] border border-lt-200 bg-white p-7 shadow-panel max-[560px]:p-5">
     {context.workspaces.length > 0 && <section>
-      <h2 className="mt-0 mb-3 text-sm tracking-wider text-iq-900 uppercase">Your workspaces</h2>
-      {context.workspaces.map((workspace) => <Button type="button" variant="secondary" className="w-full justify-start! gap-3 bg-iq-50 p-3! text-left text-iq-900" key={workspace.id} onClick={() => activate(workspace.id)} disabled={pending}>
-        <Building2 size={19}/><span className="grid flex-1 gap-0.5"><strong>{workspace.name}</strong><small className="text-iq-500 capitalize">{workspace.role}</small></span><ArrowRight size={17}/>
+      <h2 className="mt-0 mb-3 text-sm tracking-wider text-lt-900 uppercase">Your workspaces</h2>
+      {context.workspaces.map((workspace) => <Button type="button" variant="secondary" className="w-full justify-start! gap-3 bg-lt-50 p-3! text-left text-lt-900" key={workspace.id} onClick={() => activate(workspace.id)} disabled={pending}>
+        <Building2 size={19}/><span className="grid flex-1 gap-0.5"><strong>{workspace.name}</strong><small className="text-lt-500 capitalize">{workspace.role}</small></span><ArrowRight size={17}/>
       </Button>)}
     </section>}
     <form className="grid gap-4" onSubmit={submit}><Field id="workspace-name" name="name" label="Workspace name" placeholder="Acme sales team" required maxLength={80}/>{error && <FormMessage tone="error">{error}</FormMessage>}<Button className="w-full" type="submit" disabled={pending}>{pending ? 'Creating…' : 'Create workspace'}<ArrowRight size={18}/></Button></form>

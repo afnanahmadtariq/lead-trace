@@ -1,17 +1,17 @@
 import unittest
 
-from insightiq_worker.extract import classify_sentence, extract_claims, is_junk_claim, is_relevant_claim, merge_claim_lists
-from insightiq_worker.llm import (
+from lead_trace_worker.extract import classify_sentence, extract_claims, is_junk_claim, is_relevant_claim, merge_claim_lists
+from lead_trace_worker.llm import (
     DEFAULT_DASHSCOPE_BASE_URL,
     fallback_claims,
     llm_enabled,
     personalize_outreach_draft,
     resolve_llm_config,
 )
-from insightiq_worker.models import SourceBundle
-from insightiq_worker.tavily import build_discovery_queries, tavily_configured
-from insightiq_worker.graph_brief import build_brief_graph, citation_gate, new_id
-from insightiq_worker.models import BriefCitation, BriefSections, RunContext
+from lead_trace_worker.models import SourceBundle
+from lead_trace_worker.tavily import build_discovery_queries, tavily_configured
+from lead_trace_worker.graph_brief import build_brief_graph, citation_gate, new_id
+from lead_trace_worker.models import BriefCitation, BriefSections, RunContext
 
 
 class TavilyTest(unittest.TestCase):
@@ -36,7 +36,7 @@ class LlmTest(unittest.TestCase):
                     os.environ[key] = value
 
     def test_fallback_claims_from_sources(self):
-        from insightiq_worker.models import RunContext
+        from lead_trace_worker.models import RunContext
 
         context = RunContext(
             run_id='run',

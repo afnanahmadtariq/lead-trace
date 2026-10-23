@@ -4,9 +4,9 @@ import unittest
 from unittest.mock import patch
 import datetime
 
-from insightiq_worker.db import Worker
-from insightiq_worker.models import EvidenceDraft
-from insightiq_worker.pipeline import (
+from lead_trace_worker.db import Worker
+from lead_trace_worker.models import EvidenceDraft
+from lead_trace_worker.pipeline import (
     BACKOFF_SQL,
     CLAIM_SQL,
     COUNTS_SQL,
@@ -14,7 +14,7 @@ from insightiq_worker.pipeline import (
     FETCH_SOURCES_SQL,
     INSERT_EVIDENCE_SQL,
 )
-from insightiq_worker.stages import LOAD_RUN_SQL, _assemble_langgraph_evidence, process_brief_stage, run_context_from_row
+from lead_trace_worker.stages import LOAD_RUN_SQL, _assemble_langgraph_evidence, process_brief_stage, run_context_from_row
 
 
 class _FakeMessage:
@@ -279,7 +279,7 @@ class EvidenceStageAllClaimsDroppedTest(unittest.TestCase):
 
         with patch.dict(os.environ, {'DASHSCOPE_API_KEY': 'test-key'}):
             with patch('psycopg.connect', return_value=connection):
-                with self.assertLogs('insightiq.worker', level='ERROR') as logs:
+                with self.assertLogs('lead-trace.worker', level='ERROR') as logs:
                     result = worker.poll_once()
 
         self.assertTrue(result)
@@ -328,7 +328,7 @@ class EvidenceStageInsertFailureRollsBackTest(unittest.TestCase):
 
         with patch.dict(os.environ, {'DASHSCOPE_API_KEY': 'test-key'}):
             with patch('psycopg.connect', return_value=connection):
-                with self.assertLogs('insightiq.worker', level='ERROR') as logs:
+                with self.assertLogs('lead-trace.worker', level='ERROR') as logs:
                     result = worker.poll_once()
 
         self.assertTrue(result)
@@ -361,7 +361,7 @@ class EvidenceStageBlankExcerptTest(unittest.TestCase):
 
         with patch.dict(os.environ, {'DASHSCOPE_API_KEY': 'test-key'}):
             with patch('psycopg.connect', return_value=connection):
-                with self.assertLogs('insightiq.worker', level='ERROR') as logs:
+                with self.assertLogs('lead-trace.worker', level='ERROR') as logs:
                     result = worker.poll_once()
 
         self.assertTrue(result)
@@ -447,7 +447,7 @@ class EvidenceStageDegradeOneSourceTest(unittest.TestCase):
 
         with patch.dict(os.environ, {'DASHSCOPE_API_KEY': 'test-key'}):
             with patch('psycopg.connect', return_value=connection):
-                with self.assertLogs('insightiq.worker', level='ERROR') as logs:
+                with self.assertLogs('lead-trace.worker', level='ERROR') as logs:
                     result = worker.poll_once()
 
         self.assertTrue(result)
@@ -513,7 +513,7 @@ class EvidenceStageLanggraphPathTest(unittest.TestCase):
 
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop('DASHSCOPE_API_KEY', None)
-            with patch('insightiq_worker.stages.build_evidence_graph') as mock_graph:
+            with patch('lead_trace_worker.stages.build_evidence_graph') as mock_graph:
                 mock_graph.return_value.invoke.return_value = {'drafts': duplicate_drafts}
                 with patch('psycopg.connect', return_value=connection):
                     result = worker.poll_once()

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('verification email resend is manual and its cooldown survives reload', async ({ page }) => {
   const email = 'resend-test@example.com'
-  const storageKey = `insightiq:email-verification:${email}`
+  const storageKey = `lead-trace:email-verification:${email}`
   let resendRequests = 0
 
   page.on('request', (request) => {

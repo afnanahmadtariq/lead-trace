@@ -52,7 +52,7 @@ export function BriefShareButton({ briefId, initialToken }: { briefId: string; i
       {copied ? <Check size={14}/> : <Share2 size={14}/>}
       {pending === 'share' ? 'Creating link…' : copied ? 'Link copied' : token ? 'Copy public link' : 'Share brief'}
     </Button>
-    {token && <Button type="button" variant="ghost" size="xs" className="text-iq-500" onClick={() => void revoke()} disabled={pending !== null}><Link2Off size={14}/>{pending === 'revoke' ? 'Revoking…' : 'Revoke'}</Button>}
+    {token && <Button type="button" variant="ghost" size="xs" className="text-lt-500" onClick={() => void revoke()} disabled={pending !== null}><Link2Off size={14}/>{pending === 'revoke' ? 'Revoking…' : 'Revoke'}</Button>}
     {error && <span className="basis-full text-[.72rem] text-danger" role="alert">{error}</span>}
   </div>
 }

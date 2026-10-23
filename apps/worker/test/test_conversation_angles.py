@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 from pydantic import ValidationError
 
-from insightiq_worker.graph_brief import assemble_sections, citation_gate
-from insightiq_worker.llm import polish_brief
-from insightiq_worker.models import BriefSections, ConversationAngle, RunContext
+from lead_trace_worker.graph_brief import assemble_sections, citation_gate
+from lead_trace_worker.llm import polish_brief
+from lead_trace_worker.models import BriefSections, ConversationAngle, RunContext
 
 
 def make_context(goal='meeting'):
@@ -71,8 +71,8 @@ class ConversationAnglesTest(unittest.TestCase):
                     update={'conversation_angles': [angle(invalid_id)]})}
                 self.assertIn('uncited conversation angle', citation_gate(invalid)['error'])
 
-    @patch('insightiq_worker.llm.llm_enabled', return_value=True)
-    @patch('insightiq_worker.llm._chat_json')
+    @patch('lead_trace_worker.llm.llm_enabled', return_value=True)
+    @patch('lead_trace_worker.llm._chat_json')
     def test_polisher_accepts_valid_specific_angle_and_keeps_original_claim(self, chat, enabled):
         assembled = state()
         chat.return_value = {'summary': 'Acme launched an SDK; validate how it affects developer onboarding.',
@@ -83,8 +83,8 @@ class ConversationAnglesTest(unittest.TestCase):
         self.assertEqual(polished.key_signals, assembled['sections'].key_signals)
         self.assertIsNone(citation_gate({**assembled, 'sections': polished})['error'])
 
-    @patch('insightiq_worker.llm.llm_enabled', return_value=True)
-    @patch('insightiq_worker.llm._chat_json')
+    @patch('lead_trace_worker.llm.llm_enabled', return_value=True)
+    @patch('lead_trace_worker.llm._chat_json')
     def test_polisher_discards_invalid_ids_and_asserted_pain_before_completion(self, chat, enabled):
         assembled = state([signal(i) for i in range(6)])
         cited_ids = {citation.evidence_id for citation in assembled['sections'].key_signals}

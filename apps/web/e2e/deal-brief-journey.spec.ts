@@ -11,7 +11,7 @@ test('clear all removes every notification from the panel', async ({ page, reque
   expect(signIn.ok()).toBeTruthy()
   const auth = await signIn.json() as { token: string }
   const cookie = {
-    name: 'insightiq.session_token',
+    name: 'lead-trace.session_token',
     value: auth.token,
     httpOnly: true,
     sameSite: 'Lax' as const,
@@ -37,7 +37,7 @@ test('sign-in, create research run, open cited brief', async ({ page, request })
   expect(signIn.ok()).toBeTruthy()
   const auth = await signIn.json() as { token: string }
   const cookie = {
-    name: 'insightiq.session_token',
+    name: 'lead-trace.session_token',
     value: auth.token,
     httpOnly: true,
     sameSite: 'Lax' as const,
@@ -90,6 +90,7 @@ test('sign-in, create research run, open cited brief', async ({ page, request })
   await page.goto(`/shared/briefs/${share.token}`)
   await expect(page.getByRole('heading', { name: 'This shared brief is no longer available.' })).toBeVisible()
 
+  await page.goto(privateBriefUrl)
   await expect(page.getByRole('heading', { name: 'Connect the signal to your offer' })).toBeVisible()
   await expect(page.getByRole('tabpanel')).toContainText('Hypothesis to validate')
   await expect(page.getByRole('tabpanel')).toContainText(e2eFixtures.citation.claim)
@@ -106,7 +107,7 @@ test('sign-in, create research run, open cited brief', async ({ page, request })
   const downloadPromise = page.waitForEvent('download')
   await page.getByRole('button', { name: 'Download brief' }).click()
   const download = await downloadPromise
-  expect(download.suggestedFilename()).toBe('InsightIQ-meeting-brief.txt')
+  expect(download.suggestedFilename()).toBe('Lead-Trace-meeting-brief.txt')
   const citation = page.locator(`a[href="${e2eFixtures.citation.url}"]`)
   await expect(citation.first()).toBeVisible()
   await expect(citation.first()).toHaveAttribute('target', '_blank')

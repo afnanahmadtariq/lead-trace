@@ -13,7 +13,7 @@ export async function authenticatedFetch<T>(path: string): Promise<T | null> {
     headers: { cookie: requestHeaders.get('cookie') || '' },
   })
   if (response.status === 401) return null
-  if (!response.ok) throw new Error(`InsightIQ API returned ${response.status} for ${path}`)
+  if (!response.ok) throw new Error(`Lead Trace API returned ${response.status} for ${path}`)
   return response.json() as Promise<T>
 }
 

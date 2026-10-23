@@ -6,8 +6,8 @@ type ButtonSize = 'xs' | 'sm' | 'md' | 'icon-sm' | 'icon'
 
 const variants: Record<ButtonVariant, string> = {
   primary: 'border-transparent bg-[linear-gradient(135deg,#1c9eec,#16429b)] text-white! hover:brightness-95',
-  secondary: 'border-iq-200 bg-white text-iq-900! hover:border-iq-300 hover:bg-iq-50',
-  ghost: 'border-transparent bg-transparent text-iq-700 hover:bg-iq-100 hover:text-iq-900',
+  secondary: 'border-lt-200 bg-white text-lt-900! hover:border-lt-300 hover:bg-lt-50',
+  ghost: 'border-transparent bg-transparent text-lt-700 hover:bg-lt-100 hover:text-lt-900',
   danger: 'border-transparent bg-transparent text-danger hover:bg-[#fff0f2] hover:text-danger',
 }
 

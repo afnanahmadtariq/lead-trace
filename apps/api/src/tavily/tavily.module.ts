@@ -12,7 +12,7 @@ import { TavilySearchService } from './tavily-search.service'
       useFactory: (config: ConfigService) => tavily({
         apiKey: config.get<string>('TAVILY_API_KEY') || undefined,
         projectId: config.get<string>('TAVILY_PROJECT_ID') || undefined,
-        clientSource: 'insightiq-api',
+        clientSource: 'lead-trace-api',
       }),
     },
     TavilySearchService,

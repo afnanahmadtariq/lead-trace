@@ -22,7 +22,7 @@ export async function sendAuthEmail(input: SendAuthEmailInput) {
 
   const template = renderAuthEmail(input)
   const response = await new Resend(apiKey).emails.send({
-    from: process.env.RESEND_FROM_EMAIL?.trim() || 'InsightIQ <onboarding@resend.dev>',
+    from: process.env.RESEND_FROM_EMAIL?.trim() || 'Lead Trace <onboarding@resend.dev>',
     to: input.to,
     subject: template.subject,
     html: template.html,

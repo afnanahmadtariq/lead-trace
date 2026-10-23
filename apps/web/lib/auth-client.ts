@@ -18,7 +18,7 @@ export function webCallbackURL(path: string) {
   return new URL(path, window.location.origin).toString()
 }
 
-const authReturnKey = 'insightiq-auth-return'
+const authReturnKey = 'lead-trace-auth-return'
 
 export function rememberAuthReturn(path: string) {
   const safePath = path.startsWith('/') && !path.startsWith('//') ? path : '/auth/continue'

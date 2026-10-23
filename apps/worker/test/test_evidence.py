@@ -2,7 +2,7 @@ import unittest
 
 from pydantic import ValidationError
 
-from insightiq_worker.evidence import (
+from lead_trace_worker.evidence import (
     MAX_CLAIMS_PER_SOURCE,
     SAME_FACT_OVERLAP_THRESHOLD,
     SIGNAL_TYPES,
@@ -19,7 +19,7 @@ from insightiq_worker.evidence import (
     filter_claims_for_source,
     reconcile_claims,
 )
-from insightiq_worker.models import RunContext
+from lead_trace_worker.models import RunContext
 
 
 def _claim(claim: str, signal_type: str = 'hiring', confidence: float = 0.5, observed_at=None) -> ExtractedClaim:

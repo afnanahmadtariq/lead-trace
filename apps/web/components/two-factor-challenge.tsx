@@ -26,7 +26,7 @@ export function TwoFactorChallenge({ context }: { context: AccountContext }) {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState('')
   const resendCooldown = useResendCooldown({
-    storageKey: `insightiq:two-factor-email:${context.user.id}`,
+    storageKey: `lead-trace:two-factor-email:${context.user.id}`,
   })
   const [trustDevice, setTrustDevice] = useState(false)
 
@@ -84,7 +84,7 @@ export function TwoFactorChallenge({ context }: { context: AccountContext }) {
       {pending
         ? <Button className="w-full" type="button" variant="secondary" disabled>Sending…</Button>
         : resendCooldown.locked
-          ? <p className="m-0 text-center text-[.78rem] font-medium text-iq-500" role="status">{resendCooldown.ready ? `Resend available in ${resendCooldown.secondsRemaining}s` : 'Checking email status…'}</p>
+          ? <p className="m-0 text-center text-[.78rem] font-medium text-lt-500" role="status">{resendCooldown.ready ? `Resend available in ${resendCooldown.secondsRemaining}s` : 'Checking email status…'}</p>
           : <Button className="w-full" type="button" variant="secondary" onClick={sendEmailCode}>{resendCooldown.sent ? 'Resend email code' : 'Send email code'}</Button>}
     </>}
     {method === 'backup' && <FormMessage>Use one of the single-use recovery codes you saved during setup.</FormMessage>}
@@ -101,7 +101,7 @@ export function TwoFactorChallenge({ context }: { context: AccountContext }) {
         onChange={(event) => setCode(numericCode ? event.target.value.replace(/\D/g, '').slice(0, 6) : event.target.value)}
         required
       />
-      <label className="flex items-center gap-2.5 text-[.84rem] text-iq-600"><input type="checkbox" checked={trustDevice} onChange={(event) => setTrustDevice(event.target.checked)} className="size-4 accent-brand"/>Trust this device for 30 days</label>
+      <label className="flex items-center gap-2.5 text-[.84rem] text-lt-600"><input type="checkbox" checked={trustDevice} onChange={(event) => setTrustDevice(event.target.checked)} className="size-4 accent-brand"/>Trust this device for 30 days</label>
       {error && <FormMessage tone="error">{error}</FormMessage>}
       <Button className="w-full" type="submit" disabled={submitDisabled}>{pending ? 'Checking…' : 'Verify identity'}</Button>
     </>}

@@ -13,7 +13,7 @@ export function ConversationPackButton({ sections, goal }: { sections: unknown; 
     const url = URL.createObjectURL(new Blob([value], { type: 'text/plain;charset=utf-8' }))
     const anchor = document.createElement('a')
     anchor.href = url
-    anchor.download = `InsightIQ-${goal}-brief.txt`
+    anchor.download = `Lead-Trace-${goal}-brief.txt`
     anchor.click()
     window.setTimeout(() => URL.revokeObjectURL(url), 1000)
   }

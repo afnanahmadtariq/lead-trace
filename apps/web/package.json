@@ -1,5 +1,5 @@
 {
-  "name": "@insightiq/web",
+  "name": "@lead-trace/web",
   "private": true,
   "scripts": {
     "dev": "next dev",

@@ -9,7 +9,7 @@ function createId() {
 }
 
 test('research rows stay scoped to their workspace', { skip: integrationEnabled ? false : 'Set INTEGRATION_TESTS=true with DATABASE_URL' }, async () => {
-  const { db } = require('@insightiq/db')
+  const { db } = require('@lead-trace/db')
 
   const userA = createId()
   const userB = createId()

@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 from pydantic import BaseModel
 
-from insightiq_worker.model_gateway import (
+from lead_trace_worker.model_gateway import (
     ModelGatewayConfig,
     StructuredOutputError,
     request_structured_output,

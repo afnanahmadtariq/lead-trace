@@ -7,7 +7,7 @@ import {
 } from './wikipedia-discovery'
 
 const WIKI_API = 'https://en.wikipedia.org/w/api.php'
-const USER_AGENT = 'InsightIQ-Research/0.1 (+https://insightiq.app)'
+const USER_AGENT = 'LeadTrace-Research/0.1 (+https://leadtrace.online)'
 
 type WikiSearchHit = { title?: string; snippet?: string }
 

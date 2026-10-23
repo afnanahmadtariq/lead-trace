@@ -38,14 +38,14 @@ jobs:
         run: npm ci
 
       - name: Lint frontend
-        run: npm run lint --workspace=@insightiq/web
+        run: npm run lint --workspace=@lead-trace/web
 
       - name: Check frontend types
-        run: npm run check-types --workspace=@insightiq/web
+        run: npm run check-types --workspace=@lead-trace/web
 
       - name: Build frontend for PR validation
         if: ${{ github.event_name == 'pull_request' }}
-        run: npm run build --workspace=@insightiq/web
+        run: npm run build --workspace=@lead-trace/web
 
   build-artifact:
     needs: verify
@@ -78,7 +78,7 @@ jobs:
         env:
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
           NODE_ENV: production
-        run: npm run cf:build --workspace=@insightiq/web
+        run: npm run cf:build --workspace=@lead-trace/web
 
       - name: Validate exact Cloudflare artifact
         working-directory: apps/web

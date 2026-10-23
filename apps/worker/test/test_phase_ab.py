@@ -1,8 +1,8 @@
 import datetime
 import unittest
 
-from insightiq_worker.email import render_brief_ready_email
-from insightiq_worker.graph_brief import _compute_urgency
+from lead_trace_worker.email import render_brief_ready_email
+from lead_trace_worker.graph_brief import _compute_urgency
 
 
 class BriefReadyEmailTest(unittest.TestCase):

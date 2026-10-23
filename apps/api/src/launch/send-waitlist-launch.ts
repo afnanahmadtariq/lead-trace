@@ -1,8 +1,8 @@
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 import { Resend } from 'resend'
 import { renderLaunchEmail } from './launch-email.template'
 
-const campaign = 'insightiq-launch-2026-09'
+const campaign = 'lead-trace-launch-2026-09'
 const delayBetweenEmailsMs = 600
 
 function requiredEnvironment(name: string) {

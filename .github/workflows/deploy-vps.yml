@@ -5,8 +5,8 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/insightiq-api
-  WORKER_IMAGE_NAME: ${{ github.repository_owner }}/insightiq-worker
+  IMAGE_NAME: ${{ github.repository_owner }}/lead-trace-api
+  WORKER_IMAGE_NAME: ${{ github.repository_owner }}/lead-trace-worker
 
 concurrency:
   group: deploy-api-${{ github.ref_type == 'tag' && 'production' || github.ref }}
@@ -36,18 +36,18 @@ jobs:
   verify:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/insightiq?schema=public
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/lead-trace?schema=public
     services:
       postgres:
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: insightiq
+          POSTGRES_DB: lead-trace
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres -d insightiq"
+          --health-cmd "pg_isready -U postgres -d lead-trace"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -79,13 +79,13 @@ jobs:
         run: npm run db:migrate
 
       - name: Lint
-        run: npm run lint -- --filter=@insightiq/api... --filter=@insightiq/worker
+        run: npm run lint -- --filter=@lead-trace/api... --filter=@lead-trace/worker
 
       - name: Check types
-        run: npm run check-types -- --filter=@insightiq/api... --filter=@insightiq/worker
+        run: npm run check-types -- --filter=@lead-trace/api... --filter=@lead-trace/worker
 
       - name: Build backend
-        run: npm run build -- --filter=@insightiq/api --filter=@insightiq/worker
+        run: npm run build -- --filter=@lead-trace/api --filter=@lead-trace/worker
 
       - name: Run API tests
         working-directory: apps/api
@@ -98,7 +98,7 @@ jobs:
         run: node --test test/*.integration.test.cjs
 
       - name: Run worker tests
-        run: npm run test -- --filter=@insightiq/worker
+        run: npm run test -- --filter=@lead-trace/worker
 
   build-image:
     needs: verify
@@ -168,7 +168,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "docker-compose.yml,nginx/templates"
-          target: insightiq
+          target: lead-trace
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.5
@@ -188,7 +188,7 @@ jobs:
             set -e
             umask 077
 
-            cd "$HOME/insightiq"
+            cd "$HOME/lead-trace"
             for required in POSTGRES_PASSWORD BETTER_AUTH_SECRET RESEND_API_KEY TAVILY_API_KEY DASHSCOPE_API_KEY; do
               printf '%s\n' "$PRODUCTION_ENV" | grep -Eq "^${required}=.+$" || {
                 echo "Missing required production setting: ${required}" >&2

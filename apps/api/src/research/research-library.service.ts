@@ -1,6 +1,6 @@
 import { GoneException, Injectable, NotFoundException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
-import { db } from '@insightiq/db'
+import { db } from '@lead-trace/db'
 import { randomBytes } from 'node:crypto'
 import { AccountContextService, type AuthenticatedSession } from '../auth/account-context.service'
 

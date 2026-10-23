@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import httpx
 
-from insightiq_worker.fetch import UnsafeSourceUrl, ensure_public_http_url, fetch_with_httpx
+from lead_trace_worker.fetch import UnsafeSourceUrl, ensure_public_http_url, fetch_with_httpx
 
 
 PUBLIC_DNS = [(socket.AF_INET, socket.SOCK_STREAM, 6, '', ('93.184.216.34', 443))]

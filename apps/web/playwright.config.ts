@@ -21,7 +21,7 @@ export default defineConfig({
   projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
   webServer: useRealStack ? [
     {
-      command: 'npm run dev --workspace=@insightiq/api',
+      command: 'npm run dev --workspace=@lead-trace/api',
       url: `http://127.0.0.1:${apiPort}/health`,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
@@ -31,7 +31,7 @@ export default defineConfig({
         PORT: String(apiPort),
         E2E_ENABLED: 'true',
         E2E_SEED_SECRET: process.env.E2E_SEED_SECRET || 'e2e-local-secret-ok',
-        DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5432/insightiq?schema=public',
+        DATABASE_URL: process.env.DATABASE_URL || 'postgresql://postgres:postgres@127.0.0.1:5432/lead-trace?schema=public',
         BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET || 'local-better-auth-secret-minimum-32-chars',
         BETTER_AUTH_URL: `http://127.0.0.1:${apiPort}`,
         BETTER_AUTH_TRUSTED_ORIGINS: `http://127.0.0.1:${webPort}`,

@@ -1,5 +1,5 @@
 {
-  "name": "@insightiq/db",
+  "name": "@lead-trace/db",
   "private": true,
   "main": "dist/src/index.js",
   "types": "src/index.ts",

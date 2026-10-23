@@ -1,5 +1,5 @@
 {
-  "name": "@insightiq/api",
+  "name": "@lead-trace/api",
   "private": true,
   "scripts": {
     "dev": "nest start --watch",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@better-auth/core": "^1.7.2",
     "@better-auth/prisma-adapter": "^1.7.2",
-    "@insightiq/db": "*",
+    "@lead-trace/db": "*",
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.0",

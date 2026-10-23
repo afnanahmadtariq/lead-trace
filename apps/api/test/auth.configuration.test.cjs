@@ -151,18 +151,18 @@ test('Tavily discovery settings are bounded and have useful defaults', () => {
 test('authentication email is branded and escapes untrusted content', () => {
   const message = renderAuthEmail({
     kind: 'verification',
-    title: 'Verify <InsightIQ>',
+    title: 'Verify <Lead Trace>',
     message: 'Hello <script>alert(1)</script>',
     actionUrl: 'http://localhost:3000/auth/continue?next=<unsafe>',
   })
 
-  assert.match(message.subject, /^\[InsightIQ\]/)
+  assert.match(message.subject, /^\[Lead Trace\]/)
   assert.doesNotMatch(message.html, /<script>/)
   assert.match(message.html, /&lt;script&gt;/)
   assert.match(message.text, /http:\/\/localhost:3000/)
 
-  const launch = renderLaunchEmail({ name: '<Alex>', actionUrl: 'https://insightiq.example/sign-up?from=<launch>' })
-  assert.match(launch.subject, /InsightIQ is live/)
+  const launch = renderLaunchEmail({ name: '<Alex>', actionUrl: 'https://lead-trace.example/sign-up?from=<launch>' })
+  assert.match(launch.subject, /Lead Trace is live/)
   assert.doesNotMatch(launch.html, /<Alex>/)
   assert.match(launch.html, /&lt;Alex&gt;/)
 })

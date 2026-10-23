@@ -2,10 +2,10 @@ import json
 import unittest
 from unittest.mock import patch
 
-from insightiq_worker.extract import numeric_quantities, rank_evidence_for_brief
-from insightiq_worker.graph_brief import assemble_sections
-from insightiq_worker.llm import polish_brief
-from insightiq_worker.models import RunContext
+from lead_trace_worker.extract import numeric_quantities, rank_evidence_for_brief
+from lead_trace_worker.graph_brief import assemble_sections
+from lead_trace_worker.llm import polish_brief
+from lead_trace_worker.models import RunContext
 
 
 def context():
@@ -29,8 +29,8 @@ class NumericGroundingTest(unittest.TestCase):
         self.assertNotEqual(numeric_quantities('50%'), numeric_quantities('50'))
         self.assertNotEqual(numeric_quantities('$300M'), numeric_quantities('$9.3B'))
 
-    @patch('insightiq_worker.llm.llm_enabled', return_value=True)
-    @patch('insightiq_worker.llm._chat_json')
+    @patch('lead_trace_worker.llm.llm_enabled', return_value=True)
+    @patch('lead_trace_worker.llm._chat_json')
     def test_titles_cannot_authorize_numbers_and_bad_fields_fall_back(self, chat, enabled):
         rows = [row('one', 'Vercel expects its $300 million secondary tender offer to close in November 2025.')]
         ctx = context()
@@ -57,8 +57,8 @@ class NumericGroundingTest(unittest.TestCase):
         self.assertNotIn('$9.3B', prompt)
         self.assertIn('A past date does not prove completion', system)
 
-    @patch('insightiq_worker.llm.llm_enabled', return_value=True)
-    @patch('insightiq_worker.llm._chat_json')
+    @patch('lead_trace_worker.llm.llm_enabled', return_value=True)
+    @patch('lead_trace_worker.llm._chat_json')
     def test_offer_numbers_cannot_authorize_prospect_claim_or_outreach(self, chat, enabled):
         ctx = context().model_copy(update={'goal': 'outreach', 'value_proposition': 'Our fictional product promises a 25% reduction in onboarding friction.'})
         rows = [row('one', 'Vercel released a developer onboarding guide for its platform.', 'launch')]
