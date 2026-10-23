@@ -232,7 +232,8 @@ class EvidenceStageIdempotencyTest(unittest.TestCase):
         self.assertTrue(result)
         self.assertNotIn(FETCH_SOURCES_SQL, connection.executed_sql())
         self.assertNotIn(INSERT_EVIDENCE_SQL, connection.executed_sql())
-        self.assertEqual(connection.commit_count, 1)
+        # Claim commit, brief read commit before synthesis, then the brief + completion commit.
+        self.assertEqual(connection.commit_count, 3)
 
 
 class EvidenceStageHappyPathTest(unittest.TestCase):
@@ -309,7 +310,8 @@ class EvidenceStageSuccessBackoffTest(unittest.TestCase):
         executed_sql = connection.executed_sql()
         self.assertIn(BACKOFF_SQL, executed_sql)
         self.assertGreater(executed_sql.index(BACKOFF_SQL), executed_sql.index(INSERT_EVIDENCE_SQL))
-        self.assertEqual(connection.commit_count, 1)
+        # Claim commit, read commit before model calls, then one commit for inserts + backoff.
+        self.assertEqual(connection.commit_count, 3)
 
 
 class EvidenceStageInsertFailureRollsBackTest(unittest.TestCase):
@@ -434,9 +436,43 @@ class EvidenceStageDegradeOneSourceTest(unittest.TestCase):
         self.assertEqual(len(insert_calls), 1)
         self.assertEqual(insert_calls[0][1][3], 'source-ok')
         self.assertNotIn(FAIL_SQL, connection.executed_sql())
-        self.assertEqual(connection.commit_count, 1)
+        self.assertEqual(connection.commit_count, 3)
 
-    def test_a_different_exception_type_still_propagates_and_fails_the_run(self):
+    def test_api_error_on_one_source_degrades_it_but_run_still_succeeds(self):
+        failing_source = (
+            'source-fail', 'https://example.test/f', 'Fail Title', 'Fail Publisher', 'Fail excerpt', None,
+            {'matches': [{'score': 0.8}]},
+        )
+        connection = FakeConnection(
+            claimed_row=CLAIMED_ROW,
+            counts_row=(2, 0, False),
+            sources_rows=[failing_source, SOURCE_ROW],
+        )
+        ok_response = json.dumps({'claims': [{'claim': 'Acme announced it raised $5 million in a new funding round.', 'signalType': 'funding', 'confidence': 0.9, 'observedAt': None}]})
+        fake_client = FakeModelClient([])
+
+        def create(**kwargs):
+            if 'Fail excerpt' in json.dumps(kwargs.get('messages')):
+                raise ConnectionError('network down')
+            return _FakeResponse(ok_response)
+
+        fake_client.chat.completions.create = create
+        worker = Worker(database_url='postgresql://x', model_client_factory=lambda _config: fake_client)
+
+        with patch.dict(os.environ, {'DASHSCOPE_API_KEY': 'test-key'}):
+            with patch('psycopg.connect', return_value=connection):
+                with self.assertLogs('lead-trace.worker', level='WARNING') as logs:
+                    result = worker.poll_once()
+
+        self.assertTrue(result)
+        self.assertIn('network down', '\n'.join(logs.output))
+        insert_calls = [
+            (sql, params) for kind, sql, params in connection.actions if kind == 'execute' and sql == INSERT_EVIDENCE_SQL
+        ]
+        self.assertEqual([params[3] for _sql, params in insert_calls], ['source-1'])
+        self.assertNotIn(FAIL_SQL, connection.executed_sql())
+
+    def test_api_error_on_every_source_fails_the_run(self):
         connection = FakeConnection(
             claimed_row=CLAIMED_ROW,
             counts_row=(1, 0, False),
@@ -451,7 +487,7 @@ class EvidenceStageDegradeOneSourceTest(unittest.TestCase):
                     result = worker.poll_once()
 
         self.assertTrue(result)
-        self.assertIn('network down', '\n'.join(logs.output))
+        self.assertIn('no evidence claims survived extraction', '\n'.join(logs.output))
         self.assertIn(FAIL_SQL, connection.executed_sql())
         self.assertNotIn(INSERT_EVIDENCE_SQL, connection.executed_sql())
 
@@ -536,9 +572,10 @@ class BriefStageHappyPathTest(unittest.TestCase):
         )
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop('DASHSCOPE_API_KEY', None)
-            brief_id = process_brief_stage(connection, RUN_ID, ORGANIZATION_ID)
+            brief_id, send_email = process_brief_stage(connection, RUN_ID, ORGANIZATION_ID)
 
         self.assertTrue(brief_id)
+        self.assertIsNotNone(send_email)
         executed = connection.executed_sql()
         self.assertTrue(any('INSERT INTO deal_brief' in sql for sql in executed))
         self.assertTrue(any('INSERT INTO notification' in sql for sql in executed))
@@ -553,13 +590,82 @@ class BriefStageHappyPathTest(unittest.TestCase):
         )
         with patch.dict(os.environ, {}, clear=False):
             os.environ.pop('DASHSCOPE_API_KEY', None)
-            brief_id = process_brief_stage(connection, RUN_ID, ORGANIZATION_ID)
+            brief_id, send_email = process_brief_stage(connection, RUN_ID, ORGANIZATION_ID)
 
         self.assertEqual(brief_id, 'brief-existing')
+        self.assertIsNone(send_email)
         executed = connection.executed_sql()
         self.assertFalse(any('INSERT INTO deal_brief' in sql for sql in executed))
         self.assertFalse(any('INSERT INTO notification' in sql for sql in executed))
         self.assertTrue(any('"completedAt" = NOW()' in sql for sql in executed))
+
+
+class WorkerTransactionTest(unittest.TestCase):
+    def test_claim_is_committed_before_stage_work_begins(self):
+        connection = FakeConnection(
+            claimed_row=CLAIMED_ROW,
+            counts_row=(1, 0, False),
+            sources_rows=[SOURCE_ROW],
+        )
+        fake_client = FakeModelClient(
+            [json.dumps({'claims': [{'claim': 'Acme announced it raised $5 million in a new funding round.', 'signalType': 'funding', 'confidence': 0.9, 'observedAt': None}]})]
+        )
+        worker = Worker(database_url='postgresql://x', model_client_factory=lambda _config: fake_client)
+
+        with patch.dict(os.environ, {'DASHSCOPE_API_KEY': 'test-key'}):
+            with patch('psycopg.connect', return_value=connection):
+                worker.poll_once()
+
+        actions = [(kind, sql) for kind, sql, _params in connection.actions]
+        claim_index = actions.index(('execute', CLAIM_SQL))
+        self.assertEqual(actions[claim_index + 1], ('commit', None))
+        self.assertLess(claim_index + 1, actions.index(('execute', COUNTS_SQL)))
+
+    def test_brief_ready_email_is_sent_only_after_commit(self):
+        connection = FakeConnection(
+            claimed_row=CLAIMED_ROW,
+            counts_row=(1, 1, False),
+            evidence_rows=[EVIDENCE_ROW],
+        )
+        commits_at_send: list[int] = []
+        worker = Worker(database_url='postgresql://x')
+
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop('DASHSCOPE_API_KEY', None)
+            with patch(
+                'lead_trace_worker.stages.send_brief_ready_email',
+                side_effect=lambda **_kwargs: commits_at_send.append(connection.commit_count),
+            ):
+                with patch('psycopg.connect', return_value=connection):
+                    worker.poll_once()
+
+        # Sent exactly once, after the final commit that holds the brief and COMPLETE_RUN.
+        self.assertEqual(commits_at_send, [connection.commit_count])
+        last_commit = max(index for index, action in enumerate(connection.actions) if action[0] == 'commit')
+        complete_index = max(
+            index
+            for index, (kind, sql, _params) in enumerate(connection.actions)
+            if kind == 'execute' and '"completedAt" = NOW()' in sql
+        )
+        self.assertGreater(last_commit, complete_index)
+
+    def test_brief_ready_email_failure_does_not_fail_the_run(self):
+        connection = FakeConnection(
+            claimed_row=CLAIMED_ROW,
+            counts_row=(1, 1, False),
+            evidence_rows=[EVIDENCE_ROW],
+        )
+        worker = Worker(database_url='postgresql://x')
+
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop('DASHSCOPE_API_KEY', None)
+            with patch('lead_trace_worker.stages.send_brief_ready_email', side_effect=RuntimeError('smtp down')):
+                with patch('psycopg.connect', return_value=connection):
+                    result = worker.poll_once()
+
+        self.assertTrue(result)
+        self.assertNotIn(FAIL_SQL, connection.executed_sql())
+        self.assertEqual(connection.rollback_count, 0)
 
 
 if __name__ == '__main__':

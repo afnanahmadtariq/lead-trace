@@ -1,3 +1,5 @@
+import type { ResearchEvidenceItem } from './research'
+
 export interface BriefCitation {
   evidence_id: string
   claim: string
@@ -26,20 +28,11 @@ export interface BriefSections {
   urgency_label?: 'High urgency' | 'Moderate' | 'Low'
 }
 
-export interface ResearchEvidenceItem {
-  id: string
-  claim: string
-  signalType: string
-  confidence: number
-  observedAt?: string | null
-  source: { title: string; url: string; publisher?: string | null }
-}
-
 function nonEmptyText(value: unknown): value is string {
   return typeof value === 'string' && Boolean(value.trim())
 }
 
-function publicSourceUrl(value: unknown): value is string {
+export function publicSourceUrl(value: unknown): value is string {
   if (!nonEmptyText(value)) return false
   try { return ['http:', 'https:'].includes(new URL(value).protocol) } catch { return false }
 }

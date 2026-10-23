@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { QRCodeSVG } from 'qrcode.react'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import type { AccountContext } from '../lib/account-context'
-import { apiRequest } from '../lib/api-client'
+import { apiRequest, errorMessage } from '../lib/api-client'
 import { authClient, webCallbackURL } from '../lib/auth-client'
 import { useResendCooldown } from '../lib/use-resend-cooldown'
 import { Button } from './ui/button'
@@ -17,7 +17,6 @@ type Setup = { totpURI: string; backupCodes: string[] }
 type SetupPlan = 'email' | 'authenticator'
 type SetupStep = 'closed' | 'choose' | 'confirm' | 'connect' | 'recovery' | 'complete'
 
-function message(error: { message?: string } | null, fallback: string) { return error?.message || fallback }
 function classes(...values: Array<string | false>) { return values.filter(Boolean).join(' ') }
 
 function SetupFlow({ children }: { children: ReactNode }) {
@@ -127,7 +126,7 @@ export function SecuritySettings({ user, accountDeletion }: { user: AccountConte
     const action = plan === 'email' ? 'enable-email' : 'enable-authenticator'
     begin(action)
     const result = await authClient.twoFactor.enable({ method: plan === 'email' ? 'otp' : 'totp', password: user.hasPassword ? setupPassword : undefined })
-    if (result.error) setError(message(result.error, plan === 'email' ? 'Email two-factor authentication could not be enabled.' : 'Authenticator setup could not be started.'))
+    if (result.error) setError(errorMessage(result.error, plan === 'email' ? 'Email two-factor authentication could not be enabled.' : 'Authenticator setup could not be started.'))
     else if (plan === 'email') { setEnabled(true); setSetupPassword(''); setSetupConfirmationCode(''); setupConfirmationCooldown.reset(); setStep('complete'); router.refresh() }
     else if (result.data?.method === 'totp') { setSetup(result.data); setSetupPassword(''); setSetupConfirmationCode(''); setupConfirmationCooldown.reset(); setStep('connect') }
     else setError('Authenticator setup was not returned. Please try again.')
@@ -139,7 +138,7 @@ export function SecuritySettings({ user, accountDeletion }: { user: AccountConte
     if (!setup) return
     begin('verify-authenticator')
     const result = await authClient.twoFactor.verifyTotp({ code: verificationCode })
-    if (result.error) setError(message(result.error, 'That authenticator code is not valid.'))
+    if (result.error) setError(errorMessage(result.error, 'That authenticator code is not valid.'))
     else { setEnabled(true); setAuthenticatorEnabled(true); setRecoveryCodes(setup.backupCodes); setVerificationCode(''); setStep('recovery'); router.refresh() }
     setPending(null)
   }
@@ -162,7 +161,7 @@ export function SecuritySettings({ user, accountDeletion }: { user: AccountConte
     }
     begin('disable-2fa')
     const result = await authClient.twoFactor.disable({ password: user.hasPassword ? disablePassword : undefined })
-    if (result.error) setError(message(result.error, 'Two-factor authentication could not be disabled.'))
+    if (result.error) setError(errorMessage(result.error, 'Two-factor authentication could not be disabled.'))
     else { setEnabled(false); setAuthenticatorEnabled(false); setRecoveryCodes([]); setDisablePassword(''); setDisableConfirmationCode(''); disableConfirmationCooldown.reset(); setSuccess('Two-factor authentication has been disabled.'); router.refresh() }
     setPending(null)
   }
@@ -170,7 +169,7 @@ export function SecuritySettings({ user, accountDeletion }: { user: AccountConte
   async function generateRecoveryCodes(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); begin('recovery')
     const result = await authClient.twoFactor.generateBackupCodes({ password: user.hasPassword ? recoveryPassword : undefined })
-    if (result.error) setError(message(result.error, 'New recovery codes could not be generated.'))
+    if (result.error) setError(errorMessage(result.error, 'New recovery codes could not be generated.'))
     else { setRecoveryCodes(result.data?.backupCodes || []); setRecoveryPassword(''); setPlan('authenticator'); setAddingAuthenticator(true); setStep('recovery') }
     setPending(null)
   }
@@ -182,7 +181,7 @@ export function SecuritySettings({ user, accountDeletion }: { user: AccountConte
       callbackURL: webCallbackURL('/'),
       password: user.hasPassword ? accountDeletionPassword : undefined,
     })
-    if (result.error) setError(message(result.error, 'The account deletion confirmation could not be sent.'))
+    if (result.error) setError(errorMessage(result.error, 'The account deletion confirmation could not be sent.'))
     else {
       setAccountDeletionConfirmation('')
       setAccountDeletionPassword('')

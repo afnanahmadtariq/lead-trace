@@ -15,7 +15,8 @@ function secondsUntilReady(lastSentAt: number) {
 
 function readStoredTime(storageKey?: string) {
   if (!storageKey) return null
-  const value = Number(window.localStorage.getItem(storageKey))
+  let value = 0
+  try { value = Number(window.localStorage.getItem(storageKey)) } catch { /* Cooldown still works for this visit without storage. */ }
   return Number.isFinite(value) && value > 0 ? value : null
 }
 
@@ -26,8 +27,10 @@ export function useResendCooldown({ startLocked = false, storageKey }: ResendCoo
 
   const remember = useCallback((sentAt: number | null) => {
     if (storageKey) {
-      if (sentAt) window.localStorage.setItem(storageKey, String(sentAt))
-      else window.localStorage.removeItem(storageKey)
+      try {
+        if (sentAt) window.localStorage.setItem(storageKey, String(sentAt))
+        else window.localStorage.removeItem(storageKey)
+      } catch { /* Keep the cooldown in memory when storage is unavailable. */ }
     }
     setLastSentAt(sentAt)
     setSecondsRemaining(sentAt ? secondsUntilReady(sentAt) : 0)

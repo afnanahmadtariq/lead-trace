@@ -99,7 +99,11 @@ export class WorkspaceSettingsService {
   }
 
   async deleteWorkspace(session: AuthenticatedSession, confirmation?: string) {
-    const membership = await this.assertAdmin(session)
+    const membership = await this.accounts.assertActiveWorkspace(session)
+    // Better Auth can store several roles comma-separated.
+    if (!membership.role.split(',').includes('owner')) {
+      throw new ForbiddenException('Only the workspace owner can delete this workspace')
+    }
     if (confirmation !== membership.organization.name) {
       throw new BadRequestException('Type the workspace name to confirm deleting this workspace')
     }

@@ -93,8 +93,11 @@ export class CalendarService {
     const updated = { access_token: result.access_token!, refresh_token: result.refresh_token || tokens.refresh_token, expiresAt: Date.now() + result.expires_in! * 1000 }
     // Compare-and-swap avoids recreating a disconnected connection.
     const saved = await db.calendarConnection.updateMany({ where: { id: connection.id, encryptedTokens: connection.encryptedTokens }, data: { encryptedTokens: encrypt(updated, context) } })
-    if (!saved.count) throw new ConflictException('Calendar connection changed; try again')
-    return updated.access_token
+    if (saved.count) return updated.access_token
+    // A concurrent request refreshed first; reuse its token instead of failing.
+    const current = await db.calendarConnection.findUnique({ where: { organizationId_userId: { organizationId, userId } } })
+    if (!current) throw new ConflictException('Calendar connection changed; try again')
+    return decrypt<Tokens>(current.encryptedTokens, context).access_token
   }
 
   async disconnect(session: AuthenticatedSession) {

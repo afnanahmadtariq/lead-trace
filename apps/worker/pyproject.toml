@@ -9,14 +9,12 @@ dependencies = [
   "langgraph>=0.2",
   "httpx>=0.27",
   "beautifulsoup4>=4.12",
-  "crawl4ai>=0.4",
 ]
 
 [project.optional-dependencies]
 llm = ["openai>=1.40"]
 
 [project.scripts]
-lead-trace-demo-collect = "lead_trace_worker.demo:main"
 lead-trace-process-run = "lead_trace_worker.process_run:main"
 
 [build-system]

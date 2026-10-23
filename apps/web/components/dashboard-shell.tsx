@@ -44,7 +44,7 @@ export function DashboardShell({
 
   useEffect(() => {
     queueMicrotask(() => {
-      setCollapsed(window.localStorage.getItem('lead-trace-sidebar-collapsed') === 'true')
+      try { setCollapsed(window.localStorage.getItem('lead-trace-sidebar-collapsed') === 'true') } catch { /* Sidebar stays expanded without browser storage. */ }
     })
   }, [])
 
@@ -53,11 +53,9 @@ export function DashboardShell({
   }, [])
 
   function toggleSidebar() {
-    setCollapsed((current) => {
-      const next = !current
-      window.localStorage.setItem('lead-trace-sidebar-collapsed', String(next))
-      return next
-    })
+    const next = !collapsed
+    setCollapsed(next)
+    try { window.localStorage.setItem('lead-trace-sidebar-collapsed', String(next)) } catch { /* Keep the choice for this visit. */ }
   }
 
   function selectNotification(item: InsightNotification) {

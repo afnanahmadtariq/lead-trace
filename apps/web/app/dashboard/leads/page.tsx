@@ -5,12 +5,11 @@ import { ButtonLink } from '../../../components/ui/button'
 import { WorkspaceHeader, WorkspacePage, WorkspaceSection } from '../../../components/workspace/workspace-page'
 import { cardClass, label } from '../../../lib/crm'
 import type { LeadCapabilities, LeadSearchPage } from '../../../lib/leads'
-import { authenticatedFetch } from '../../../lib/server-auth'
+import { requireFetch } from '../../../lib/server-auth'
 
 export default async function Page({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const page = Math.min(200000, Math.max(1, Math.floor(Number((await searchParams).page) || 1)))
-  const [capabilities, searches] = await Promise.all([authenticatedFetch<LeadCapabilities>('/leads/capabilities'), authenticatedFetch<LeadSearchPage>(`/leads/searches?page=${page}`)])
-  if (!capabilities || !searches) return null
+  const [capabilities, searches] = await Promise.all([requireFetch<LeadCapabilities>('/leads/capabilities'), requireFetch<LeadSearchPage>(`/leads/searches?page=${page}`)])
   return <WorkspacePage><WorkspaceHeader eyebrow="Lead generation" title="Find your next sales conversation." lead="Describe your ideal buyer. Review public source evidence, qualify the fit, and save the right people into CRM."/>
     <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] items-start gap-6 max-[1000px]:grid-cols-1">
       <WorkspaceSection title="Start a lead search" description="Begin with a specific role and market."><div className={cardClass}><LeadSearchForm capabilities={capabilities}/></div></WorkspaceSection>

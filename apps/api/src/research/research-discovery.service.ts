@@ -7,6 +7,7 @@ import {
   deduplicateDiscoveredSources,
   filterDiscoveryBatches,
   type DiscoveredSource,
+  type ProspectDiscoveryInput,
 } from './research-discovery'
 import { WikipediaDiscoveryService } from './wikipedia-discovery.service'
 
@@ -41,18 +42,20 @@ export class ResearchDiscoveryService {
     })
     if (claimed.count !== 1) throw new ConflictException('Research run has already been claimed')
 
+    // Research the identity submitted with this run; an email-matched CRM contact may hold older details.
+    const prospect = { ...run.prospect, ...(run.inputSnapshot as { prospect?: Partial<ProspectDiscoveryInput> } | null)?.prospect }
     try {
-      const queries = buildDiscoveryQueries(run.prospect)
+      const queries = buildDiscoveryQueries(prospect)
       const settled = await Promise.allSettled(queries.map((item) => this.tavily.search({ ...item, sessionId: run.id })))
       const batches = settled.flatMap((result) => result.status === 'fulfilled' ? [result.value] : [])
       const failedQueries = settled.length - batches.length
-      const relevantBatches = filterDiscoveryBatches(batches, run.prospect)
+      const relevantBatches = filterDiscoveryBatches(batches, prospect)
       let sources: DiscoveredSource[] = relevantBatches.length ? deduplicateDiscoveredSources(relevantBatches) : []
       let wikipediaSources = 0
 
       if (!sources.length) {
         this.log.warn('Tavily returned no sources for run=%s; falling back to Wikipedia', run.id)
-        const fallback = await this.wikipedia.discover(run.prospect)
+        const fallback = await this.wikipedia.discover(prospect)
         const fallbackBatches = fallback.map((source) => ({
           kind: 'wikipedia-fallback',
           query: source.query,
@@ -68,7 +71,7 @@ export class ResearchDiscoveryService {
             score: source.score,
           }],
         }))
-        sources = deduplicateDiscoveredSources(filterDiscoveryBatches(fallbackBatches, run.prospect))
+        sources = deduplicateDiscoveredSources(filterDiscoveryBatches(fallbackBatches, prospect))
         wikipediaSources = sources.length
       }
 

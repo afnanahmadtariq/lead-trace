@@ -97,7 +97,7 @@ export const auth = betterAuth({
             })
           }
           for (const successor of policy.successorPromotions) {
-            await tx.member.update({ where: { id: successor.memberId }, data: { role: 'admin' } })
+            await tx.member.update({ where: { id: successor.memberId }, data: { role: successor.role } })
           }
           if (policy.soleWorkspaceIds.length) {
             await tx.organization.deleteMany({ where: { id: { in: policy.soleWorkspaceIds } } })

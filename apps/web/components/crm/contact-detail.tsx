@@ -3,6 +3,7 @@
 import { ArrowLeft, ArrowRight, CalendarDays, CheckCheck, FileText, Mail, Phone, Plus, Search, StickyNote, Target, UserRound } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
+import { publicSourceUrl } from '../../lib/brief'
 import { cardClass, label, money, type CalendarStatus, type ContactDetail as Detail, type Person } from '../../lib/crm'
 import { Button, ButtonLink } from '../ui/button'
 import { Modal } from '../ui/modal'
@@ -51,7 +52,7 @@ export function ContactDetail({ contact, members, calendar, userId }: { contact:
           {nextTask ? <Link href="#contact-follow-ups" className="inline-flex items-center gap-2 text-sm font-semibold text-brand">View follow-ups<ArrowRight size={15}/></Link> : <Button size="xs" onClick={() => setAction('task')}>Set a next step<ArrowRight size={15}/></Button>}
         </section>
 
-        {Boolean(contact.leadCandidates?.length) && <div className="max-[900px]:order-2"><WorkspaceSection title="Lead discovery" description="Source context preserved from your reviewed shortlist."><div className={`${cardClass} grid gap-4`}>{contact.leadCandidates?.map((lead) => <article key={lead.id}><Link className="text-sm font-semibold text-brand" href={`/dashboard/leads/${lead.search.id}`}>{lead.search.title}</Link><blockquote className="my-3 border-l-2 border-lt-200 pl-3 text-sm leading-relaxed text-lt-600">{lead.quote}</blockquote><a className="text-xs text-brand" href={lead.source.url} target="_blank" rel="noreferrer">{lead.source.title} ↗</a></article>)}</div></WorkspaceSection></div>}
+        {Boolean(contact.leadCandidates?.length) && <div className="max-[900px]:order-2"><WorkspaceSection title="Lead discovery" description="Source context preserved from your reviewed shortlist."><div className={`${cardClass} grid gap-4`}>{contact.leadCandidates?.map((lead) => <article key={lead.id}><Link className="text-sm font-semibold text-brand" href={`/dashboard/leads/${lead.search.id}`}>{lead.search.title}</Link><blockquote className="my-3 border-l-2 border-lt-200 pl-3 text-sm leading-relaxed text-lt-600">{lead.quote}</blockquote>{publicSourceUrl(lead.source.url) ? <a className="text-xs text-brand" href={lead.source.url} target="_blank" rel="noreferrer">{lead.source.title} ↗</a> : <span className="text-xs text-lt-500">{lead.source.title}</span>}</article>)}</div></WorkspaceSection></div>}
 
         <div className="max-[900px]:order-2"><WorkspaceSection title="Deals" description={`${openDeals.length} open ${openDeals.length === 1 ? 'opportunity' : 'opportunities'} with this contact.`} action={<Link href="/dashboard/pipeline">View pipeline →</Link>}>
           <div className={`${cardClass} grid gap-3`}>
