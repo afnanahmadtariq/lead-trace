@@ -43,6 +43,10 @@ test('lead search to qualified CRM contact preserves provenance and tenant isola
     assert.equal(result.status, 'completed'); assert.equal(result.candidates.length, 1); assert.equal(result.sources.length, 1); assert.equal(result.rejectedCandidates, 1)
     const candidate = result.candidates[0]
     assert.equal(candidate.source.url, 'https://northstar.example.com/team')
+    assert.deepEqual(candidate.missingCriteria, [])
+    assert.equal(candidate.qualification.version, 2)
+    assert.equal(candidate.qualification.evidence.location.sourceId, result.sources[0].id)
+    assert.equal(candidate.qualification.evidence.role.quote, candidate.quote)
     await assert.rejects(() => leads.discover(a, search.id), /already running/)
     const details = { name: candidate.name, companyName: candidate.companyName, email: 'maya@example.com', lifecycle: 'qualified' }
     await assert.rejects(() => leads.convert(a, candidate.id, details), /Qualify/)
@@ -53,6 +57,7 @@ test('lead search to qualified CRM contact preserves provenance and tenant isola
     const repeated = await leads.convert(a, candidate.id, details)
     assert.equal(repeated.prospectId, converted.prospectId)
     assert.equal((await crm.list(a)).total, 1)
+    assert.deepEqual((await crm.detail(a, converted.prospectId)).leadCandidates[0].qualification, candidate.qualification)
     await assert.rejects(() => leads.review(a, candidate.id, 'dismissed'), /already been saved/)
     // Repeated discoveries of the same person reuse the CRM identity, including concurrent promotions.
     state.name = 'Alex River'; state.company = 'Southstar'

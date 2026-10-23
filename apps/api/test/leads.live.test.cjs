@@ -28,14 +28,19 @@ test('live providers discover a source-backed lead and carry it into CRM researc
     await db.user.create({ data: { id: userId, name: 'Live smoke', email: `live-${id}@example.test` } })
     await db.organization.create({ data: { id: organizationId, name: 'Leadgen live smoke', slug: organizationId, createdAt: new Date() } })
     await db.member.create({ data: { id: randomUUID(), organizationId, userId, role: 'owner', createdAt: new Date() } })
-    const search = await leads.create(session, { title: 'CRM software leaders live check', industry: 'software', role: 'CEO', location: 'United States', keywords: 'Salesforce' })
+    const search = await leads.create(session, { title: 'Austin agency founders live check', industry: 'digital marketing agency', role: 'Founder', location: 'Austin' })
     await leads.discover(session, search.id)
     const result = await leads.get(session, search.id)
     console.log(`Live discovery: ${result.sources.length} sources; ${result.candidates.length} grounded leads; ${result.rejectedCandidates} rejected extractions; ${result.failedQueries} failed queries`)
     assert.equal(result.status, 'completed')
     assert.ok(result.sources.length > 0, 'Live provider must return source pages')
-    assert.ok(result.candidates.length > 0, 'Live extraction must return at least one grounded person/company')
-    const candidate = result.candidates[0]
+    const candidate = result.candidates.find((lead) => lead.qualification?.version === 2 && !lead.missingCriteria.length && !lead.qualification.issues.length)
+    assert.ok(candidate, 'Live discovery must find a buyer with quoted support for role, industry and actual geography')
+    for (const key of ['industry', 'role', 'location']) {
+      const proof = candidate.qualification.evidence[key]
+      const source = result.sources.find((entry) => entry.id === proof.sourceId)
+      assert.ok(source && source.excerpt.replace(/\s+/g, ' ').includes(proof.quote.replace(/\s+/g, ' ')), `${key} must retain an exact quote from a saved source`)
+    }
     await leads.review(session, candidate.id, 'qualified')
     const converted = await leads.convert(session, candidate.id, { name: candidate.name, companyName: candidate.companyName })
     const contact = await crm.detail(session, converted.prospectId)

@@ -67,7 +67,7 @@ export class LeadsService {
       const settled = await Promise.allSettled(queries.map((query) => this.tavily.search({ ...query, sessionId: id })))
       const batches = settled.flatMap((result) => result.status === 'fulfilled' ? [result.value] : [])
       if (!batches.length) throw new BadGatewayException('Web discovery is unavailable. Retry this search.')
-      const sources = deduplicateDiscoveredSources(batches).filter((source) => source.score >= 0.3 && source.excerpt && publicSourceUrl(source.url)).slice(0, 18).map((source, index) => ({ id: `s${index + 1}`, url: publicSourceUrl(source.url)!, title: source.title, publisher: source.publisher, excerpt: source.excerpt!, queries: [...new Set(source.matches.map((match) => match.query))] }))
+      const sources = deduplicateDiscoveredSources(batches).filter((source) => source.score >= 0.3 && source.excerpt && publicSourceUrl(source.url)).slice(0, 18).map((source, index) => ({ id: `s${index + 1}`, url: publicSourceUrl(source.url)!, title: source.title, publisher: source.publisher, excerpt: source.excerpt!, publishedAt: source.publishedAt, queries: [...new Set(source.matches.map((match) => match.query))] }))
       const extracted = sources.length ? await this.extraction.extract(sources, criteria) : { candidates: [], rejected: 0 }
       return await db.$transaction(async (tx) => {
         const saved = await tx.leadSearch.updateMany({ where: { id, organizationId, status: 'running', attemptToken, lockExpiresAt: { gt: new Date() } }, data: { status: 'completed', completedAt: new Date(), lockExpiresAt: null, attemptToken: null, queries: queries as unknown as Prisma.InputJsonValue, failedQueries: queries.length - batches.length, rejectedCandidates: extracted.rejected } })
@@ -75,12 +75,13 @@ export class LeadsService {
         const sourceIds = new Map<string, string>()
         for (const source of sources) {
           const sourceId = randomUUID(); sourceIds.set(source.id, sourceId)
-          await tx.leadSource.create({ data: { ...source, id: sourceId, organizationId, searchId: id } })
+          await tx.leadSource.create({ data: { id: sourceId, organizationId, searchId: id, url: source.url, title: source.title, publisher: source.publisher, excerpt: source.excerpt, queries: source.queries } })
         }
         for (const candidate of extracted.candidates) {
           const sourceId = sourceIds.get(candidate.sourceId)
           if (!sourceId) throw new BadGatewayException('Lead source reference was not found')
-          await tx.leadCandidate.create({ data: { ...candidate, sourceId, organizationId, searchId: id } })
+          const qualification = { ...candidate.qualification, evidence: Object.fromEntries(Object.entries(candidate.qualification.evidence).map(([key, proof]) => [key, { ...proof, sourceId: sourceIds.get(proof.sourceId)! }])) }
+          await tx.leadCandidate.create({ data: { ...candidate, qualification, sourceId, organizationId, searchId: id } })
         }
         return { id, status: 'completed', candidatesFound: extracted.candidates.length }
       }, { timeout: 10000 })

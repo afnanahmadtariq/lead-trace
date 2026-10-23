@@ -539,6 +539,7 @@ model LeadCandidate {
   quote           String
   matchedCriteria String[]
   missingCriteria String[]
+  qualification   Json?
   status          String       @default("new")
   reviewedById    String?
   reviewedBy      User?        @relation(fields: [reviewedById], references: [id], onDelete: SetNull)

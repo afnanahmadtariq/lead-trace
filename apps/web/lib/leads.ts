@@ -1,6 +1,8 @@
 export type LeadCapabilities = { discoveryConfigured: boolean; extractionConfigured: boolean; maxCandidates: number; queriesPerSearch: number }
 export type LeadSource = { id: string; url: string; title: string; excerpt: string; publisher: string; retrievedAt: string; queries: string[] }
-export type LeadCandidate = { id: string; name: string; companyName: string; jobTitle: string | null; quote: string; matchedCriteria: string[]; missingCriteria: string[]; status: 'new' | 'qualified' | 'dismissed' | 'converted'; source: LeadSource; prospectId: string | null; prospect: { id: string; name: string } | null }
+export type LeadQualification = { version: 2; checkedAt: string; issues: string[]; evidence: Record<string, { sourceId: string; quote: string }> }
+export type LeadCandidate = { id: string; name: string; companyName: string; jobTitle: string | null; quote: string; matchedCriteria: string[]; missingCriteria: string[]; qualification: LeadQualification | null; status: 'new' | 'qualified' | 'dismissed' | 'converted'; source: LeadSource; prospectId: string | null; prospect: { id: string; name: string } | null }
+export function sourceSupported(candidate: LeadCandidate) { return candidate.qualification?.version === 2 && candidate.missingCriteria.length === 0 && candidate.qualification.issues.length === 0 }
 export type LeadSearch = { id: string; title: string; industry: string; role: string; location: string | null; keywords: string | null; status: 'queued' | 'running' | 'completed' | 'failed' | 'cancelled'; errorMessage: string | null; createdAt: string; lockExpiresAt: string | null; attemptCount: number; failedQueries: number; rejectedCandidates: number; _count?: { sources: number; candidates: number } }
 export type LeadSearchDetail = LeadSearch & { interrupted?: boolean; sources: LeadSource[]; candidates: LeadCandidate[] }
 export type LeadSearchPage = { items: LeadSearch[]; total: number; page: number; pageSize: number }

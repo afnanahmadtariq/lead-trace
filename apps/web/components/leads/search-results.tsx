@@ -5,18 +5,19 @@ import { useEffect, useRef, useState } from 'react'
 import { ApiError, apiRequest } from '../../lib/api-client'
 import { cardClass, controlClass, label, type ContactPage, type Person } from '../../lib/crm'
 import type { LeadCandidate, LeadCapabilities, LeadSearchDetail } from '../../lib/leads'
+import { sourceSupported } from '../../lib/leads'
 import { MutationForm, OwnerField, text } from '../crm/forms'
 import { LocalTime } from '../crm/local-time'
 import { Button, ButtonLink } from '../ui/button'
 import { Field } from '../ui/form-field'
 import { Modal } from '../ui/modal'
 
-const filters = ['all', 'new', 'qualified', 'converted', 'dismissed'] as const
-const statusLabel = (value: string) => value === 'converted' ? 'Saved to CRM' : label(value)
+const filters = ['matches', 'review', 'all', 'new', 'qualified', 'converted', 'dismissed'] as const
+const statusLabel = (value: string) => value === 'converted' ? 'Saved to CRM' : value === 'matches' ? 'Source-supported matches' : value === 'review' ? 'Needs review' : label(value)
 
 export function LeadSearchResults({ search, members, capabilities }: { search: LeadSearchDetail; members: Person[]; capabilities: LeadCapabilities }) {
   const router = useRouter(), started = useRef(false)
-  const [filter, setFilter] = useState<typeof filters[number]>('all'), [busy, setBusy] = useState(''), [error, setError] = useState(''), [selected, setSelected] = useState<LeadCandidate | null>(null)
+  const [filter, setFilter] = useState<typeof filters[number]>('matches'), [busy, setBusy] = useState(''), [error, setError] = useState(''), [selected, setSelected] = useState<LeadCandidate | null>(null)
   const ready = capabilities.discoveryConfigured && capabilities.extractionConfigured
   const expired = Boolean(search.interrupted)
   const retryable = (search.status === 'failed' || expired) && search.attemptCount < 5
@@ -44,9 +45,11 @@ export function LeadSearchResults({ search, members, capabilities }: { search: L
     catch (error) { setError(error instanceof Error ? error.message : 'Could not review lead') }
     finally { setBusy('') }
   }
-  const candidates = search.candidates.filter((candidate) => filter === 'all' || candidate.status === filter)
+  const inFilter = (candidate: LeadCandidate, view: typeof filters[number]) => view === 'all' || (view === 'matches' ? sourceSupported(candidate) : view === 'review' ? !sourceSupported(candidate) : candidate.status === view)
+  const candidates = search.candidates.filter((candidate) => inFilter(candidate, filter))
+  const supported = search.candidates.filter(sourceSupported).length
   return <>
-    <div className={`${cardClass} flex flex-wrap items-center justify-between gap-4`}><div><span className="inline-flex items-center gap-2 text-sm font-semibold text-brand">{['queued', 'running'].includes(search.status) ? <LoaderCircle className="animate-spin" size={17}/> : <Search size={17}/>} {label(search.status)}</span><p className="mt-2 mb-0 text-xs text-lt-500">{search.sources.length} source pages · {search.candidates.length} suggested leads · Attempt {search.attemptCount}/5</p></div><div className="flex flex-wrap gap-2">{retryable && <Button onClick={discover} disabled={Boolean(busy) || !ready}>Retry search</Button>}{['queued', 'running', 'failed'].includes(search.status) && <Button variant="secondary" disabled={busy === 'cancel'} onClick={async () => {
+    <div className={`${cardClass} flex flex-wrap items-center justify-between gap-4`}><div><span className="inline-flex items-center gap-2 text-sm font-semibold text-brand">{['queued', 'running'].includes(search.status) ? <LoaderCircle className="animate-spin" size={17}/> : <Search size={17}/>} {label(search.status)}</span><p className="mt-2 mb-0 text-xs text-lt-500">{search.sources.length} source pages · {supported} source-supported matches · {search.candidates.length - supported} need review · Attempt {search.attemptCount}/5</p></div><div className="flex flex-wrap gap-2">{retryable && <Button onClick={discover} disabled={Boolean(busy) || !ready}>Retry search</Button>}{['queued', 'running', 'failed'].includes(search.status) && <Button variant="secondary" disabled={busy === 'cancel'} onClick={async () => {
       setBusy('cancel'); setError('')
       try { await apiRequest(`/leads/searches/${search.id}/cancel`, { method: 'POST' }); router.refresh() }
       catch (error) { setError(error instanceof Error ? error.message : 'Could not cancel search') }
@@ -57,11 +60,12 @@ export function LeadSearchResults({ search, members, capabilities }: { search: L
     {expired && <p role="status" className="text-sm text-lt-600">This search was interrupted. Retry to safely start a new attempt.</p>}
     {search.failedQueries > 0 && <p className="text-sm text-lt-600">{search.failedQueries} of 3 discovery queries failed. These results cover the successful queries only.</p>}
     {search.status === 'completed' && <>
-      <div className="flex flex-wrap gap-2" aria-label="Filter leads">{filters.map((value) => <Button size="xs" variant={filter === value ? 'primary' : 'secondary'} key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{value === 'all' ? 'All' : statusLabel(value)} · {value === 'all' ? search.candidates.length : search.candidates.filter((candidate) => candidate.status === value).length}</Button>)}</div>
-      <p className="m-0 text-xs leading-relaxed text-lt-500">Source coverage shows which requested terms appear in the quoted context. It does not verify company size, current employment, budget, or intent. Open the original page before qualifying a lead.</p>
+      <div className="flex flex-wrap gap-2" aria-label="Filter leads">{filters.map((value) => <Button size="xs" variant={filter === value ? 'primary' : 'secondary'} key={value} aria-pressed={filter === value} onClick={() => setFilter(value)}>{statusLabel(value)} · {search.candidates.filter((candidate) => inFilter(candidate, value)).length}</Button>)}</div>
+      <p className="m-0 text-xs leading-relaxed text-lt-500">Matches have quoted support for each requested criterion. Missing evidence and older dated sources go into Needs review. These are prospective buyers, not confirmed interest or verified contact details. Check the original pages before outreach.</p>
       <div className="grid grid-cols-2 items-start gap-4 max-[1100px]:grid-cols-1">{candidates.map((candidate) => <article key={candidate.id} className={`${cardClass} grid min-w-0 gap-4`}>
         <header className="flex items-start justify-between gap-3"><div><h2 className="m-0 text-xl text-lt-900">{candidate.name}</h2><p className="mt-1 mb-0 text-sm text-lt-600">{candidate.jobTitle ? `${candidate.jobTitle} · ` : ''}{candidate.companyName}</p></div><span className="shrink-0 rounded-full bg-lt-100 px-3 py-1 text-xs text-brand">{statusLabel(candidate.status)}</span></header>
-        <div className="grid gap-2"><p className="m-0 text-xs font-semibold text-lt-700">Source coverage · {candidate.matchedCriteria.length}/{candidate.matchedCriteria.length + candidate.missingCriteria.length} criteria</p><div className="flex flex-wrap gap-2">{candidate.matchedCriteria.map((key) => <span className="inline-flex items-center gap-1 rounded-full bg-lt-100 px-2 py-1 text-xs text-brand" key={key}><Check size={12}/>{label(key)}</span>)}</div>{candidate.missingCriteria.length > 0 && <p className="m-0 text-xs text-lt-500">Unconfirmed in this quote: {candidate.missingCriteria.map(label).join(', ')}.</p>}</div>
+        <div className="grid gap-2"><p className="m-0 text-xs font-semibold text-lt-700">{sourceSupported(candidate) ? 'Source-supported match' : 'Needs review'} · {candidate.qualification?.version === 2 ? candidate.matchedCriteria.length : 0}/{candidate.matchedCriteria.length + candidate.missingCriteria.length} criteria</p><div className="flex flex-wrap gap-2">{candidate.qualification?.version === 2 && candidate.matchedCriteria.map((key) => <span className="inline-flex items-center gap-1 rounded-full bg-lt-100 px-2 py-1 text-xs text-brand" key={key}><Check size={12}/>{label(key)}</span>)}</div>{candidate.missingCriteria.length > 0 && <p className="m-0 text-xs text-lt-500">Unconfirmed: {candidate.missingCriteria.map(label).join(', ')}.</p>}{!candidate.qualification && <p className="m-0 text-xs text-lt-500">Saved before criterion evidence checks. Run a new search to reassess this candidate.</p>}{candidate.qualification?.issues.map((issue) => <p className="m-0 text-xs text-lt-500" key={issue}>{issue}.</p>)}</div>
+        {candidate.qualification && <details><summary className="cursor-pointer text-xs font-semibold text-brand">Why this person matches</summary><div className="mt-3 grid gap-3">{Object.entries(candidate.qualification.evidence).map(([key, proof]) => { const source = search.sources.find((source) => source.id === proof.sourceId); return <div key={key} className="text-xs leading-relaxed text-lt-600"><strong>{label(key)}</strong><p className="my-1 break-words">{proof.quote}</p>{source && <a href={source.url} target="_blank" rel="noreferrer" className="text-brand underline">{source.publisher}</a>}</div> })}</div></details>}
         <blockquote className="m-0 border-l-2 border-brand/40 bg-lt-50 p-4 text-sm leading-relaxed break-words text-lt-700">“{candidate.quote}”</blockquote>
         <div><a className="inline-flex items-center gap-1 break-words text-sm font-semibold text-brand" href={candidate.source.url} target="_blank" rel="noreferrer">{candidate.source.title}<ArrowUpRight size={15}/></a><p className="mt-1 mb-0 text-xs text-lt-500">{candidate.source.publisher} · Retrieved <LocalTime value={candidate.source.retrievedAt} dateOnly/></p></div>
         <footer className="flex flex-wrap gap-2">{candidate.status === 'converted' && candidate.prospectId ? <ButtonLink href={`/dashboard/contacts/${candidate.prospectId}`}>Open CRM contact</ButtonLink> : <>

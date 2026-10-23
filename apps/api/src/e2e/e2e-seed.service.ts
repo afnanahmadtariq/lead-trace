@@ -162,6 +162,7 @@ export class E2eSeedService {
       } })
       const lead = await transaction.leadCandidate.create({ data: {
         organizationId, searchId: leadSearch.id, sourceId: leadSource.id, identityKey: 'seeded-maya-northstar', name: 'Maya Chen', companyName: 'Northstar', jobTitle: 'Head of Sales', quote: leadSource.excerpt, matchedCriteria: ['industry', 'role', 'location'], missingCriteria: [],
+        qualification: { version: 2, checkedAt: now.toISOString(), issues: [], evidence: Object.fromEntries(['industry', 'role', 'location'].map((key) => [key, { sourceId: leadSource.id, quote: leadSource.excerpt }])) },
       } })
 
       return {
