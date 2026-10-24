@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-24T04:38:24.342786+00:00",
+  "checkedAt": "2026-10-24T04:43:13.335064+00:00",
   "baseCommit": "5e37a0c296916207900f3faa9221e7624cbbb4c0",
   "overallStatus": "live_verification_pending",
   "scope": "Repairs for the four findings in backend-live-api-audit.json and non-regression checks. Production configuration and deployment were not changed.",
@@ -135,7 +135,49 @@
         "connectionPreserved": true
       },
       "scope": "Authenticated requests to the running local backend using the existing locally issued app session; real Google Calendar event creation and read-back. No attendees or invitations. User connection preserved.",
-      "timePrecision": "Google returned event times at second precision. The initial fixture included milliseconds; the fixture was aligned to seconds and the complete journey passed on rerun."
+      "timePrecision": "Google returned event times at second precision. The initial fixture included milliseconds; the fixture was aligned to seconds and the complete journey passed on rerun.",
+      "latestPermissionsRecheck": {
+        "checkedAt": "2026-10-24T04:42:54.315Z",
+        "checks": [
+          {
+            "name": "calendar_status",
+            "status": 200,
+            "configured": true,
+            "connected": true
+          },
+          {
+            "name": "event_created",
+            "status": 201,
+            "synced": true
+          },
+          {
+            "name": "google_read_back",
+            "status": 200,
+            "confirmed": true,
+            "attendeeCount": 0,
+            "exactTimes": true
+          },
+          {
+            "name": "idempotent_retry",
+            "status": 201,
+            "meetingCount": 1,
+            "sameEvent": true
+          },
+          {
+            "name": "crm_persistence",
+            "status": 200,
+            "syncedMeetingCount": 1
+          }
+        ],
+        "cleanup": {
+          "googleEventRemoved": true,
+          "deleteStatus": 204,
+          "readBackState": "cancelled",
+          "localContactAndMeetingRemoved": true,
+          "connectionPreserved": true
+        },
+        "result": "passed"
+      }
     }
   },
   "findings": [
@@ -304,12 +346,12 @@
     "existingApiWorkerAndDatabase": "preserved"
   },
   "latestModelProbe": {
-    "checkedAt": "2026-10-24T04:38:24.342786+00:00",
+    "checkedAt": "2026-10-24T04:42:11.474Z",
     "provider": "dashscope",
     "model": "qwen3.8-max",
     "httpStatus": 403,
     "code": "insufficient_quota",
     "message": "Free quota exhausted."
   },
-  "followupCheckedCommit": "70c9d55"
+  "followupCheckedCommit": "12ee96f"
 }
