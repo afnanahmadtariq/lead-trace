@@ -33,6 +33,18 @@
     "workspaceHttp": {
       "malformedNamesRejectedWith400": 8,
       "validTrimmedNamePersisted": true
+    },
+    "calendarAuthorizationHandoff": {
+      "checkedAt": "2026-10-24T04:04:15.390Z",
+      "scope": "Authorization redirect only; no Google sign-in, consent, token exchange, event, or invitation.",
+      "redirectUri": "http://localhost:3001/crm/calendar/callback",
+      "providerHttpStatus": 200,
+      "finalHost": "accounts.google.com",
+      "finalPath": "/v3/signin/identifier",
+      "providerErrors": [],
+      "signInReached": true,
+      "pkceMethod": "S256",
+      "requestedScope": "https://www.googleapis.com/auth/calendar.events.owned"
     }
   },
   "findings": [
@@ -192,12 +204,21 @@
   ],
   "remaining": [
     "Restore the configured Qwen quota or provide an available existing model, then rerun both deep cohorts and model-backed meeting/outreach research.",
-    "Verify real Google Calendar OAuth/event creation and real email delivery only with the appropriate authorized account flow. These were not exercised by this regression pass."
+    "Google Calendar authorization reaches Google sign-in, but consent, token exchange, and real event creation require the selected account to be connected. Actual email delivery remains unverified."
   ],
   "cleanup": {
     "taskServices": "stopped after tests",
     "temporaryFiles": "removed after delivery",
     "existingDevelopmentWeb": "restored and verified HTTP 200",
     "existingApiWorkerAndDatabase": "preserved"
-  }
+  },
+  "latestModelProbe": {
+    "checkedAt": "2026-10-24T04:04:59.118192+00:00",
+    "provider": "dashscope",
+    "model": "qwen3.8-max",
+    "httpStatus": 403,
+    "code": "insufficient_quota",
+    "message": "Free quota exhausted."
+  },
+  "followupCheckedCommit": "844bb86160f2276dad3511a9b3f2adf923406cab"
 }
