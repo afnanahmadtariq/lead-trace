@@ -3,16 +3,12 @@
 import { Building2, MailPlus, Pencil, ShieldCheck, Trash2, UserRound, UsersRound } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState, type FormEvent } from 'react'
-import { apiRequest } from '../lib/api-client'
+import { apiRequest, errorMessage } from '../lib/api-client'
 import { authClient } from '../lib/auth-client'
 import type { WorkspaceSettingsContext } from '../lib/workspace-settings'
 import { Button } from './ui/button'
 import { Field } from './ui/form-field'
 import { FormMessage } from './ui/form-message'
-
-function authError(error: { message?: string } | null, fallback: string) {
-  return error?.message || fallback
-}
 
 function roleLabel(role: string) {
   return role === 'owner' ? 'Creator admin' : role === 'admin' ? 'Admin' : 'Member'
@@ -66,7 +62,7 @@ export function WorkspaceSettings({ initial }: { initial: WorkspaceSettingsConte
       organizationId: initial.workspace.id,
     })
     if (result.error) {
-      setError(authError(result.error, 'The invitation could not be sent.'))
+      setError(errorMessage(result.error, 'The invitation could not be sent.'))
     } else {
       setInviteEmail('')
       setInviteRole('member')
@@ -79,7 +75,7 @@ export function WorkspaceSettings({ initial }: { initial: WorkspaceSettingsConte
   async function cancelInvitation(invitationId: string) {
     begin(`cancel-${invitationId}`)
     const result = await authClient.organization.cancelInvitation({ invitationId })
-    if (result.error) setError(authError(result.error, 'The invitation could not be cancelled.'))
+    if (result.error) setError(errorMessage(result.error, 'The invitation could not be cancelled.'))
     else { setSuccess('Invitation cancelled.'); router.refresh() }
     setPending(null)
   }
@@ -91,7 +87,7 @@ export function WorkspaceSettings({ initial }: { initial: WorkspaceSettingsConte
       role,
       organizationId: initial.workspace.id,
     })
-    if (result.error) setError(authError(result.error, 'That member’s access could not be updated.'))
+    if (result.error) setError(errorMessage(result.error, 'That member’s access could not be updated.'))
     else { setSuccess('Member access updated.'); router.refresh() }
     setPending(null)
   }
@@ -159,8 +155,8 @@ export function WorkspaceSettings({ initial }: { initial: WorkspaceSettingsConte
 
     {initial.workspace.isAdmin && <section className="rounded-[17px] border border-danger/25 bg-white p-[23px]"><header className="flex items-start gap-3"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#fff3f4] text-danger"><Trash2 size={19}/></span><div><h2 className="m-0 text-[1.08rem] text-lt-900">Workspace danger zone</h2><p className="mt-1 mb-0 text-[.8rem] leading-[1.5] text-lt-500">Only workspace admins can perform these permanent actions.</p></div></header><div className="mt-5 grid gap-4 border-t border-lt-100 pt-5">
       <form className="grid gap-3 rounded-[14px] border border-lt-200 p-4" onSubmit={deleteBriefs}><div><h3 className="m-0 text-[.9rem] text-lt-900">Delete all Deal Briefs</h3><p className="mt-1 mb-0 text-[.76rem] leading-[1.5] text-lt-500">Removes generated briefs while keeping runs, sources, and evidence.</p></div><Field id="workspace-delete-briefs" name="confirmation" label="Type DELETE BRIEFS to confirm" value={briefConfirmation} onChange={(event) => setBriefConfirmation(event.target.value)} required/><div><Button type="submit" variant="danger" size="xs" disabled={pending !== null || briefConfirmation !== 'DELETE BRIEFS'}>Delete Deal Briefs</Button></div></form>
-      <form className="grid gap-3 rounded-[14px] border border-danger/25 p-4" onSubmit={wipeResearchData}><div><h3 className="m-0 text-[.9rem] text-lt-900">Wipe workspace research data</h3><p className="mt-1 mb-0 text-[.76rem] leading-[1.5] text-lt-500">Deletes offers, runs, sources, evidence, briefs, and research notifications. Contacts, deals, notes, follow-ups, meetings, and members remain.</p></div><Field id="workspace-wipe-data" name="confirmation" label={`Type ${initial.workspace.name} to confirm`} value={wipeConfirmation} onChange={(event) => setWipeConfirmation(event.target.value)} required/><div><Button type="submit" variant="danger" size="xs" disabled={pending !== null || wipeConfirmation !== initial.workspace.name}>Wipe research data</Button></div></form>
-      <form className="grid gap-3 rounded-[14px] border border-danger/25 p-4" onSubmit={deleteWorkspace}><div><h3 className="m-0 text-[.9rem] text-lt-900">Delete workspace</h3><p className="mt-1 mb-0 text-[.76rem] leading-[1.5] text-lt-500">Deletes this workspace, every membership, invitation, and all shared research data. This cannot be undone.</p></div><Field id="workspace-delete" name="confirmation" label={`Type ${initial.workspace.name} to confirm`} value={workspaceConfirmation} onChange={(event) => setWorkspaceConfirmation(event.target.value)} required/><div><Button type="submit" variant="danger" size="xs" disabled={pending !== null || workspaceConfirmation !== initial.workspace.name}>{pending === 'delete-workspace' ? 'Deleting…' : 'Delete workspace'}</Button></div></form>
+      <form className="grid gap-3 rounded-[14px] border border-danger/25 p-4" onSubmit={wipeResearchData}><div><h3 className="m-0 text-[.9rem] text-lt-900">Wipe workspace research data</h3><p className="mt-1 mb-0 text-[.76rem] leading-[1.5] text-lt-500">Deletes offers, runs, sources, evidence, briefs, research notifications, and lead searches with their source pages and candidates. Contacts, deals, notes, follow-ups, meetings, and members remain.</p></div><Field id="workspace-wipe-data" name="confirmation" label={`Type ${initial.workspace.name} to confirm`} value={wipeConfirmation} onChange={(event) => setWipeConfirmation(event.target.value)} required/><div><Button type="submit" variant="danger" size="xs" disabled={pending !== null || wipeConfirmation !== initial.workspace.name}>Wipe research data</Button></div></form>
+      {initial.workspace.role === 'owner' && <form className="grid gap-3 rounded-[14px] border border-danger/25 p-4" onSubmit={deleteWorkspace}><div><h3 className="m-0 text-[.9rem] text-lt-900">Delete workspace</h3><p className="mt-1 mb-0 text-[.76rem] leading-[1.5] text-lt-500">Deletes this workspace, every membership, invitation, and all shared research data. This cannot be undone.</p></div><Field id="workspace-delete" name="confirmation" label={`Type ${initial.workspace.name} to confirm`} value={workspaceConfirmation} onChange={(event) => setWorkspaceConfirmation(event.target.value)} required/><div><Button type="submit" variant="danger" size="xs" disabled={pending !== null || workspaceConfirmation !== initial.workspace.name}>{pending === 'delete-workspace' ? 'Deleting…' : 'Delete workspace'}</Button></div></form>}
     </div></section>}
   </div>
 }

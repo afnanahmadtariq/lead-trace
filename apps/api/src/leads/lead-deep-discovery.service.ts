@@ -128,9 +128,10 @@ export class LeadDeepDiscoveryService {
     await update('extracting', `Qualifying people against the requested profile using ${sources.length} source snapshots.`)
     const companyDomains = new Set(companies.flatMap((company) => company.domain ? [company.domain] : []))
     const facts = sources.filter((source) => companyDomains.has(new URL(source.url).hostname.replace(/^www\./, '')) && ['full_page', 'company_crawl'].includes(source.sourceKind || ''))
-    const groups: LeadSourceInput[][] = [], context = [...new Map([...facts, ...sources.filter((source) => anchors.has(source.id) || source.sourceKind === 'registry')].map((source) => [source.id, source])).values()].slice(0, 24)
+    // Shared context is repeated in every group request, so keep it small; a group's own full-length sources override the trimmed copies.
+    const groups: LeadSourceInput[][] = [], context = [...new Map([...facts, ...sources.filter((source) => anchors.has(source.id) || source.sourceKind === 'registry')].map((source) => [source.id, source])).values()].slice(0, 8).map((source) => ({ ...source, excerpt: source.excerpt.slice(0, 1500) }))
     const peopleSources = sources.filter((source) => source.sourceKind !== 'registry')
-    for (let index = 0; index < peopleSources.length; index += 24) groups.push([...new Map([...peopleSources.slice(index, index + 24), ...context].map((source) => [source.id, source])).values()])
+    for (let index = 0; index < peopleSources.length; index += 24) groups.push([...new Map([...context, ...peopleSources.slice(index, index + 24)].map((source) => [source.id, source])).values()])
     const settled = await Promise.allSettled(groups.map((group) => this.extraction.extract(group, criteria)))
     const extracted = settled.flatMap((result) => result.status === 'fulfilled' ? [result.value] : [])
     if (!extracted.length && groups.length) throw new BadGatewayException('Lead qualification is unavailable. Retry this search.')

@@ -507,6 +507,7 @@ model LeadSearch {
   @@unique([id, organizationId])
   @@index([organizationId, createdAt])
   @@index([createdById])
+  @@index([status, lockExpiresAt, createdAt])
   @@map("lead_search")
 }
 

@@ -11,6 +11,7 @@ type SecurityChangeAction = 'enable-two-factor' | 'disable-two-factor'
 
 const securityConfirmationLifetimeMs = 10 * 60 * 1000
 const securityAuthorizationLifetimeMs = 5 * 60 * 1000
+const securityConfirmationMaxFailures = 5
 
 function securityConfirmationAction(value: string | undefined): SecurityChangeAction {
   if (value === 'enable-two-factor' || value === 'disable-two-factor') return value
@@ -19,6 +20,11 @@ function securityConfirmationAction(value: string | undefined): SecurityChangeAc
 
 function securityConfirmationIdentifier(sessionId: string, action: SecurityChangeAction) {
   return `security-change:${sessionId}:${action}`
+}
+
+// Better Auth's verification table has no attempts column, so each wrong code is recorded as a sibling row.
+function securityConfirmationFailureIdentifier(sessionId: string, action: SecurityChangeAction) {
+  return `security-change-fail:${sessionId}:${action}`
 }
 
 function securityAuthorizationIdentifier(sessionId: string, action: SecurityChangeAction) {
@@ -47,7 +53,7 @@ export class AccountContextService {
 
     const code = String(randomInt(0, 1_000_000)).padStart(6, '0')
     await db.$transaction(async (tx) => {
-      await tx.verification.deleteMany({ where: { identifier } })
+      await tx.verification.deleteMany({ where: { identifier: { in: [identifier, securityConfirmationFailureIdentifier(session.session.id, action)] } } })
       await tx.verification.create({
         data: {
           id: randomUUID(),
@@ -77,6 +83,23 @@ export class AccountContextService {
       where: { identifier, expiresAt: { gt: new Date() } },
       orderBy: { createdAt: 'desc' },
     })
+    const failureIdentifier = securityConfirmationFailureIdentifier(session.session.id, action)
+    const lockOut = async () => {
+      await db.verification.deleteMany({ where: { identifier: { in: [identifier, failureIdentifier] } } })
+      throw new BadRequestException('Too many incorrect codes. Request a new code.')
+    }
+    // Record the attempt before counting, so concurrent guesses cannot all pass the check (successful attempts clear these rows).
+    await db.verification.create({
+      data: {
+        id: randomUUID(),
+        identifier: failureIdentifier,
+        value: session.user.id,
+        expiresAt: confirmation?.expiresAt ?? new Date(Date.now() + securityConfirmationLifetimeMs),
+      },
+    })
+    const attempts = await db.verification.count({ where: { identifier: failureIdentifier, expiresAt: { gt: new Date() } } })
+    if (attempts > securityConfirmationMaxFailures) await lockOut()
+
     const expected = confirmation?.value ? Buffer.from(confirmation.value, 'hex') : null
     const received = Buffer.from(hashSecurityConfirmationCode(enteredCode), 'hex')
     if (!expected || expected.length !== received.length || !timingSafeEqual(expected, received)) {
@@ -85,7 +108,7 @@ export class AccountContextService {
 
     const authorizationIdentifier = securityAuthorizationIdentifier(session.session.id, action)
     await db.$transaction(async (tx) => {
-      await tx.verification.deleteMany({ where: { identifier } })
+      await tx.verification.deleteMany({ where: { identifier: { in: [identifier, failureIdentifier] } } })
       await tx.verification.deleteMany({ where: { identifier: authorizationIdentifier } })
       await tx.verification.create({
         data: {

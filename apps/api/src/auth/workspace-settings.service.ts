@@ -83,6 +83,8 @@ export class WorkspaceSettingsService {
       const evidence = await tx.evidence.deleteMany({ where: { organizationId } })
       const sources = await tx.evidenceSource.deleteMany({ where: { organizationId } })
       const runs = await tx.researchRun.deleteMany({ where: { organizationId } })
+      // Searches cascade to their scraped sources and candidates; converted CRM contacts are untouched.
+      const leadSearches = await tx.leadSearch.deleteMany({ where: { organizationId } })
       // Contacts are CRM records now; a research wipe must preserve relationships.
       const offers = await tx.offer.deleteMany({ where: { organizationId } })
       return {
@@ -91,6 +93,7 @@ export class WorkspaceSettingsService {
         evidence: evidence.count,
         sources: sources.count,
         runs: runs.count,
+        leadSearches: leadSearches.count,
         prospects: 0,
         offers: offers.count,
       }
@@ -99,7 +102,11 @@ export class WorkspaceSettingsService {
   }
 
   async deleteWorkspace(session: AuthenticatedSession, confirmation?: string) {
-    const membership = await this.assertAdmin(session)
+    const membership = await this.accounts.assertActiveWorkspace(session)
+    // Better Auth can store several roles comma-separated.
+    if (!membership.role.split(',').includes('owner')) {
+      throw new ForbiddenException('Only the workspace owner can delete this workspace')
+    }
     if (confirmation !== membership.organization.name) {
       throw new BadRequestException('Type the workspace name to confirm deleting this workspace')
     }

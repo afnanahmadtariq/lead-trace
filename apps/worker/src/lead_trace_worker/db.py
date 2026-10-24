@@ -2,16 +2,20 @@ from __future__ import annotations
 
 import logging
 import os
+import threading
 import time
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable, Optional
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from uuid import uuid4
 
 from lead_trace_worker.model_gateway import ModelGatewayConfig, build_client
-from lead_trace_worker.pipeline import BACKOFF_SQL, CLAIM_SQL, COUNTS_SQL, FAIL_SQL, next_stage
+from lead_trace_worker.pipeline import BACKOFF_SQL, CLAIM_SQL, COUNTS_SQL, FAIL_SQL, HEARTBEAT_SQL, next_stage
 
 log = logging.getLogger('lead-trace.worker')
+
+HEARTBEAT_MIN_SECONDS = 5
 
 
 def postgres_url(url: str) -> str:
@@ -62,14 +66,42 @@ class Worker:
             connection.execute('SET statement_timeout = 15000')
             connection.execute('SELECT 1').fetchone()
 
+    @contextmanager
+    def _heartbeat(self, run_id, organization_id):
+        stop = threading.Event()
+
+        def beat() -> None:
+            import psycopg
+
+            try:
+                # Own connection: the main one is busy (and not thread-safe) while the stage runs.
+                with psycopg.connect(self.database_url) as connection:
+                    lease = connection.execute('SELECT EXTRACT(EPOCH FROM %s::interval)', (self.lock_for,)).fetchone()[0]
+                    connection.commit()
+                    while not stop.wait(max(HEARTBEAT_MIN_SECONDS, float(lease) / 3)):
+                        connection.execute(HEARTBEAT_SQL, (self.lock_for, run_id, organization_id, self.worker_id))
+                        connection.commit()
+            except Exception as error:
+                log.warning('lease heartbeat stopped run_id=%s error=%s', run_id, error)
+
+        thread = threading.Thread(target=beat, daemon=True)
+        thread.start()
+        try:
+            yield
+        finally:
+            stop.set()
+            thread.join(timeout=2)
+
     def poll_once(self) -> bool:
         import psycopg
 
         with psycopg.connect(self.database_url) as connection:
             connection.execute('SET statement_timeout = 15000')
             claimed = connection.execute(CLAIM_SQL, (self.lock_for, self.worker_id)).fetchone()
+            # Commit the claim so the lease ("lockExpiresAt"), not an open transaction, holds the run during slow
+            # model calls; _heartbeat keeps that lease alive so a slow stage is not re-claimed by another worker.
+            connection.commit()
             if not claimed:
-                connection.commit()
                 log.debug('poll finished worker_id=%s outcome=idle', self.worker_id)
                 return False
             started_at = time.monotonic()
@@ -114,12 +146,13 @@ class Worker:
                 if stage == 'evidence':
                     from lead_trace_worker.stages import process_evidence_stage
 
-                    inserted = process_evidence_stage(
-                        connection,
-                        run_id,
-                        organization_id,
-                        model_client_factory=self._model_client_factory,
-                    )
+                    with self._heartbeat(run_id, organization_id):
+                        inserted = process_evidence_stage(
+                            connection,
+                            run_id,
+                            organization_id,
+                            model_client_factory=self._model_client_factory,
+                        )
                     connection.execute(BACKOFF_SQL, (self.backoff_for, run_id, organization_id))
                     connection.commit()
                     elapsed_ms = round((time.monotonic() - started_at) * 1000)
@@ -135,8 +168,11 @@ class Worker:
                 if stage == 'brief':
                     from lead_trace_worker.stages import process_brief_stage
 
-                    brief_id = process_brief_stage(connection, run_id, organization_id)
+                    with self._heartbeat(run_id, organization_id):
+                        brief_id, send_email = process_brief_stage(connection, run_id, organization_id)
                     connection.commit()
+                    if send_email:
+                        send_email()
                     elapsed_ms = round((time.monotonic() - started_at) * 1000)
                     log.info(
                         'job cycle finished worker_id=%s run_id=%s workspace_id=%s stage=brief outcome=success brief_id=%s duration_ms=%s',

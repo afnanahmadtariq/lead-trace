@@ -1,6 +1,5 @@
 import { ArrowLeft, ArrowUpRight, FileCheck2, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 import { BriefRefreshButton } from '../../../../components/brief-refresh-button'
 import { BriefShareButton } from '../../../../components/brief-share-button'
 import { BriefSections } from '../../../../components/brief-sections'
@@ -14,12 +13,11 @@ import { WorkspaceHeader, WorkspacePage } from '../../../../components/workspace
 import { briefCitations, briefUrgencyLabel } from '../../../../lib/brief'
 import { formatConfidence, formatDate } from '../../../../lib/format'
 import type { DealBriefDetail } from '../../../../lib/research'
-import { authenticatedFetch } from '../../../../lib/server-auth'
+import { requireFetch } from '../../../../lib/server-auth'
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  const brief = await authenticatedFetch<DealBriefDetail>(`/deal-briefs/${id}`).catch(() => null)
-  if (!brief) notFound()
+  const brief = await requireFetch<DealBriefDetail>(`/deal-briefs/${encodeURIComponent(id)}`)
 
   const citations = briefCitations(brief.sections, brief.researchRun.evidence)
   const citationIds = new Set(citations.map((item) => item.evidence_id))

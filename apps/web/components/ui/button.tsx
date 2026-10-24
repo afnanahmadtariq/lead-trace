@@ -5,7 +5,7 @@ type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger'
 type ButtonSize = 'xs' | 'sm' | 'md' | 'icon-sm' | 'icon'
 
 const variants: Record<ButtonVariant, string> = {
-  primary: 'border-transparent bg-[linear-gradient(135deg,#1c9eec,#16429b)] text-white! hover:brightness-95',
+  primary: 'border-transparent bg-brand text-white! shadow-[0_1px_2px_rgb(16_38_79_/_18%),inset_0_1px_0_rgb(255_255_255_/_14%)] hover:bg-lt-900',
   secondary: 'border-lt-200 bg-white text-lt-900! hover:border-lt-300 hover:bg-lt-50',
   ghost: 'border-transparent bg-transparent text-lt-700 hover:bg-lt-100 hover:text-lt-900',
   danger: 'border-transparent bg-transparent text-danger hover:bg-[#fff0f2] hover:text-danger',
@@ -20,7 +20,7 @@ const sizes: Record<ButtonSize, string> = {
 }
 
 function buttonClassName(variant: ButtonVariant, size: ButtonSize, className: string) {
-  return `inline-flex shrink-0 items-center justify-center gap-2 rounded-control border font-[650] transition-[color,background-color,border-color,filter,box-shadow] duration-300 ease-fluid focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/20 motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-55 ${variants[variant]} ${sizes[size]} ${className}`
+  return `inline-flex shrink-0 items-center justify-center gap-2 rounded-control border font-[650] transition-[color,background-color,border-color,filter,box-shadow,transform] duration-200 ease-fluid active:translate-y-px focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/20 motion-reduce:transition-none disabled:cursor-not-allowed disabled:opacity-55 ${variants[variant]} ${sizes[size]} ${className}`
 }
 
 type CommonButtonProps = {

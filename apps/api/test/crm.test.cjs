@@ -10,9 +10,14 @@ const { validateEnvironment } = require('../dist/config/env.validation.js')
 test('CSV supports BOM, escaped quotes, quoted commas and multiline fields', () => {
   assert.deepEqual(parseContactsCsv('\uFEFFname,email,company\r\n"Maya ""May"" Chen",maya@example.com,"Northstar, Inc"\r\n"Alex\nRiver",,Other'), [
     { name: 'Maya "May" Chen', email: 'maya@example.com', company: 'Northstar, Inc' },
-    { name: 'Alex\nRiver', email: '', company: 'Other' },
+    { name: 'Alex\nRiver', company: 'Other' },
   ])
   for (const bad of ['email\na@example.com', 'name,name\nA,B', 'name,invalid\nA,B', 'name\n"Unclosed', 'name\n"A"oops', 'name,email\nA', 'name\n']) assert.throws(() => parseContactsCsv(bad))
+})
+test('CSV tolerates spaces around quoted fields, omits blanks and rejects mid-field quotes', () => {
+  assert.deepEqual(parseContactsCsv('name,company,title\nAlex, "Acme, Inc" ,\n \t"B",,x'), [{ name: 'Alex', company: 'Acme, Inc' }, { name: 'B', title: 'x' }])
+  assert.deepEqual(parseContactsCsv('name,email\n,a@example.com'), [{ email: 'a@example.com' }])
+  for (const bad of ['name\nab"c"', 'name\nA "B"', 'name\n"A" x']) assert.throws(() => parseContactsCsv(bad), /Malformed CSV quoting/)
 })
 test('CSV export protects spreadsheet formulas and reimports supported headers', () => {
   const csv = contactsCsv([{ name: '=HYPERLINK("malicious")', phone: '+15550001', companyName: 'Northstar, Inc', email: 'a@example.com' }])

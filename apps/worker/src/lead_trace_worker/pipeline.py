@@ -44,6 +44,12 @@ SET "lockExpiresAt" = NOW() + (%s::interval)
 WHERE id = %s AND "organizationId" = %s AND status = 'running'
 """
 
+HEARTBEAT_SQL = """
+UPDATE research_run
+SET "lockExpiresAt" = NOW() + (%s::interval)
+WHERE id = %s AND "organizationId" = %s AND status = 'running' AND "workerId" = %s
+"""
+
 FAIL_SQL = """
 UPDATE research_run
 SET

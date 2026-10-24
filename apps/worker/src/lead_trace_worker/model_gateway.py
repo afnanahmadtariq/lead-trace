@@ -9,6 +9,10 @@ from pydantic import BaseModel, ValidationError
 DEFAULT_BASE_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1'
 DEFAULT_MODEL = 'qwen3.8-max'
 MAX_STRUCTURED_OUTPUT_ATTEMPTS = 2
+# The SDK defaults (~600s, 2 retries) can stall a worker for many minutes on one call.
+# Brief synthesis has no max_tokens cap, so allow long generations; still far below the SDK default of 600s.
+CLIENT_TIMEOUT_SECONDS = 120
+CLIENT_MAX_RETRIES = 1
 
 
 class ModelGatewayConfig:
@@ -69,4 +73,9 @@ def request_structured_output(
 def build_client(config: ModelGatewayConfig):
     from openai import OpenAI
 
-    return OpenAI(api_key=config.api_key, base_url=config.base_url)
+    return OpenAI(
+        api_key=config.api_key,
+        base_url=config.base_url,
+        timeout=CLIENT_TIMEOUT_SECONDS,
+        max_retries=CLIENT_MAX_RETRIES,
+    )

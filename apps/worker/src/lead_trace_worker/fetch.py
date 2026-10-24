@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import asyncio
 import ipaddress
 import logging
 import re
 import socket
 from html import unescape
-from typing import Optional
-from urllib.parse import quote, urljoin, urlparse
+from urllib.parse import urljoin, urlparse
 
 import httpx
 from bs4 import BeautifulSoup
@@ -19,16 +17,30 @@ TRACKING = re.compile(r'\s+')
 MAX_TEXT = 12_000
 MAX_DOWNLOAD_BYTES = 1_000_000
 MAX_REDIRECTS = 5
-WIKI_API = 'https://en.wikipedia.org/w/api.php'
-WRONG_TOPIC = ('fruit', 'plant', 'album', 'film', 'song', 'disambiguation')
-BUSINESS_TOPIC = ('inc.', 'inc', 'company', 'corporation', 'technology', 'software', 'chief executive')
+# Python 3.12.0 reports these as global, but they can translate to internal IPv4 targets.
+NON_PUBLIC_IPV6 = tuple(ipaddress.ip_network(net) for net in ('64:ff9b::/96', '64:ff9b:1::/48', '::/96'))
 
 
 class UnsafeSourceUrl(ValueError):
     pass
 
 
+def _is_public_address(address) -> bool:
+    if address.version == 6:
+        if any(address in network for network in NON_PUBLIC_IPV6):
+            return False
+        embedded = address.ipv4_mapped or address.sixtofour
+        if embedded is not None and not embedded.is_global:
+            return False
+    return address.is_global
+
+
 def ensure_public_http_url(url: str) -> str:
+    _public_addresses(url)
+    return url
+
+
+def _public_addresses(url: str) -> list:
     parsed = urlparse(url)
     if parsed.scheme not in {'http', 'https'} or not parsed.hostname:
         raise UnsafeSourceUrl('source URL must use http or https and include a hostname')
@@ -46,11 +58,11 @@ def ensure_public_http_url(url: str) -> str:
             records = socket.getaddrinfo(hostname, parsed.port or (443 if parsed.scheme == 'https' else 80), type=socket.SOCK_STREAM)
         except socket.gaierror as error:
             raise UnsafeSourceUrl('source hostname could not be resolved') from error
-        addresses = list({ipaddress.ip_address(record[4][0]) for record in records})
+        addresses = list(dict.fromkeys(ipaddress.ip_address(record[4][0]) for record in records))
 
-    if not addresses or any(not address.is_global for address in addresses):
+    if not addresses or any(not _is_public_address(address) for address in addresses):
         raise UnsafeSourceUrl('source URL resolves to a non-public network address')
-    return url
+    return addresses
 
 
 def strip_html(raw: str) -> str:
@@ -67,18 +79,31 @@ def fetch_with_httpx(url: str, timeout: float = 20.0, *, transport=None) -> str:
         timeout=timeout,
         headers={'User-Agent': USER_AGENT, 'Accept': 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8'},
         transport=transport,
+        trust_env=False,
     ) as client:
         current_url = url
         for redirect_count in range(MAX_REDIRECTS + 1):
-            ensure_public_http_url(current_url)
-            with client.stream('GET', current_url) as response:
+            addresses = _public_addresses(current_url)
+            # Connect to the address we validated so a second DNS lookup cannot rebind to an internal host.
+            # IPv4 first: one pinned address replaces httpcore trying each one, and containers often lack IPv6.
+            address = next((item for item in addresses if item.version == 4), addresses[0])
+            target = httpx.URL(current_url)
+            headers = {}
+            extensions = {}
+            if target.host != str(address):
+                headers['Host'] = target.netloc.decode('ascii')
+                if target.scheme == 'https':
+                    extensions['sni_hostname'] = target.raw_host.decode('ascii')
+            request_url = target.copy_with(host=str(address))
+            with client.stream('GET', request_url, headers=headers, extensions=extensions) as response:
                 if response.is_redirect:
                     location = response.headers.get('location')
                     if not location:
                         raise httpx.HTTPError('redirect response did not include a location')
                     if redirect_count == MAX_REDIRECTS:
                         raise httpx.TooManyRedirects('source exceeded the redirect limit', request=response.request)
-                    current_url = urljoin(str(response.url), location)
+                    # response.url holds the pinned IP; relative redirects must resolve against the hostname.
+                    current_url = urljoin(current_url, location)
                     continue
 
                 response.raise_for_status()
@@ -102,140 +127,9 @@ def fetch_with_httpx(url: str, timeout: float = 20.0, *, transport=None) -> str:
     return ''
 
 
-async def fetch_with_crawl4ai(url: str) -> Optional[str]:
-    ensure_public_http_url(url)
-    try:
-        from crawl4ai import AsyncWebCrawler
-    except ImportError:
-        log.debug('crawl4ai unavailable for %s', url)
-        return None
-
-    try:
-        async with AsyncWebCrawler(verbose=False) as crawler:
-            result = await crawler.arun(url=url)
-            markdown = getattr(result, 'markdown', None) or getattr(result, 'markdown_v2', None)
-            if isinstance(markdown, str) and markdown.strip():
-                return markdown.strip()[:MAX_TEXT]
-            cleaned = getattr(result, 'cleaned_html', None)
-            if isinstance(cleaned, str) and cleaned.strip():
-                return strip_html(cleaned)[:MAX_TEXT]
-    except Exception as error:
-        log.warning('crawl4ai fetch failed url=%s error=%s', url, error)
-    return None
-
-
-def fetch_page_text(url: str, *, prefer_crawl4ai: bool = False) -> str:
-    if prefer_crawl4ai:
-        try:
-            crawled = asyncio.run(fetch_with_crawl4ai(url))
-            if crawled:
-                return crawled
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            try:
-                crawled = loop.run_until_complete(fetch_with_crawl4ai(url))
-                if crawled:
-                    return crawled
-            finally:
-                loop.close()
+def fetch_page_text(url: str) -> str:
     try:
         return fetch_with_httpx(url)
     except Exception as error:
         log.warning('httpx fetch failed url=%s error=%s', url, error)
         return ''
-
-
-def _wiki_search(client: httpx.Client, term: str, limit: int = 5) -> list[dict]:
-    response = client.get(
-        WIKI_API,
-        params={'action': 'query', 'list': 'search', 'srsearch': term, 'format': 'json', 'srlimit': limit},
-    )
-    response.raise_for_status()
-    return response.json().get('query', {}).get('search', [])
-
-
-def _score_wikipedia_hit(hit: dict, hints: tuple[str, ...], query: str) -> int:
-    title = str(hit.get('title', '')).lower()
-    snippet = re.sub(r'<[^>]+>', ' ', str(hit.get('snippet', ''))).lower()
-    query_lower = query.strip().lower()
-    if title == query_lower:
-        return 100
-    score = 0
-    if any(token in title for token in BUSINESS_TOPIC):
-        score += 4
-    if any(token in snippet for token in BUSINESS_TOPIC):
-        score += 2
-    for hint in hints:
-        token = hint.lower().strip()
-        if len(token) >= 3 and (token in title or token in snippet):
-            score += 3
-    name_parts = [part for part in query_lower.split() if len(part) >= 3]
-    if name_parts:
-        if all(part in title for part in name_parts):
-            score += 8
-        elif any(part in title for part in name_parts):
-            score += 4
-        else:
-            score -= 8
-    if any(token in title for token in WRONG_TOPIC):
-        score -= 6
-    if any(token in snippet for token in ('edible fruit', 'apple tree', 'fruit tree', 'genus malus')):
-        score -= 6
-    return score
-
-
-def _wiki_summary_by_title(client: httpx.Client, title: str) -> tuple[str, Optional[str]]:
-    slug = quote(title.replace(' ', '_'), safe='/_')
-    response = client.get(f'https://en.wikipedia.org/api/rest_v1/page/summary/{slug}')
-    if response.status_code == 404:
-        return '', None
-    response.raise_for_status()
-    payload = response.json()
-    extract = str(payload.get('extract') or '').strip()
-    page_url = payload.get('content_urls', {}).get('desktop', {}).get('page')
-    return extract[:MAX_TEXT], page_url
-
-
-def wikipedia_resolve(query: str, *, hints: tuple[str, ...] = ()) -> tuple[str, Optional[str], str]:
-    cleaned = query.strip()
-    if not cleaned:
-        return '', None, ''
-    searches = [cleaned]
-    if ' ' not in cleaned:
-        searches = [f'{cleaned} Inc.', cleaned]
-
-    with httpx.Client(timeout=15.0, headers={'User-Agent': USER_AGENT}) as client:
-        direct_extract, direct_url = _wiki_summary_by_title(client, cleaned.replace(' ', '_'))
-        if direct_extract:
-            return direct_extract, direct_url, cleaned
-
-        best_hit: Optional[dict] = None
-        best_score = -999
-        for term in searches:
-            for hit in _wiki_search(client, term):
-                score = _score_wikipedia_hit(hit, hints, cleaned)
-                if score > best_score:
-                    best_score = score
-                    best_hit = hit
-        if best_hit and best_score > 0:
-            title = str(best_hit['title'])
-            extract, page_url = _wiki_summary_by_title(client, title)
-            if extract:
-                return extract, page_url, title
-    return '', None, ''
-
-
-def wikipedia_summary(title: str) -> tuple[str, Optional[str]]:
-    extract, page_url, _ = wikipedia_resolve(title)
-    return extract, page_url
-
-
-def company_news_urls(company_name: str) -> list[str]:
-    slug = re.sub(r'[^a-z0-9]', '', company_name.lower())
-    if not slug:
-        return []
-    return [
-        f'https://www.{slug}.com/newsroom/',
-        f'https://{slug}.com/newsroom/',
-        f'https://www.{slug}.com/leadership/',
-    ]
