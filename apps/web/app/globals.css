@@ -34,6 +34,7 @@ body { margin: 0; overflow-x: clip; background: var(--color-lt-50); color: var(-
 button, input, textarea, select { font: inherit; }
 
 /* Route-owned headings and actions share the existing dashboard bar. */
+html:has([data-dashboard-topbar]) { overscroll-behavior-y: none; }
 [data-dashboard-topbar]:has([data-page-heading]) [data-header-fallback],
 [data-dashboard-topbar]:has([data-page-actions]) .dashboard-research-shortcut { display: none; }
 @media (max-width: 700px) {

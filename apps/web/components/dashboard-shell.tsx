@@ -107,15 +107,17 @@ export function DashboardShell({
     accountCloseTimer.current = setTimeout(() => setAccountMenuOpen(false), 180)
   }
 
-  return <div className={`grid min-h-screen bg-lt-50 bg-[radial-gradient(circle_at_92%_0%,#e7f5ff_0,transparent_26%)] transition-[grid-template-columns] duration-300 ease-fluid motion-reduce:transition-none ${collapsed ? 'grid-cols-[84px_minmax(0,1fr)] max-[900px]:grid-cols-1' : 'grid-cols-[252px_minmax(0,1fr)] max-[900px]:grid-cols-1'}`}>
-    <aside className={`sticky top-0 z-30 flex h-screen flex-col border-r border-lt-200 bg-white/88 py-5 pt-[25px] backdrop-blur-2xl transition-[padding] duration-300 ease-fluid motion-reduce:transition-none max-[900px]:hidden ${collapsed ? 'px-0' : 'px-[18px]'}`}>
-      <div className={`relative flex min-h-9 items-center justify-between text-lt-900 max-[900px]:m-0 ${collapsed ? 'mb-6 w-full justify-center' : 'mx-2 mb-7'}`}>
+  return <div className={`grid min-h-dvh bg-lt-50 bg-[radial-gradient(circle_at_92%_0%,#e7f5ff_0,transparent_26%)] transition-[grid-template-columns] duration-300 ease-fluid motion-reduce:transition-none ${collapsed ? 'grid-cols-[84px_minmax(0,1fr)] max-[900px]:grid-cols-1' : 'grid-cols-[252px_minmax(0,1fr)] max-[900px]:grid-cols-1'}`}>
+    <aside className={`sticky top-0 z-30 flex h-dvh self-start flex-col border-r border-lt-200 bg-white/88 py-5 pt-[25px] backdrop-blur-2xl transition-[padding] duration-300 ease-fluid motion-reduce:transition-none max-[900px]:hidden ${collapsed ? 'px-0' : 'px-[18px]'}`}>
+      <div className={`relative flex min-h-9 shrink-0 items-center justify-between text-lt-900 max-[900px]:m-0 ${collapsed ? 'mb-6 w-full justify-center' : 'mx-2 mb-7'}`}>
         <Brand href="/dashboard" compact={collapsed}/>
         <Button type="button" variant="ghost" size="icon-sm" className={`max-[900px]:hidden ${collapsed ? 'absolute top-6 -right-3.5 z-10 size-7! bg-white' : ''}`} onClick={toggleSidebar} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
           {collapsed ? <ChevronRight size={18}/> : <ChevronLeft size={18}/>}
         </Button>
       </div>
 
+      {/* Keep sidebar overflow inside the viewport without clipping the collapse control. */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain [scrollbar-width:thin]">
       {!collapsed && <Link href="/dashboard/workspace" className="mb-[23px] flex items-center gap-[11px] rounded-[14px] border border-lt-200 bg-lt-50 p-3 text-inherit no-underline transition-[background-color,border-color,box-shadow] hover:border-lt-300 hover:bg-white hover:shadow-[0_8px_24px_rgba(18,52,111,.07)] focus-visible:outline-3 focus-visible:outline-offset-2 focus-visible:outline-brand/20" aria-label={`Open ${context.activeWorkspace.name} workspace settings`}>
         <span className="grid size-[34px] shrink-0 place-items-center rounded-[10px] bg-lt-100 text-brand"><Building2 size={17}/></span>
         <div className="grid min-w-0 gap-0.5"><small className="text-[.67rem] tracking-[.07em] text-lt-500 uppercase">Workspace</small><strong className="truncate text-[.83rem] text-lt-900">{context.activeWorkspace.name}</strong></div>
@@ -140,6 +142,7 @@ export function DashboardShell({
           </Popover.Portal>
         </Popover.Root>
         <SignOutButton compact={collapsed}/>
+      </div>
       </div>
     </aside>
 
