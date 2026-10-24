@@ -24,8 +24,8 @@ export function CrmOverview({ contacts, deals, tasks }: { contacts: number; deal
   return <>
     <MetricStrip label="CRM overview" items={[
       { href: '/dashboard/contacts', value: contacts, label: 'Contacts', hint: 'People you are building relationships with' },
-      { href: '/dashboard/pipeline', value: openDeals.length, label: 'Open deals', hint: dealTotals(openDeals).join(' + ') || 'Track your potential sales' },
-      { href: '/dashboard/tasks', value: openTasks.length, label: 'Open follow-ups', tone: now && overdue.length ? 'danger' : 'default', hint: now && overdue.length ? `${overdue.length} overdue, start here` : 'Keep your next promises in sight' },
+      { href: '/dashboard/pipeline', value: openDeals.length, label: 'Open deals', detail: dealTotals(openDeals).join(' + '), hint: 'Track your potential sales' },
+      { href: '/dashboard/tasks', value: openTasks.length, label: 'Open follow-ups', tone: now && overdue.length ? 'danger' : 'default', detail: now && overdue.length ? `${overdue.length} overdue` : undefined, hint: 'Keep your next promises in sight' },
     ]}/>
 
     <section className={isNew ? 'grid grid-cols-[minmax(0,1.3fr)_minmax(0,.8fr)] items-start gap-5 max-[760px]:grid-cols-1' : 'grid gap-5'} aria-label="Your CRM workflow">

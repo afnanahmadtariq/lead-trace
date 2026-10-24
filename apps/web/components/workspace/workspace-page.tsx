@@ -1,18 +1,12 @@
 import type { ReactNode } from 'react'
+import { DashboardPageHeader, type DashboardPageHeaderProps } from './dashboard-page-header'
 
 export function WorkspacePage({ children }: { children: ReactNode }) {
-  return <div className="grid animate-page-in gap-6">{children}</div>
+  return <div className="grid animate-page-in gap-4">{children}</div>
 }
 
-export function WorkspaceHeader({ eyebrow, title, lead, action }: { eyebrow: string; title: ReactNode; lead: ReactNode; action?: ReactNode }) {
-  return <header className="flex items-end justify-between gap-7 max-[620px]:flex-col max-[620px]:items-start">
-    <div className="max-w-[720px]">
-      <p className="mt-0 mb-2.5 text-[.69rem] font-[650] tracking-[.12em] text-brand-bright uppercase">{eyebrow}</p>
-      <h1 className="m-0 text-[clamp(2.2rem,4vw,3.45rem)] leading-[1.04] font-light tracking-[-.055em] text-lt-900 max-[620px]:text-[2.35rem]">{title}</h1>
-      <p className="mt-3 mb-0 max-w-[650px] text-[.96rem] leading-[1.6] text-lt-600">{lead}</p>
-    </div>
-    {action}
-  </header>
+export function WorkspaceHeader(props: DashboardPageHeaderProps) {
+  return <DashboardPageHeader {...props}/>
 }
 
 export function WorkspaceSection({ title, description, action, children }: { title: ReactNode; description: ReactNode; action?: ReactNode; children: ReactNode }) {

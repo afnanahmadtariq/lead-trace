@@ -5,8 +5,8 @@ export function MetricGrid({ children, label }: { children: ReactNode; label?: s
 }
 
 export function MetricCard({ icon, value, label }: { icon: ReactNode; value: ReactNode; label: ReactNode }) {
-  return <article className="grid min-h-[132px] content-between rounded-panel border border-lt-200 bg-white p-[19px] shadow-card max-[620px]:min-h-[115px]">
-    <span className="grid size-[35px] place-items-center rounded-[10px] bg-lt-100 text-brand">{icon}</span>
-    <div className="flex items-baseline justify-between gap-2.5"><strong className="text-[1.65rem] font-semibold tracking-[-.04em] text-lt-900">{value}</strong><small className="text-[.73rem] text-lt-500">{label}</small></div>
+  return <article className="flex min-w-0 items-center gap-2.5 rounded-xl border border-lt-200 bg-white px-3.5 py-3">
+    <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-lt-100 text-brand" aria-hidden="true">{icon}</span>
+    <div className="min-w-0"><strong className="block text-xl leading-tight font-semibold tracking-tight text-lt-900">{value}</strong><small className="block text-xs leading-snug text-lt-600">{label}</small></div>
   </article>
 }

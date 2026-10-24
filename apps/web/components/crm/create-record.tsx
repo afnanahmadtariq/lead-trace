@@ -49,7 +49,7 @@ export function CreateRecordButton({ kind, members }: { kind: 'deal' | 'task'; m
   const title = kind === 'deal' ? 'Add deal' : 'Add follow-up'
   function close() { setOpen(false); setContact(null) }
   return <>
-    <Button onClick={() => setOpen(true)}><Plus size={17}/>{title}</Button>
+    <Button onClick={() => setOpen(true)} title={title}><Plus size={17}/><span className="max-[700px]:sr-only">{title}</span></Button>
     <Modal open={open} onClose={close} title={title} description={contact ? `For ${contact.name}${contact.companyName ? ` at ${contact.companyName}` : ''}` : 'Start by choosing the contact this belongs to.'}>
       {contact ? <div className="grid gap-5"><Button variant="ghost" size="xs" className="w-fit" onClick={() => setContact(null)}><ArrowLeft size={14}/>Choose another contact</Button>{kind === 'deal' ? <DealForm prospectId={contact.id} members={members} onSaved={close}/> : <TaskForm id={contact.id} members={members} onSaved={close}/>}</div> : <ContactPicker onSelect={setContact}/>}
     </Modal>

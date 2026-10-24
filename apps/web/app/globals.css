@@ -33,6 +33,13 @@ html { scroll-behavior: smooth; }
 body { margin: 0; overflow-x: clip; background: var(--color-lt-50); color: var(--color-lt-950); font-family: Outfit, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 button, input, textarea, select { font: inherit; }
 
+/* Route-owned headings and actions share the existing dashboard bar. */
+[data-dashboard-topbar]:has([data-page-heading]) [data-header-fallback],
+[data-dashboard-topbar]:has([data-page-actions]) .dashboard-research-shortcut { display: none; }
+@media (max-width: 700px) {
+  [data-page-actions]:has(> button:only-child) { flex-basis: auto; order: 1; }
+}
+
 /* Keep dropdown arrows inset and reserve space for long option labels. */
 select:not([multiple]):is(:not([size]), [size='1']) {
   appearance: none;

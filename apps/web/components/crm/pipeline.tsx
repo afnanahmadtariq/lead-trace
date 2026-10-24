@@ -1,10 +1,11 @@
 'use client'
-import { Kanban, Table2, Target } from 'lucide-react'
+import { Kanban, Table2 } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { compactControlClass, dealTotals, label, money, stages, stageTone, type Deal, type Person } from '../../lib/crm'
 import { Button } from '../ui/button'
 import { Modal } from '../ui/modal'
+import { InfoTip } from '../ui/info-tip'
 import { StageBadge } from './badges'
 import { DeleteButton } from './delete-button'
 import { DealForm } from './forms'
@@ -33,12 +34,11 @@ export function Pipeline({ deals, members }: { deals: Deal[]; members: Person[] 
   const valueMetrics = currencies.length ? currencies.map((currency) => ({ label: currencies.length > 1 ? `Open value in ${currency}` : 'Open value', value: money(openDeals.filter((deal) => deal.currency === currency).reduce((sum, deal) => sum + Number(deal.value), 0), currency), hint: 'Across open deals' })) : [{ label: 'Open value', value: money(0, 'USD'), hint: 'Across open deals' }]
   return <>
     <MetricStrip label="Pipeline summary" items={[{ label: 'Open deals', value: openDeals.length, hint: 'Still in progress' }, ...valueMetrics, { label: 'Won', value: deals.filter((deal) => deal.stage === 'won').length, tone: 'success', hint: 'Closed as won' }]}/>
-    {!deals.length && <div className="flex items-start gap-3 rounded-2xl border border-dashed border-lt-300 bg-white p-5"><span className="grid size-10 shrink-0 place-items-center rounded-xl bg-lt-100 text-brand"><Target size={19}/></span><p className="m-0 self-center text-sm leading-relaxed text-lt-600">Your pipeline starts with a potential sale. Choose Add deal, pick a contact, and give the opportunity a name and value.</p></div>}
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <label className="flex items-center gap-2.5 text-sm font-semibold whitespace-nowrap text-lt-700">Show stage<select className={`${compactControlClass} min-w-40 font-normal`} value={stageFilter} onChange={(event) => setStageFilter(event.target.value)}><option value="all">All stages</option>{stages.map((stage) => <option key={stage} value={stage}>{label(stage)}</option>)}</select></label>
+      <div className="flex items-center gap-1"><label className="text-sm text-lt-700"><span className="sr-only">Show stage</span><select className={`${compactControlClass} min-w-40`} value={stageFilter} onChange={(event) => setStageFilter(event.target.value)}><option value="all">All stages</option>{stages.map((stage) => <option key={stage} value={stage}>{label(stage)}</option>)}</select></label><InfoTip label="About pipeline data">Showing up to 500 most recently updated deals. Values are grouped by currency. Add a deal to link a potential sale to a contact.</InfoTip></div>
       <div className="flex gap-1 rounded-xl bg-lt-100 p-1" role="group" aria-label="Pipeline view">
-        <Button type="button" size="xs" variant={view === 'board' ? 'secondary' : 'ghost'} className={view === 'board' ? 'shadow-card' : ''} aria-label="Board view" aria-pressed={view === 'board'} onClick={() => changeView('board')}><Kanban size={16}/>Board</Button>
-        <Button type="button" size="xs" variant={view === 'table' ? 'secondary' : 'ghost'} className={view === 'table' ? 'shadow-card' : ''} aria-label="Table view" aria-pressed={view === 'table'} onClick={() => changeView('table')}><Table2 size={16}/>Table</Button>
+        <Button type="button" size="xs" variant={view === 'board' ? 'secondary' : 'ghost'} className={view === 'board' ? 'shadow-card' : ''} aria-label="Board view" title="Board view" aria-pressed={view === 'board'} onClick={() => changeView('board')}><Kanban size={16}/><span className="max-[640px]:sr-only">Board</span></Button>
+        <Button type="button" size="xs" variant={view === 'table' ? 'secondary' : 'ghost'} className={view === 'table' ? 'shadow-card' : ''} aria-label="Table view" title="Table view" aria-pressed={view === 'table'} onClick={() => changeView('table')}><Table2 size={16}/><span className="max-[640px]:sr-only">Table</span></Button>
       </div>
     </div>
     {view === 'table' ? <PipelineTable deals={visibleDeals} onEdit={setSelected}/> : <div className="flex max-w-full items-stretch gap-3 overflow-x-auto pb-3 max-[640px]:grid max-[640px]:grid-cols-1" aria-label="Deal pipeline" tabIndex={0}>{stages.filter((stage) => stageFilter === 'all' || stage === stageFilter).map((stage) => {
@@ -54,7 +54,6 @@ export function Pipeline({ deals, members }: { deals: Deal[]; members: Person[] 
       </section>
     })}</div>}
     <Modal open={Boolean(selected)} onClose={() => setSelected(null)} title="Update deal">{selected && <><DealForm key={selected.id} deal={selected} prospectId={selected.prospectId} members={members} onSaved={() => setSelected(null)}/><div className="mt-5 flex items-center justify-between gap-3 border-t border-lt-100 pt-4"><span className="text-xs text-lt-500">Remove this deal from the pipeline.</span><DeleteButton noun="deal" path={`/crm/deals/${selected.id}`} description={`“${selected.title}” will be removed from the pipeline.`} onDeleted={() => setSelected(null)}/></div></>}</Modal>
-    <p className="m-0 text-xs text-lt-500">Showing up to 500 most recently updated deals. Values are grouped by currency.</p>
   </>
 }
 

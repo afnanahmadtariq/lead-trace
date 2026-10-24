@@ -15,9 +15,9 @@ const navigation = [
   { href: '/dashboard/integrations', label: 'Integrations', icon: Plug },
 ]
 
-export function DashboardNav({ collapsed = false }: { collapsed?: boolean }) {
+export function DashboardNav({ collapsed = false, vertical = false }: { collapsed?: boolean; vertical?: boolean }) {
   const pathname = usePathname()
-  return <nav className={`grid gap-1 max-[900px]:mt-4 max-[900px]:flex max-[900px]:overflow-x-auto ${collapsed ? 'w-full justify-items-center max-[900px]:w-auto' : ''}`} aria-label="Workspace navigation">
+  return <nav className={`grid gap-1 ${vertical ? '' : 'max-[900px]:mt-4 max-[900px]:flex max-[900px]:overflow-x-auto'} ${collapsed ? 'w-full justify-items-center max-[900px]:w-auto' : ''}`} aria-label="Workspace navigation">
     {navigation.map(({ href, label, icon: Icon, exact }) => {
       const active = exact ? pathname === href : pathname.startsWith(href)
       const collapsedClass = collapsed ? 'w-11 justify-center px-0 max-[900px]:w-auto max-[900px]:justify-start max-[900px]:px-3' : ''

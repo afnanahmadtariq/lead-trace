@@ -18,7 +18,7 @@ test('CRM gives a next step without Calendar and creates records from their own 
   await page.request.delete(`${apiURL}/crm/calendar`)
 
   await page.goto('/dashboard')
-  await expect(page.getByRole('heading', { name: 'Make your next move.' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible()
   await expect(page.getByRole('heading', { name: 'Your next follow-ups' })).toBeVisible()
   await page.getByRole('link', { name: 'Add contact', exact: true }).click()
   const contactDialog = page.getByRole('dialog', { name: 'Add contact' })
@@ -116,7 +116,9 @@ test('CRM gives a next step without Calendar and creates records from their own 
   await page.goto(contactUrl)
   if (process.env.CRM_SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.CRM_SCREENSHOT_DIR}/contact-workflow.png`, fullPage: true, animations: 'disabled', caret: 'initial' })
   await page.setViewportSize({ width: 390, height: 844 })
+  await page.getByRole('button', { name: 'Open navigation', exact: true }).click()
   await expect(page.getByRole('link', { name: 'Contacts', exact: true })).toContainText('Contacts')
+  await page.keyboard.press('Escape')
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBeTruthy()
   if (process.env.CRM_SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.CRM_SCREENSHOT_DIR}/contact-workflow-mobile.png`, fullPage: true, animations: 'disabled', caret: 'initial' })
   await page.goto('/dashboard/pipeline')

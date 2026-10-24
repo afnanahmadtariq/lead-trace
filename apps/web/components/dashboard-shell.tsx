@@ -1,7 +1,7 @@
 'use client'
 
 import * as Popover from '@radix-ui/react-popover'
-import { Bell, Building2, Check, ChevronLeft, ChevronRight, Search, Settings, UserRound } from 'lucide-react'
+import { Bell, Building2, Check, ChevronLeft, ChevronRight, Menu, Search, Settings, UserRound } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import type { AccountContext } from '../lib/account-context'
@@ -11,6 +11,7 @@ import { DashboardNav } from './dashboard-nav'
 import { SignOutButton } from './sign-out-button'
 import { Brand } from './ui/brand'
 import { Button, ButtonLink } from './ui/button'
+import { DashboardHeaderTarget } from './workspace/dashboard-page-header'
 
 function NotificationEntry({ item, onSelect }: { item: InsightNotification; onSelect: () => void }) {
   const content = <>
@@ -33,8 +34,10 @@ export function DashboardShell({
   children: ReactNode
 }) {
   const [collapsed, setCollapsed] = useState(false)
+  const [headerTarget, setHeaderTarget] = useState<HTMLDivElement | null>(null)
   const [notificationsOpen, setNotificationsOpen] = useState(false)
   const [accountMenuOpen, setAccountMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [notificationItems, setNotificationItems] = useState(notifications)
   const [clearingNotifications, setClearingNotifications] = useState(false)
   const [notificationError, setNotificationError] = useState('')
@@ -50,6 +53,16 @@ export function DashboardShell({
 
   useEffect(() => () => {
     if (accountCloseTimer.current) clearTimeout(accountCloseTimer.current)
+  }, [])
+
+  useEffect(() => {
+    const desktop = window.matchMedia('(min-width: 901px)')
+    function closeHiddenMenu() {
+      if (desktop.matches) setMobileMenuOpen(false)
+      else setAccountMenuOpen(false)
+    }
+    desktop.addEventListener('change', closeHiddenMenu)
+    return () => desktop.removeEventListener('change', closeHiddenMenu)
   }, [])
 
   function toggleSidebar() {
@@ -95,7 +108,7 @@ export function DashboardShell({
   }
 
   return <div className={`grid min-h-screen bg-lt-50 bg-[radial-gradient(circle_at_92%_0%,#e7f5ff_0,transparent_26%)] transition-[grid-template-columns] duration-300 ease-fluid motion-reduce:transition-none ${collapsed ? 'grid-cols-[84px_minmax(0,1fr)] max-[900px]:grid-cols-1' : 'grid-cols-[252px_minmax(0,1fr)] max-[900px]:grid-cols-1'}`}>
-    <aside className={`sticky top-0 z-30 flex h-screen flex-col border-r border-lt-200 bg-white/88 py-5 pt-[25px] backdrop-blur-2xl transition-[padding] duration-300 ease-fluid motion-reduce:transition-none max-[900px]:static max-[900px]:block max-[900px]:h-auto max-[900px]:w-full max-[900px]:border-r-0 max-[900px]:border-b max-[900px]:p-[18px] ${collapsed ? 'px-0' : 'px-[18px]'}`}>
+    <aside className={`sticky top-0 z-30 flex h-screen flex-col border-r border-lt-200 bg-white/88 py-5 pt-[25px] backdrop-blur-2xl transition-[padding] duration-300 ease-fluid motion-reduce:transition-none max-[900px]:hidden ${collapsed ? 'px-0' : 'px-[18px]'}`}>
       <div className={`relative flex min-h-9 items-center justify-between text-lt-900 max-[900px]:m-0 ${collapsed ? 'mb-6 w-full justify-center' : 'mx-2 mb-7'}`}>
         <Brand href="/dashboard" compact={collapsed}/>
         <Button type="button" variant="ghost" size="icon-sm" className={`max-[900px]:hidden ${collapsed ? 'absolute top-6 -right-3.5 z-10 size-7! bg-white' : ''}`} onClick={toggleSidebar} aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'} title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}>
@@ -130,11 +143,28 @@ export function DashboardShell({
       </div>
     </aside>
 
-    <div className="min-w-0">
-      <header className="sticky top-0 z-20 flex h-[68px] items-center justify-between gap-5 border-b border-lt-200 bg-lt-50/95 px-[34px] backdrop-blur-xl max-[900px]:h-16 max-[900px]:gap-3 max-[900px]:px-5">
-        <div className="grid min-w-0 flex-1 gap-0.5"><small className="truncate text-[.66rem] tracking-[.07em] text-lt-500 uppercase">Sales workspace</small><strong className="truncate text-[.86rem] text-lt-900">{context.activeWorkspace.name}</strong></div>
-        <div className="flex shrink-0 items-center gap-[9px]">
-          <ButtonLink href="/dashboard/research/new" size="xs" className="max-[520px]:px-3"><Search size={15}/><span className="max-[520px]:hidden">Research prospect</span><span className="hidden max-[520px]:inline">New brief</span></ButtonLink>
+    <DashboardHeaderTarget value={headerTarget}><div className="min-w-0">
+      <header data-dashboard-topbar className="sticky top-0 z-20 flex min-h-16 flex-wrap items-center gap-x-3 gap-y-2 border-b border-lt-200 bg-lt-50/95 px-6 py-2.5 backdrop-blur-xl max-[900px]:px-5">
+        <Popover.Root open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <Popover.Trigger asChild><Button type="button" variant="secondary" size="icon-sm" className="hidden! max-[900px]:inline-flex!" aria-label="Open navigation"><Menu size={18}/></Button></Popover.Trigger>
+          <Popover.Portal>
+            <Popover.Content aria-label="Workspace menu" side="bottom" align="start" sideOffset={12} collisionPadding={16} onClick={(event) => { if ((event.target as HTMLElement).closest('a')) setMobileMenuOpen(false) }} className="z-100 grid max-h-[calc(100dvh_-_100px)] w-[min(300px,calc(100vw_-_32px))] gap-3 overflow-y-auto rounded-2xl border border-lt-200 bg-white p-3 shadow-panel">
+              <div className="px-2 py-1"><Brand href="/dashboard"/></div>
+              <Link href="/dashboard/workspace" className="flex min-w-0 items-center gap-2.5 rounded-xl bg-lt-50 px-3 py-2.5 text-sm font-semibold text-lt-900"><Building2 size={17} className="shrink-0 text-brand"/><span className="truncate">{context.activeWorkspace.name}</span></Link>
+              <DashboardNav vertical/>
+              <div className="grid gap-1 border-t border-lt-200 pt-2">
+                <div className="grid gap-0.5 px-3 py-2"><strong className="truncate text-sm text-lt-900">{context.user.name}</strong><span className="truncate text-xs text-lt-500">{context.user.email}</span></div>
+                <Link href="/dashboard/profile" className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-lt-700 hover:bg-lt-50"><UserRound size={17}/>Profile</Link>
+                <Link href="/dashboard/settings" className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm text-lt-700 hover:bg-lt-50"><Settings size={17}/>Settings & security</Link>
+                <SignOutButton/>
+              </div>
+            </Popover.Content>
+          </Popover.Portal>
+        </Popover.Root>
+        <div data-header-fallback className="min-w-0 flex-1 truncate text-sm font-semibold text-lt-900">{context.activeWorkspace.name}</div>
+        <div ref={setHeaderTarget} className="contents"/>
+        <div className="order-2 ml-auto flex shrink-0 items-center gap-2">
+          <ButtonLink href="/dashboard/research/new" size="icon-sm" variant="secondary" className="dashboard-research-shortcut"><Search size={17} aria-hidden="true"/><span className="sr-only">Research prospect</span></ButtonLink>
           <Popover.Root open={notificationsOpen} onOpenChange={setNotificationsOpen}>
             <Popover.Trigger asChild>
               <Button type="button" variant="secondary" size="icon" className="relative text-lt-600 hover:text-brand data-[state=open]:border-lt-300 data-[state=open]:bg-lt-50 data-[state=open]:text-brand" aria-label={`${unreadNotifications} unread notifications`}>
@@ -153,7 +183,7 @@ export function DashboardShell({
           </Popover.Root>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-[1180px] px-[38px] pt-9 pb-20 max-[900px]:px-5 max-[900px]:pt-8 max-[900px]:pb-16">{children}</main>
-    </div>
+      <main className="mx-auto w-full max-w-[1440px] px-6 pt-5 pb-12 max-[900px]:px-5 max-[900px]:pt-4 max-[900px]:pb-10">{children}</main>
+    </div></DashboardHeaderTarget>
   </div>
 }

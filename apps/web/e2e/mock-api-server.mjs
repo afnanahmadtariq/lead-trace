@@ -15,6 +15,11 @@ const corsHeaders = {
 }
 
 const state = { sessions: new Map(), runs: new Map(), pollCounts: new Map(), shares: new Map() }
+const leadSearchFixture = {
+  id: 'header-lead-search', title: 'London SaaS sales leaders', role: 'Head of sales', industry: 'B2B SaaS', location: 'London, United Kingdom', keywords: 'Growing sales teams',
+  status: 'completed', errorMessage: null, createdAt: new Date().toISOString(), lockExpiresAt: null, attemptCount: 1, failedQueries: 0, rejectedCandidates: 0,
+  sources: [], candidates: [], _count: { sources: 0, candidates: 0 },
+}
 
 function json(res, status, body, headers = {}) {
   res.writeHead(status, { 'Content-Type': 'application/json', ...corsHeaders, ...headers })
@@ -182,6 +187,13 @@ const server = http.createServer(async (req, res) => {
     if (pathname.startsWith('/crm/')) {
       if (!ensureAuthenticated(req, res)) return
       return handleCrm({ req, res, pathname, url, json, readBody, runs: state.runs, webOrigin: WEB_ORIGIN })
+    }
+    if (req.method === 'GET' && ['/leads/capabilities', '/leads/searches', `/leads/searches/${leadSearchFixture.id}`, '/evidence'].includes(pathname)) {
+      if (!ensureAuthenticated(req, res)) return
+      if (pathname === '/leads/capabilities') return json(res, 200, { discoveryConfigured: true, extractionConfigured: true, maxCandidates: 30, queriesPerSearch: 6, publicRegistries: [] })
+      if (pathname === '/leads/searches') return json(res, 200, { items: [leadSearchFixture], total: 1, page: 1, pageSize: 20 })
+      if (pathname === '/evidence') return json(res, 200, { sources: [], evidence: [] })
+      return json(res, 200, leadSearchFixture)
     }
     if (pathname === '/integrations') {
       if (!ensureAuthenticated(req, res)) return
