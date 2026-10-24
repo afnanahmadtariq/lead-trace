@@ -138,9 +138,12 @@ export class CalendarService {
       if (startsAt.getTime() <= Date.now()) {
         response = await fetch(`${base}/${googleEventId}`, { headers, signal: AbortSignal.timeout(15000) })
         if (response.status === 404 || response.status === 410) throw new BadRequestException('This meeting was not scheduled; choose a future time and start a new request')
-      } else response = await fetch(`${base}?sendUpdates=${meeting.inviteContact ? 'all' : 'none'}`, {
+      } else response = await fetch(`${base}?sendUpdates=${meeting.inviteContact ? 'all' : 'none'}&conferenceDataVersion=1`, {
         method: 'POST', headers, signal: AbortSignal.timeout(15000),
-        body: JSON.stringify({ id: googleEventId, summary: meeting.title, description: `Lead Trace contact: ${contact.name}${contact.companyName ? ` · ${contact.companyName}` : ''}`, start: { dateTime: startsAt.toISOString() }, end: { dateTime: endsAt.toISOString() }, ...(meeting.attendeeEmail ? { attendees: [{ email: meeting.attendeeEmail }] } : {}) }),
+        body: JSON.stringify({ id: googleEventId, summary: meeting.title, description: `Lead Trace contact: ${contact.name}${contact.companyName ? ` · ${contact.companyName}` : ''}`, start: { dateTime: startsAt.toISOString() }, end: { dateTime: endsAt.toISOString() },
+          // Reuse this event's request ID on retries; every new event gets its own Meet room.
+          conferenceData: { createRequest: { requestId: googleEventId, conferenceSolutionKey: { type: 'hangoutsMeet' } } },
+          ...(meeting.attendeeEmail ? { attendees: [{ email: meeting.attendeeEmail }] } : {}) }),
       })
       if (response.status === 409) response = await fetch(`${base}/${googleEventId}`, { headers, signal: AbortSignal.timeout(15000) })
     } catch (error) {

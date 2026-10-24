@@ -70,6 +70,7 @@ test('CRM lifecycle, tenant isolation, research reuse and Google Calendar retrie
     const state = authorization.searchParams.get('state')
     stateIds.push(createHash('sha256').update(state).digest('hex'))
     assert.equal(authorization.searchParams.get('code_challenge_method'), 'S256')
+    assert.equal(authorization.searchParams.get('scope'), 'https://www.googleapis.com/auth/calendar.events.owned')
     await assert.rejects(() => calendar.callback(b, state, 'code'), /same workspace/)
     let tokenRequests = 0, eventRequests = 0, failAfterCreating = true
     const providerEvents = new Map()
@@ -83,6 +84,8 @@ test('CRM lifecycle, tenant isolation, research reuse and Google Calendar retrie
         eventRequests++
         const event = JSON.parse(init.body)
         assert.equal(init.headers.Authorization, 'Bearer test-access-token')
+        assert.equal(new URL(url).searchParams.get('conferenceDataVersion'), '1')
+        assert.deepEqual(event.conferenceData, { createRequest: { requestId: event.id, conferenceSolutionKey: { type: 'hangoutsMeet' } } })
         if (url.includes('sendUpdates=all')) assert.equal(event.attendees[0].email, 'maya@example.com')
         else { assert.ok(url.includes('sendUpdates=none')); assert.equal(event.attendees, undefined) }
         if (providerEvents.has(event.id)) return Response.json({}, { status: 409 })
