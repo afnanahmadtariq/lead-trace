@@ -78,7 +78,7 @@ class LlmTest(unittest.TestCase):
 
         self.assertEqual(config.api_key, 'dashscope-key')
         self.assertEqual(config.base_url, DEFAULT_DASHSCOPE_BASE_URL)
-        self.assertEqual(config.model, 'qwen3.8-max')
+        self.assertEqual(config.model, 'qwen3.7-plus')
 
     def test_legacy_model_override_remains_supported_per_provider(self):
         from unittest.mock import patch

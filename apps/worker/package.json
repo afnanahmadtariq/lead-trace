@@ -8,7 +8,7 @@
     "clean": "python3 -c \"import pathlib, shutil; [shutil.rmtree(p) for p in pathlib.Path('.').rglob('__pycache__')]\"",
     "lint": ".venv/bin/python -c \"import ast, pathlib; [ast.parse(p.read_text()) for p in list(pathlib.Path('src').rglob('*.py')) + list(pathlib.Path('test').rglob('*.py'))]\"",
     "check-types": "npm run lint",
-    "test": "env -u OPENAI_API_KEY -u DASHSCOPE_API_KEY .venv/bin/python -m unittest discover -s test -t . -q",
+    "test": "env -u OPENAI_API_KEY -u DASHSCOPE_API_KEY -u GEMINI_API_KEY -u LLM_PROVIDER_ORDER .venv/bin/python -m unittest discover -s test -t . -q",
     "process": ".venv/bin/python -m lead_trace_worker.process_run"
   }
 }

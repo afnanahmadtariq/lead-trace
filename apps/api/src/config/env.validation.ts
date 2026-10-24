@@ -1,3 +1,6 @@
+import { modelProviderOrder } from '../ai/model-provider'
+import { ConfigService } from '@nestjs/config'
+
 const DEFAULT_WEB_URL = 'http://localhost:3000'
 const DEFAULT_API_URL = 'http://localhost:3001'
 const DEVELOPMENT_AUTH_SECRET = 'lead-trace-development-secret-change-before-production'
@@ -95,5 +98,12 @@ function calendarConfiguration(config: Record<string, unknown>) {
 }
 
 export function validateEnvironment(config: Record<string, unknown>) {
-  return { ...config, ...authConfiguration(config), ...emailConfiguration(config), ...tavilyConfiguration(config), ...calendarConfiguration(config) }
+  const order = modelProviderOrder(new ConfigService(config)).join(',')
+  return {
+    ...config, ...authConfiguration(config), ...emailConfiguration(config), ...tavilyConfiguration(config), ...calendarConfiguration(config),
+    LLM_PROVIDER_ORDER: order,
+    GEMINI_API_KEY: optionalString(config.GEMINI_API_KEY) ?? '',
+    GEMINI_BASE_URL: httpUrl(config.GEMINI_BASE_URL, 'https://generativelanguage.googleapis.com/v1beta/openai', 'GEMINI_BASE_URL'),
+    GEMINI_MODEL: optionalString(config.GEMINI_MODEL) ?? 'gemini-3.5-flash-lite',
+  }
 }

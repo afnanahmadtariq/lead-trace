@@ -96,7 +96,7 @@ class ModelGatewayConfigTest(unittest.TestCase):
             config = ModelGatewayConfig.from_env()
             self.assertEqual(config.api_key, 'secret')
             self.assertEqual(config.base_url, 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1')
-            self.assertEqual(config.model, 'qwen3.8-max')
+            self.assertEqual(config.model, 'qwen3.7-plus')
 
 
 class RequestStructuredOutputTest(unittest.TestCase):

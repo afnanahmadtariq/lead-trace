@@ -465,7 +465,7 @@ class EvidenceStageDegradeOneSourceTest(unittest.TestCase):
                     result = worker.poll_once()
 
         self.assertTrue(result)
-        self.assertIn('network down', '\n'.join(logs.output))
+        self.assertIn('ConnectionError', '\n'.join(logs.output))
         insert_calls = [
             (sql, params) for kind, sql, params in connection.actions if kind == 'execute' and sql == INSERT_EVIDENCE_SQL
         ]

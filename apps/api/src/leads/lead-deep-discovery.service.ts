@@ -82,8 +82,8 @@ export class LeadDeepDiscoveryService {
     try {
       const planned = await this.planner.plan([...pool.values()].slice(0, 48), criteria)
       companies = [...new Map([...companies, ...planned].map((company) => [company.name.toLowerCase(), company])).values()].slice(0, 8)
-      activity.push({ provider: 'Qwen', operation: 'company planning', requests: 1, records: companies.length, credits: null, status: 'ok' })
-    } catch { activity.push({ provider: 'Qwen', operation: 'company planning', requests: 1, records: 0, credits: null, status: 'unavailable', message: 'Company planning unavailable; sourced current employers and direct people discovery continue.' }) }
+      activity.push({ provider: 'AI model', operation: 'company planning', requests: 1, records: companies.length, credits: null, status: 'ok' })
+    } catch { activity.push({ provider: 'AI model', operation: 'company planning', requests: 1, records: 0, credits: null, status: 'unavailable', message: 'Company planning unavailable; sourced current employers and direct people discovery continue.' }) }
     await update('people', `Searching current teams at ${companies.length} sourced companies and corroborating registry records.`)
     const targetQueries = companies.flatMap((company) => companyPeopleQueries(company, criteria))
     if (targetQueries.length) await search(targetQueries)
@@ -143,7 +143,7 @@ export class LeadDeepDiscoveryService {
       if (providerFailure?.status === 'rejected') throw providerFailure.reason
       throw new BadGatewayException('Lead qualification is unavailable. Retry this search.')
     }
-    activity.push({ provider: 'Qwen', operation: 'people qualification', requests: groups.length, records: extracted.reduce((sum, result) => sum + result.candidates.length, 0), credits: null, status: extracted.length === groups.length ? 'ok' : 'partial', ...(extracted.length < groups.length ? { message: providerFailure?.status === 'rejected' ? providerFailure.reason.message : 'Some qualification requests failed; results may be incomplete.' } : {}) })
+    activity.push({ provider: 'AI model', operation: 'people qualification', requests: groups.length, records: extracted.reduce((sum, result) => sum + result.candidates.length, 0), credits: null, status: extracted.length === groups.length ? 'ok' : 'partial', ...(extracted.length < groups.length ? { message: providerFailure?.status === 'rejected' ? providerFailure.reason.message : 'Some qualification requests failed; results may be incomplete.' } : {}) })
     const candidates = new Map<string, (typeof extracted)[number]['candidates'][number]>()
     const corroborated = corroborateCompanyEvidence(extracted.flatMap((result) => result.candidates), sources, companies, criteria)
     for (const record of corroborated) {

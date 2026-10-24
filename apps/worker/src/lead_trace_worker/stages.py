@@ -11,6 +11,7 @@ from lead_trace_worker.graph_brief import build_brief_graph, new_id
 from lead_trace_worker.graph_evidence import build_evidence_graph
 from lead_trace_worker.email import send_brief_ready_email
 from lead_trace_worker.model_gateway import ModelGatewayConfig, build_client
+from lead_trace_worker.providers import configured_providers
 from lead_trace_worker.models import EvidenceDraft, RunContext, SourceBundle
 from lead_trace_worker.pipeline import FETCH_SOURCES_SQL, INSERT_EVIDENCE_SQL
 
@@ -106,7 +107,7 @@ def _source_score(metadata: Any) -> float:
 
 
 def _gateway_enabled() -> bool:
-    return bool(os.environ.get('DASHSCOPE_API_KEY', '').strip())
+    return bool(configured_providers())
 
 
 def _is_blank_excerpt(excerpt: Optional[str]) -> bool:
@@ -183,7 +184,7 @@ def _process_evidence_gateway(
             claims_by_source.append((source['id'], []))
             continue
         try:
-            extracted = evidence.extract_claims_for_source(client, config, source, context)
+            extracted = evidence.extract_claims_for_source(client, config, source, context, client_factory=model_client_factory)
         except Exception as error:
             # One source's timeout or API error must not discard claims from the others.
             log.warning(

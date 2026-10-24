@@ -19,7 +19,7 @@ export class LeadsService {
 
   async create(session: AuthenticatedSession, input: CreateLeadSearchDto) {
     const organizationId = await this.crm.scope(session)
-    if (!this.config.get<string>('TAVILY_API_KEY')?.trim() || !this.extraction.configured()) throw new ServiceUnavailableException('Configure Tavily and the model provider before generating leads')
+    if (!this.config.get<string>('TAVILY_API_KEY')?.trim() || !this.extraction.configured()) throw new ServiceUnavailableException('Configure Tavily and an enabled model provider before generating leads')
     return db.$transaction(async (tx) => {
       // Serialize the quota check across API instances without locking CRM records.
       await tx.$queryRaw`SELECT 1 FROM pg_advisory_xact_lock(hashtextextended(${`lead-search:${organizationId}`}, 0))`
@@ -76,7 +76,7 @@ export class LeadsService {
   private async executeDiscovery(id: string, organizationId: string) {
     const search = await db.leadSearch.findUnique({ where: { id_organizationId: { id, organizationId } } })
     if (!search) throw new NotFoundException('Lead search not found')
-    if (!this.config.get<string>('TAVILY_API_KEY') || !this.extraction.configured()) throw new ServiceUnavailableException('Configure Tavily and the model provider before generating leads')
+    if (!this.config.get<string>('TAVILY_API_KEY') || !this.extraction.configured()) throw new ServiceUnavailableException('Configure Tavily and an enabled model provider before generating leads')
     const attemptToken = randomUUID(), now = new Date()
     const claim = await db.leadSearch.updateMany({ where: { id, organizationId, attemptCount: { lt: 5 }, OR: [{ status: { in: ['queued', 'failed'] } }, { status: 'running', lockExpiresAt: { lte: now } }] }, data: { status: 'running', phase: 'discovering', attemptToken, attemptCount: { increment: 1 }, lockExpiresAt: new Date(Date.now() + 300000), startedAt: now, completedAt: null, errorMessage: null } })
     if (!claim.count) throw new ConflictException('This search is already running, finished, cancelled, or has reached its retry limit')

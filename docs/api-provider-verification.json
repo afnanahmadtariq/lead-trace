@@ -1,0 +1,55 @@
+{
+  "checkedAt": "2026-10-24T05:30:59.390701+00:00",
+  "scope": "Final API and worker provider verification slice, using retained official-source quotes. No fresh deep-cohort or browser journey rerun.",
+  "production": {
+    "providerOrder": [
+      "gemini",
+      "dashscope"
+    ],
+    "primaryModel": "gemini-3.5-flash-lite",
+    "fallbackModel": "qwen3.7-plus"
+  },
+  "local": {
+    "providerOrder": [
+      "dashscope"
+    ],
+    "model": "qwen3.8-flash",
+    "geminiKeyPresent": true,
+    "geminiRequestsInLiveLocalCheck": 0
+  },
+  "liveChecks": {
+    "currentGeminiKeyJsonPing": "passed (HTTP 200)",
+    "geminiOnlyLeadExtractionAndCompanyPlanning": "passed (HTTP 200 for both)",
+    "apiFailover": "passed (intentional Gemini model HTTP 404, then DashScope HTTP 200)",
+    "workerEvidenceGateway": "passed (2 extracted claims)",
+    "workerBriefTransport": "passed",
+    "workerFailover": "passed (actual selected provider dashscope)",
+    "localDashscopeLeadExtraction": "passed; zero Gemini requests"
+  },
+  "regressions": {
+    "api": {
+      "passed": 113,
+      "failed": 0,
+      "skipped": 1,
+      "skipReason": "Opt-in fresh live discovery journey"
+    },
+    "worker": {
+      "passed": 176,
+      "failed": 0
+    },
+    "apiBuild": "passed",
+    "apiLintAndTypes": "passed",
+    "workerSyntax": "passed",
+    "composeAndEnvironmentValidation": "passed"
+  },
+  "deployment": "No production deployment, GitHub secret update, tag, or push was performed.",
+  "credentials": "Real .env and .env.prod credentials remain ignored by Git.",
+  "cleanup": {
+    "taskOwnedTestServices": "stopped",
+    "disposableDatabase": "removed",
+    "temporaryTestFiles": "removed",
+    "existingWebHttpStatus": 200,
+    "existingApiHttpStatus": 200,
+    "existingWorkerAndDatabase": "preserved"
+  }
+}

@@ -48,7 +48,7 @@ Company details are currently stored on contacts. Shared company records, custom
 
 ## Lead generation
 
-Open **Find leads** and describe the buyer role, industry/market, optional location, and additional keywords. Deep discovery first identifies companies, then searches their teams, reads full pages, and checks public registries. It investigates up to eight companies using at most 30 Tavily searches, full-page extraction for up to 16 URLs, and up to four company-site crawls of three pages each. Up to 64 source snapshots support up to 40 professional prospects. Quick discovery remains available with three searches and up to 18 snippets. Both modes use the existing Qwen model; no additional data subscription is required.
+Open **Find leads** and describe the buyer role, industry/market, optional location, and additional keywords. Deep discovery first identifies companies, then searches their teams, reads full pages, and checks public registries. It investigates up to eight companies using at most 30 Tavily searches, full-page extraction for up to 16 URLs, and up to four company-site crawls of three pages each. Up to 64 source snapshots support up to 40 professional prospects. Quick discovery remains available with three searches and up to 18 snippets. Both modes use the configured AI provider chain; no additional lead-data subscription is required.
 
 1. Start a search. A database-backed API worker continues discovery when you leave the page; return to see phase progress, sourced companies, registry records, and provider activity. Completed searches remain in the workspace's saved search list.
 2. Review **Source-supported matches** first. These candidates have exact quoted evidence for every requested criterion and no detected source-age issue. **Needs review** holds missing evidence, old dated sources, and candidates saved before the evidence checks. Expand **Why this person matches** to inspect each criterion and its source. A source-supported match does not establish buying intent or verified contact details.
@@ -60,7 +60,7 @@ The model receives bounded source text, the current date, and criteria as untrus
 
 Public registry checks use [GLEIF](https://www.gleif.org/en/lei-data/gleif-api/) for legal identities and reported headquarters, [Wikidata](https://www.wikidata.org/) to corroborate official websites, and [SEC EDGAR](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) for US public-company identities and reported business addresses. Coverage varies: many private businesses have no matching record. Registry records alone cannot establish industry fit, current employment, or buyer intent. A registered address is not a person's work location. Location fit can use a person's work location or an explicitly reported company headquarters. Partial provider failures stay visible; a total web-search outage fails the search rather than reporting a successful empty result. Tavily [Extract](https://docs.tavily.com/documentation/api-reference/endpoint/extract) and [Crawl](https://docs.tavily.com/documentation/api-reference/endpoint/crawl) complement search snippets.
 
-**Configuration:** apply migrations and regenerate Prisma Client, then configure `TAVILY_API_KEY`, `DASHSCOPE_API_KEY`, `DASHSCOPE_BASE_URL`, and `DASHSCOPE_MODEL` on the API. The API uses the same model settings as the research worker; Docker Compose forwards them to both services. The feature shows setup status when providers are missing. Keys stay on the server. See [Tavily Search](https://docs.tavily.com/documentation/api-reference/endpoint/search) and [Qwen structured output](https://www.alibabacloud.com/help/en/model-studio/qwen-structured-output).
+**Configuration:** apply migrations and regenerate Prisma Client, then configure `TAVILY_API_KEY`, `DASHSCOPE_API_KEY`, `DASHSCOPE_BASE_URL`, and `DASHSCOPE_MODEL` on the API. The API uses the same model settings as the research worker; Docker Compose forwards them to both services. In production, set `LLM_PROVIDER_ORDER=gemini,dashscope` and configure `GEMINI_API_KEY`, `GEMINI_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai`, and `GEMINI_MODEL=gemini-3.5-flash-lite`. Failed requests or invalid structured responses fall back to DashScope. Missing provider keys are skipped. Keep `DASHSCOPE_MODEL=qwen3.7-plus` for the production fallback. For local testing, use `LLM_PROVIDER_ORDER=dashscope` and `DASHSCOPE_MODEL=qwen3.8-flash`; Gemini is excluded even if its key is present. Keys in `.env` and `.env.prod` remain untracked. See [Gemini OpenAI compatibility](https://ai.google.dev/gemini-api/docs/openai). The [provider verification record](docs/api-provider-verification.json) lists the live calls and regression checks for this integration. The feature shows setup status when providers are missing. Keys stay on the server. See [Tavily Search](https://docs.tavily.com/documentation/api-reference/endpoint/search) and [Qwen structured output](https://www.alibabacloud.com/help/en/model-studio/qwen-structured-output).
 
 Searches persist queued/running/completed/failed/cancelled states. Failures can be retried up to five attempts; a search that crashes on its fifth attempt is marked failed. A renewable five-minute lease allows the background worker to recover interrupted jobs after an API restart; cancellation invalidates a pending attempt so late results cannot overwrite it. The authenticated discovery endpoint returns promptly while a worker processes one job per API instance. This is an on-demand saved search, not a recurring campaign. Existing searches preserve their original quick/exact settings; new searches default to deep discovery and equivalent senior titles. The workspace allows up to three recent active searches, and search creation/discovery have API rate limits. Provider usage is charged to the configured accounts.
 
@@ -192,7 +192,7 @@ A company profile can tell you what a business does. Preparing for a conversatio
 
 **Your prospect + your offer → public sources → evidence → a cited Deal Brief**
 
-The API saves your context and discovers relevant public sources with **Tavily**, with Wikipedia as a fallback when discovery returns no sources. A background **Python worker** uses **Qwen through DashScope** to extract and reconcile claims. **LangGraph** then assembles a brief for your chosen goal, and a citation check matches each key signal to its stored claim and source before completion.
+The API saves your context and discovers relevant public sources with **Tavily**, with Wikipedia as a fallback when discovery returns no sources. A background **Python worker** uses the **configured Gemini/DashScope provider chain** to extract and reconcile claims. **LangGraph** then assembles a brief for your chosen goal, and a citation check matches each key signal to its stored claim and source before completion.
 
 You can inspect the result, copy or export it, retry failed research, or regenerate a brief from stored evidence and compare changes. Missing evidence appears as a gap. Citations make claims traceable; review the sources and recommendations before use. Review your outreach message before sending.
 
@@ -207,7 +207,7 @@ flowchart LR
     API --> DB("<b>Data and jobs</b><br/>PostgreSQL · Prisma · job leases")
     DB --> Worker("<b>Research worker</b><br/>Python · LangGraph")
     API --> Discovery("<b>Public discovery and company registries</b><br/>Tavily Search · Extract · Crawl<br/>GLEIF · Wikidata · SEC EDGAR")
-    API --> Model("<b>AI inference</b><br/>Qwen / DashScope<br/>Qualification + briefs")
+    API --> Model("<b>AI inference</b><br/>Gemini / DashScope<br/>Qualification + briefs")
     Worker --> Model
     API --> Calendar("<b>Optional integration</b><br/>Google Calendar<br/>OAuth · meetings")
     classDef component fill:#FFFFFF,stroke:#C4DAF5,stroke-width:2px,color:#173B75,rx:12,ry:12;
@@ -219,7 +219,7 @@ flowchart LR
 | --- | --- | --- |
 | Web dashboard | Collect context and show progress, evidence, and briefs | Next.js, React, Tailwind CSS |
 | API and accounts | Manage sign-in, workspaces, requests, and source discovery | NestJS, Better Auth, Tavily |
-| Research worker | Extract evidence, generate briefs, and check citations | Python, LangGraph, Qwen/DashScope |
+| Research worker | Extract evidence, generate briefs, and check citations | Python, LangGraph, Gemini/DashScope |
 | Data and jobs | Store workspace records and queue background work | PostgreSQL, Prisma |
 
 The web app runs on **Cloudflare Workers via OpenNext**. The API, research worker, and PostgreSQL run with **Docker Compose on a VPS**, with Nginx handling API traffic. PostgreSQL tracks the job queue, and database relationships keep research records tied to their workspace. The worker holds each claimed run under a lease (`WORKER_LOCK_INTERVAL`, 10 minutes by default) that a heartbeat renews during slow stages; model calls time out after 120 seconds and retry once.

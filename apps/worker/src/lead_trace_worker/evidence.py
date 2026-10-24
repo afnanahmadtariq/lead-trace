@@ -124,6 +124,7 @@ def extract_claims_for_source(
     config: ModelGatewayConfig,
     source: dict,
     context: Optional[RunContext] = None,
+    *, client_factory=None,
 ) -> list[ExtractedClaim]:
     system_prompt, user_prompt = build_extraction_prompt(source, context)
     result = request_structured_output(
@@ -132,6 +133,7 @@ def extract_claims_for_source(
         system_prompt=system_prompt,
         user_prompt=user_prompt,
         schema=SourceClaims,
+        client_factory=client_factory,
     )
     return result.claims
 

@@ -13,13 +13,12 @@ from pydantic import BaseModel, Field
 from lead_trace_worker.extract import extract_claims, numeric_quantities
 from lead_trace_worker.evidence import ExtractedClaim as GroundedClaim, filter_claims_for_source, wrap_source_excerpt
 from lead_trace_worker.model_gateway import CLIENT_MAX_RETRIES, CLIENT_TIMEOUT_SECONDS
+from lead_trace_worker.providers import configured_providers, request_options, DEFAULT_DASHSCOPE_MODEL, DEFAULT_DASHSCOPE_BASE_URL
 from lead_trace_worker.models import BriefGeneration, BriefSections, ConversationAngle, EvidenceDraft, RunContext, SignalType, SourceBundle
 
 log = logging.getLogger('lead-trace.worker.llm')
 
 DEFAULT_OPENAI_MODEL = 'gpt-4o-mini'
-DEFAULT_DASHSCOPE_MODEL = 'qwen3.8-max'
-DEFAULT_DASHSCOPE_BASE_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1'
 
 SIGNAL_TYPES = (
     'hiring',
@@ -68,6 +67,7 @@ class LlmRuntimeConfig:
     api_key: str
     base_url: Optional[str]
     model: str
+    provider: str = 'dashscope'
 
 
 def personalize_outreach_draft(draft: Optional[str], sender_name: Optional[str]) -> Optional[str]:
@@ -87,62 +87,79 @@ def personalize_outreach_draft(draft: Optional[str], sender_name: Optional[str])
     return f'{personalized}\n\nBest,\n{name}'
 
 
-def resolve_llm_config() -> LlmRuntimeConfig:
+def resolve_llm_configs() -> list[LlmRuntimeConfig]:
     openai_key = os.environ.get('OPENAI_API_KEY', '').strip()
-    dashscope_key = os.environ.get('DASHSCOPE_API_KEY', '').strip()
     legacy_model = os.environ.get('WORKER_LLM_MODEL', '').strip()
 
-    if openai_key:
-        return LlmRuntimeConfig(
+    # Preserve explicit legacy OpenAI configurations. An explicit provider order
+    # controls the production chain and prevents local use of a Gemini key.
+    if openai_key and not os.environ.get('LLM_PROVIDER_ORDER', '').strip() and os.environ.get('NODE_ENV') != 'production':
+        return [LlmRuntimeConfig(
             api_key=openai_key,
             base_url=os.environ.get('OPENAI_BASE_URL', '').strip() or None,
             model=os.environ.get('OPENAI_MODEL', '').strip() or legacy_model or DEFAULT_OPENAI_MODEL,
-        )
-    if dashscope_key:
-        return LlmRuntimeConfig(
-            api_key=dashscope_key,
-            base_url=os.environ.get('DASHSCOPE_BASE_URL', '').strip() or DEFAULT_DASHSCOPE_BASE_URL,
-            model=os.environ.get('DASHSCOPE_MODEL', '').strip() or legacy_model or DEFAULT_DASHSCOPE_MODEL,
-        )
-    raise RuntimeError('OPENAI_API_KEY or DASHSCOPE_API_KEY is required for LLM features')
+            provider='openai',
+        )]
+    providers = configured_providers()
+    return [LlmRuntimeConfig(p.api_key, p.base_url, p.model, p.provider) for p in providers]
+
+
+def resolve_llm_config() -> LlmRuntimeConfig:
+    configs = resolve_llm_configs()
+    if not configs:
+        raise RuntimeError('Configure an enabled GEMINI_API_KEY or DASHSCOPE_API_KEY for LLM features')
+    return configs[0]
 
 
 def llm_enabled() -> bool:
-    return bool(os.environ.get('OPENAI_API_KEY', '').strip() or os.environ.get('DASHSCOPE_API_KEY', '').strip())
+    return bool(resolve_llm_configs())
 
 
 @lru_cache(maxsize=4)
-def _build_client(api_key: str, base_url: Optional[str]):
+def _build_client(api_key: str, base_url: Optional[str], provider: str = 'dashscope'):
     try:
         from openai import OpenAI
     except ImportError as error:
         raise RuntimeError('openai package required for LLM features; pip install lead-trace-worker[llm]') from error
 
-    return OpenAI(api_key=api_key, base_url=base_url, timeout=CLIENT_TIMEOUT_SECONDS, max_retries=CLIENT_MAX_RETRIES)
+    return OpenAI(api_key=api_key, base_url=base_url,
+                  timeout=45 if provider == 'gemini' else CLIENT_TIMEOUT_SECONDS,
+                  max_retries=0 if provider == 'gemini' else CLIENT_MAX_RETRIES)
 
 
 def _client():
     config = resolve_llm_config()
-    return _build_client(config.api_key, config.base_url)
+    return _build_client(config.api_key, config.base_url, config.provider)
 
 
 def _model() -> str:
     return resolve_llm_config().model
 
 
-def _chat_json(system: str, user: str) -> dict:
-    response = _client().chat.completions.create(
-        model=_model(),
-        temperature=0.2,
-        response_format={'type': 'json_object'},
-        extra_body={'enable_thinking': False},
-        messages=[
-            {'role': 'system', 'content': system},
-            {'role': 'user', 'content': user},
-        ],
-    )
-    content = response.choices[0].message.content or '{}'
-    return json.loads(content)
+class ModelJson(dict):
+    def __init__(self, value: dict, provider: str, model: str):
+        super().__init__(value)
+        self.provider = provider
+        self.model = model
+
+
+def _chat_json(system: str, user: str, schema=None) -> dict:
+    for config in resolve_llm_configs():
+        try:
+            response = _build_client(config.api_key, config.base_url, config.provider).chat.completions.create(
+                model=config.model, temperature=0.2,
+                response_format={'type': 'json_object'}, **request_options(config.provider),
+                messages=[{'role': 'system', 'content': system}, {'role': 'user', 'content': user}],
+            )
+            payload = json.loads(response.choices[0].message.content)
+            if not isinstance(payload, dict):
+                raise ValueError('Expected a JSON object')
+            if schema is not None:
+                schema.model_validate(payload)
+            return ModelJson(payload, config.provider, config.model)
+        except Exception:
+            log.warning('model copy request failed provider=%s model=%s; trying next configured provider', config.provider, config.model)
+    raise RuntimeError('Enabled model providers could not return valid structured output')
 
 
 def _grounded_draft(item: LlmClaim, source: SourceBundle, context: RunContext) -> Optional[EvidenceDraft]:
@@ -319,7 +336,7 @@ def polish_brief(context: RunContext, sections: BriefSections, evidence: list[di
         'The question must test that hypothesis, without presuming it is true.'
     )
     try:
-        payload = _chat_json(system, prompt)
+        payload = _chat_json(system, prompt, schema=LlmBriefCopy)
         copy = LlmBriefCopy.model_validate(payload)
     except Exception as error:
         log.warning('llm brief polish failed: %s', error)
@@ -353,10 +370,11 @@ def polish_brief(context: RunContext, sections: BriefSections, evidence: list[di
         'next_steps': grounded_list(copy.next_steps, sections.next_steps),
     }
     outreach_draft = (copy.outreach_draft if grounded_text(copy.outreach_draft) else sections.outreach_draft) if context.goal == 'outreach' else None
-    config = resolve_llm_config() if os.environ.get('OPENAI_API_KEY', '').strip() or os.environ.get('DASHSCOPE_API_KEY', '').strip() else None
+    configs = resolve_llm_configs()
+    config = configs[0] if configs else None
     generation = BriefGeneration(
-        mode='model_assisted', provider=('openai' if os.environ.get('OPENAI_API_KEY', '').strip() else 'dashscope') if config else None,
-        model=config.model if config else None,
+        mode='model_assisted', provider=getattr(payload, 'provider', config.provider if config else None),
+        model=getattr(payload, 'model', config.model if config else None),
     )
     log.info('brief generation run_id=%s mode=%s provider=%s model=%s', context.run_id, generation.mode, generation.provider, generation.model)
     return sections.model_copy(
