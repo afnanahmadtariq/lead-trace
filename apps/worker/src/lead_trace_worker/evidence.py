@@ -8,7 +8,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from lead_trace_worker.extract import SENTENCE_SPLIT, is_junk_claim, is_relevant_claim
+from lead_trace_worker.extract import SENTENCE_SPLIT, is_junk_claim, is_question, is_relevant_claim
 from lead_trace_worker.model_gateway import ModelGatewayConfig, request_structured_output
 from lead_trace_worker.models import RunContext
 
@@ -99,6 +99,7 @@ def build_extraction_prompt(source: dict, context: Optional[RunContext] = None) 
         'Extract only claims that are directly supported by the provided excerpt — '
         'never infer or assume facts not stated in the text. '
         'Keep only standalone facts explicitly about the target prospect or target company. '
+        'Questions and FAQ headings are not facts. Use a stated answer only when it supports a complete claim. '
         'Reject directory listings, social activity labels, comments by other people, navigation text, '
         'truncated fragments, and generic industry claims. Include the named person or company in every claim. '
         f'Classify each claim with a signalType chosen from this closed list: {signal_type_list}. '
@@ -159,7 +160,13 @@ def _hedge_agrees_with_source(claim: str, excerpt: str) -> bool:
 
 
 def _claim_has_source_support(claim: str, source: dict) -> bool:
-    source_text = f'{source.get("title", "")} {source.get("excerpt", "")}'
+    # An unanswered FAQ must not ground a declarative model paraphrase of the question.
+    excerpt = '\n'.join(
+        sentence for line in source.get('excerpt', '').splitlines()
+        for sentence in SENTENCE_SPLIT.split(line) if not is_question(sentence)
+    )
+    title = source.get('title', '')
+    source_text = f'{"" if is_question(title) else title} {excerpt}'
     claim_numbers = _extract_numeric_tokens(claim.lower())
     source_numbers = _extract_numeric_tokens(source_text.lower())
     if claim_numbers and not claim_numbers.issubset(source_numbers):
@@ -170,7 +177,7 @@ def _claim_has_source_support(claim: str, source: dict) -> bool:
     overlap = claim_tokens & _support_tokens(source_text)
     if not (len(overlap) >= 2 and (len(overlap) / len(claim_tokens)) >= 0.60):
         return False
-    return _hedge_agrees_with_source(claim, source.get('excerpt', ''))
+    return _hedge_agrees_with_source(claim, excerpt)
 
 
 def filter_claims_for_source(

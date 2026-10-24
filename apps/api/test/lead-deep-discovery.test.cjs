@@ -4,6 +4,7 @@ const { validateExtractedLeads, roleMatches } = require('../dist/leads/lead-disc
 const { validateCompanyPlan, companyDomain, currentRoleCompanies } = require('../dist/leads/lead-company-planner.service.js')
 const { LeadDeepDiscoveryService, deepLeadQueries, companyPeopleQueries } = require('../dist/leads/lead-deep-discovery.service.js')
 const { LeadRegistriesService, sameRegisteredCompany, countryCode } = require('../dist/leads/lead-registries.service.js')
+const { corroborateCompanyEvidence } = require('../dist/leads/lead-company-evidence.js')
 const criteria = { industry: 'B2B SaaS', role: 'Head of Sales', location: 'United States', roleMatch: 'function' }
 const quote = 'Maya Chen is VP of Sales at Northstar, a B2B SaaS company headquartered in the United States.'
 const source = { id: 's1', url: 'https://northstar.example.com/team', title: 'Northstar leadership', publisher: 'northstar.example.com', excerpt: quote, queries: [] }
@@ -91,6 +92,19 @@ test('a total web outage is a failure rather than a misleading zero-buyer result
   await assert.rejects(() => new LeadDeepDiscoveryService(tavily, {}, registries, {}).run(criteria, 'deep', 'search', async () => {}), /Registry records alone cannot establish current buyers/)
 })
 
+test('deep discovery preserves actionable quota failures when no qualification batch succeeds', async () => {
+  const { ServiceUnavailableException } = require('@nestjs/common')
+  const tavily = {
+    search: async () => ({ sources: [{ ...source, score: 0.9 }], kind: 'company-discovery', query: 'test', credits: 1 }),
+    extractPages: async () => ({ sources: [], failed: 0, credits: 0 }),
+  }
+  const extraction = { extract: async () => { throw new ServiceUnavailableException('The model provider quota is exhausted.') } }
+  const registries = { seed: async () => ({ sources: [], activity: [] }) }
+  const planner = { plan: async () => [] }
+  await assert.rejects(() => new LeadDeepDiscoveryService(tavily, extraction, registries, planner).run(criteria, 'deep', 'search', async () => {}),
+    (error) => error.getStatus() === 503 && /quota is exhausted/.test(error.message))
+})
+
 test('registry searches exclude funds and retain only exact professional company fields', async () => {
   const original = global.fetch
   const record = (name, category = 'GENERAL') => ({ id: '52990000000000000000', attributes: { entity: { legalName: { name }, category, status: 'ACTIVE', headquartersAddress: { city: 'Austin', country: 'US' } } } })
@@ -131,9 +145,57 @@ test('company planning satisfies the model JSON-mode contract', async () => {
 })
 
 test('SaaS expertise in an author biography and SaaS customers cannot prove company industry', () => {
-  for (const industryQuote of ['Jane brings B2B SaaS marketing expertise to her writing.', 'Northstar provides tax services for SaaS businesses.']) {
+  for (const industryQuote of ['Jane brings B2B SaaS marketing expertise to her writing.', 'Northstar provides tax services for SaaS businesses.', 'Northstar customers are B2B SaaS companies.']) {
     const other = { ...source, id: 'about', excerpt: `Northstar. ${industryQuote}`, url: 'https://northstar.example.com/about' }
     const result = validateExtractedLeads({ candidates: [{ ...person, quote: 'Maya Chen is VP of Sales at Northstar.', evidence: { industry: { sourceId: 'about', quote: industryQuote } } }] }, [{ ...source, excerpt: 'Maya Chen is VP of Sales at Northstar.' }, other], criteria)
     assert.ok(result.candidates[0].missingCriteria.includes('industry'))
+  }
+})
+
+test('company evidence outside the person batch fills a missing criterion with a saved exact quote', () => {
+  const roleSource = { ...source, excerpt: 'Maya Chen is VP of Sales at Northstar. Northstar is headquartered in the United States.' }
+  const about = { ...source, id: 'about', url: 'https://northstar.example.com/product', excerpt: 'Northstar is a cloud-based software platform for businesses.', sourceKind: 'full_page' }
+  const candidates = validateExtractedLeads({ candidates: [{ ...person, quote: roleSource.excerpt }] }, [roleSource], criteria).candidates
+  assert.deepEqual(candidates[0].missingCriteria, ['industry'])
+  const [result] = corroborateCompanyEvidence(candidates, [roleSource, about], [{ name: 'Northstar', domain: 'northstar.example.com' }], criteria)
+  assert.deepEqual(result.missingCriteria, [])
+  assert.deepEqual(result.qualification.evidence.industry, { sourceId: 'about', quote: about.excerpt })
+})
+
+test('company corroboration cannot borrow a different company or directory business model', () => {
+  const roleSource = { ...source, excerpt: 'Maya Chen is VP of Sales at Northstar.' }
+  const candidates = validateExtractedLeads({ candidates: [{ ...person, quote: roleSource.excerpt }] }, [roleSource], criteria).candidates
+  for (const about of [
+    { ...source, id: 'about', url: 'https://other.example.com/about', excerpt: 'Northstar is a B2B SaaS company.' },
+    { ...source, id: 'about', url: 'https://northstar.example.com/customers', excerpt: 'Other Company is a B2B SaaS company.' },
+    { ...source, id: 'about', url: 'https://northstar.example.com/customers', excerpt: 'Northstar customers are B2B SaaS companies.' },
+    { ...source, id: 'about', url: 'https://northstar.example.com/glossary/saas', excerpt: 'Northstar explains the industry. A SaaS platform is cloud-based software for businesses.' },
+  ]) {
+    const [result] = corroborateCompanyEvidence(candidates, [roleSource, about], [{ name: 'Northstar', domain: 'northstar.example.com' }], criteria)
+    assert.ok(result.missingCriteria.includes('industry'))
+  }
+})
+
+test('separate product and business-audience paragraphs retain a contiguous industry quote', () => {
+  const roleSource = { ...source, excerpt: 'Maya Chen is VP of Sales at Northstar. Northstar is headquartered in the United States.' }
+  const about = { ...source, id: 'product', url: 'https://northstar.example.com/product', excerpt: 'Northstar Cloud is offered as a SaaS product with paid plans.\n\nBuilt on open standards.\n\nNorthstar is trusted by software-led companies.', sourceKind: 'full_page' }
+  const candidates = validateExtractedLeads({ candidates: [{ ...person, quote: roleSource.excerpt }] }, [roleSource], criteria).candidates
+  const [result] = corroborateCompanyEvidence(candidates, [roleSource, about], [{ name: 'Northstar', domain: 'northstar.example.com' }], criteria)
+  assert.deepEqual(result.missingCriteria, [])
+  assert.ok(about.excerpt.includes(result.qualification.evidence.industry.quote))
+})
+
+test('a vendor’s explicit inclusion of its own product in B2B SaaS is evidence; generic examples are not', () => {
+  const roleSource = { ...source, excerpt: 'Maya Chen is VP of Sales at Northstar. Northstar is headquartered in the United States.' }
+  const candidates = validateExtractedLeads({ candidates: [{ ...person, quote: roleSource.excerpt }] }, [roleSource], criteria).candidates
+  for (const [excerpt, supported] of [
+    ['Common examples of B2B SaaS include CRM tools like Salesforce and, of course, our collaboration workspace here at Northstar.', true],
+    ['Here at Northstar we explain common examples of B2B SaaS: Salesforce, Slack, and other software platforms for businesses.', false],
+    ['Common examples of B2B SaaS include our customers at Northstar.', false],
+    ['Common examples of B2B SaaS include Northstar and our collaboration workspace here at Another Vendor.', false],
+  ]) {
+    const page = { ...source, id: 'product', url: 'https://northstar.example.com/blog/b2b-saas', excerpt }
+    const [result] = corroborateCompanyEvidence(candidates, [roleSource, page], [{ name: 'Northstar', domain: 'northstar.example.com' }], criteria)
+    assert.equal(!result.missingCriteria.includes('industry'), supported)
   }
 })

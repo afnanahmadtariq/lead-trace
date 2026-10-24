@@ -75,6 +75,13 @@ class ConversationAngle(BaseModel):
         return cleaned
 
 
+class BriefGeneration(BaseModel):
+    mode: Literal['model_assisted', 'fallback']
+    provider: Optional[str] = None
+    model: Optional[str] = None
+    reason: Optional[Literal['not_configured', 'no_cited_evidence', 'provider_error']] = None
+
+
 class BriefSections(BaseModel):
     summary: str
     key_signals: list[BriefCitation]
@@ -88,6 +95,7 @@ class BriefSections(BaseModel):
     gaps: list[str] = Field(default_factory=list)
     urgency_score: float = Field(default=0.0, ge=0.0, le=1.0)
     urgency_label: Literal['High urgency', 'Moderate', 'Low'] = 'Low'
+    generation: Optional[BriefGeneration] = None
 
 
 class RunContext(BaseModel):

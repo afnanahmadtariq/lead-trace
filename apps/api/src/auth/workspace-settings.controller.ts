@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Patch } from '@nestjs/common'
 import { Session } from '@thallesp/nestjs-better-auth'
 import type { AuthenticatedSession } from './account-context.service'
 import { WorkspaceSettingsService } from './workspace-settings.service'
+import { UpdateWorkspaceDto } from './workspace-settings.dto'
 
 @Controller('workspace-settings')
 export class WorkspaceSettingsController {
@@ -13,7 +14,7 @@ export class WorkspaceSettingsController {
   }
 
   @Patch()
-  updateWorkspace(@Session() session: AuthenticatedSession, @Body() body: { name?: string }) {
+  updateWorkspace(@Session() session: AuthenticatedSession, @Body() body: UpdateWorkspaceDto) {
     return this.settings.updateWorkspace(session, body?.name)
   }
 

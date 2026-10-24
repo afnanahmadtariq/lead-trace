@@ -37,6 +37,12 @@ test('candidate identities deduplicate within a search and keep different compan
   assert.throws(() => validateExtractedLeads({}, [source], criteria), /invalid JSON schema/)
 })
 
+test('a team page cannot assign one person another person’s role quote', () => {
+  const team = { ...source, title: 'Northstar leadership', excerpt: 'Maya Chen is Head of Sales at Northstar. Alex Rivera is Chief Technology Officer at Northstar.' }
+  const result = validateExtractedLeads({ candidates: [{ ...candidate, name: 'Alex Rivera', quote: 'Maya Chen is Head of Sales at Northstar.' }] }, [team], criteria)
+  assert.equal(result.candidates.length, 0)
+})
+
 test('SEO titles cannot establish buyer criteria and a surname cannot establish geography', () => {
   const excerpt = 'Ben Austin is Founder and CEO of Example Media, an independent digital marketing agency.'
   const result = validateExtractedLeads({ candidates: [{ sourceId: 's1', name: 'Ben Austin', companyName: 'Example Media', jobTitle: 'Founder and CEO', quote: excerpt }] }, [{ ...source, title: 'Austin agency founders in London SaaS', excerpt }], { industry: 'digital marketing agency', role: 'Founder', location: 'Austin' })

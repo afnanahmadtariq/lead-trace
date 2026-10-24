@@ -21,8 +21,8 @@ def configure_logging() -> None:
 
 
 def main() -> None:
-    configure_logging()
     worker = Worker.from_env()
+    configure_logging()
     idle = float(os.environ.get('WORKER_POLL_SECONDS', '3'))
     heartbeat = float(os.environ.get('WORKER_HEARTBEAT_SECONDS', '60'))
     last_heartbeat = time.monotonic()

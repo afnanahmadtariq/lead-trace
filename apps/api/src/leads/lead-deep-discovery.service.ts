@@ -1,8 +1,9 @@
-import { BadGatewayException, Injectable } from '@nestjs/common'
+import { BadGatewayException, Injectable, ServiceUnavailableException } from '@nestjs/common'
 import { deduplicateDiscoveredSources } from '../research/research-discovery'
 import { TavilySearchService, type TavilyDiscoveryQuery, type TavilySearchBatch, type TavilySource } from '../tavily/tavily-search.service'
 import { buildLeadQueries, publicSourceUrl, type LeadSourceInput } from './lead-discovery'
 import { LeadExtractionService } from './lead-extraction.service'
+import { corroborateCompanyEvidence } from './lead-company-evidence'
 import { companyDomain, currentRoleCompanies, LeadCompanyPlanner } from './lead-company-planner.service'
 import { LeadRegistriesService } from './lead-registries.service'
 import type { CompanyTarget, DiscoverySnapshot, LeadCriteria, ProgressCallback, ProviderActivity } from './lead-types'
@@ -23,10 +24,13 @@ export function deepLeadQueries(criteria: LeadCriteria): TavilyDiscoveryQuery[] 
 export function companyPeopleQueries(company: CompanyTarget, criteria: LeadCriteria): TavilyDiscoveryQuery[] {
   const name = company.name.replace(/["\r\n]/g, ' '), role = criteria.role.replace(/["\r\n]/g, ' ')
   const related = criteria.roleMatch === 'function' && /sales|revenue/i.test(role) ? 'sales leadership VP sales chief revenue officer' : role
+  const productQuery = /saas/i.test(criteria.industry)
+    ? '("SaaS" OR "cloud-based" OR "subscription") software platform business customers -inurl:glossary -inurl:blog -inurl:careers -jobs'
+    : `${criteria.industry.replace(/["\r\n]/g, ' ')} products business customers headquarters`
   return [
     { kind: 'company-people', query: `"${name}" "${role}" current ${criteria.location || ''} -jobs -hiring`.slice(0, 400), topic: 'general' },
     { kind: 'company-team', query: `${company.domain ? `site:${company.domain}` : `"${name}"`} ${related} team leadership about company`.slice(0, 400), topic: 'general' },
-    { kind: 'company-overview', query: `"${name}" ${criteria.industry.replace(/["\r\n]/g, ' ')} products business customers cloud software headquarters`.slice(0, 400), topic: 'general' },
+    { kind: 'company-overview', query: `${company.domain ? `site:${company.domain}` : `"${name}"`} ${productQuery}`.slice(0, 400), topic: 'general' },
   ]
 }
 
@@ -43,7 +47,7 @@ export class LeadDeepDiscoveryService {
       const previous = pool.get(url)
       if (previous) {
         previous.queries = [...new Set([...previous.queries, ...source.queries])]
-        if (source.excerpt.length > previous.excerpt.length && !previous.excerpt.includes(source.excerpt)) {
+        if (!previous.excerpt.includes(source.excerpt)) {
           previous.excerpt = `${previous.excerpt.slice(0, 2500)}\n\nPage text:\n${source.excerpt}`.slice(0, 14000)
           previous.sourceKind = source.sourceKind || previous.sourceKind
         }
@@ -134,10 +138,15 @@ export class LeadDeepDiscoveryService {
     for (let index = 0; index < peopleSources.length; index += 24) groups.push([...new Map([...context, ...peopleSources.slice(index, index + 24)].map((source) => [source.id, source])).values()])
     const settled = await Promise.allSettled(groups.map((group) => this.extraction.extract(group, criteria)))
     const extracted = settled.flatMap((result) => result.status === 'fulfilled' ? [result.value] : [])
-    if (!extracted.length && groups.length) throw new BadGatewayException('Lead qualification is unavailable. Retry this search.')
-    activity.push({ provider: 'Qwen', operation: 'people qualification', requests: groups.length, records: extracted.reduce((sum, result) => sum + result.candidates.length, 0), credits: null, status: extracted.length === groups.length ? 'ok' : 'partial' })
+    const providerFailure = settled.find((result) => result.status === 'rejected' && result.reason instanceof ServiceUnavailableException)
+    if (!extracted.length && groups.length) {
+      if (providerFailure?.status === 'rejected') throw providerFailure.reason
+      throw new BadGatewayException('Lead qualification is unavailable. Retry this search.')
+    }
+    activity.push({ provider: 'Qwen', operation: 'people qualification', requests: groups.length, records: extracted.reduce((sum, result) => sum + result.candidates.length, 0), credits: null, status: extracted.length === groups.length ? 'ok' : 'partial', ...(extracted.length < groups.length ? { message: providerFailure?.status === 'rejected' ? providerFailure.reason.message : 'Some qualification requests failed; results may be incomplete.' } : {}) })
     const candidates = new Map<string, (typeof extracted)[number]['candidates'][number]>()
-    for (const record of extracted.flatMap((result) => result.candidates)) {
+    const corroborated = corroborateCompanyEvidence(extracted.flatMap((result) => result.candidates), sources, companies, criteria)
+    for (const record of corroborated) {
       const previous = candidates.get(record.identityKey)
       if (!previous || record.matchedCriteria.length > previous.matchedCriteria.length || (record.matchedCriteria.length === previous.matchedCriteria.length && record.qualification.issues.length < previous.qualification.issues.length)) candidates.set(record.identityKey, record)
     }

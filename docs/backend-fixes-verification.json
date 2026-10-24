@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-10-24T03:59:38.742694+00:00",
+  "baseCommit": "5e37a0c296916207900f3faa9221e7624cbbb4c0",
+  "overallStatus": "live_verification_pending",
+  "scope": "Repairs for the four findings in backend-live-api-audit.json and non-regression checks. Production configuration and deployment were not changed.",
+  "checks": {
+    "api": {
+      "passed": 97,
+      "failed": 0,
+      "skipped": 1,
+      "database": "isolated temporary PostgreSQL"
+    },
+    "worker": {
+      "passed": 169,
+      "failed": 0
+    },
+    "browserMock": {
+      "passed": 14,
+      "failed": 0,
+      "skipped": 5
+    },
+    "browserRealDatabase": {
+      "passed": 2,
+      "journeys": [
+        "CRM persistence, notes, deals, follow-ups, imports, and research links",
+        "Lead review, qualification, CRM conversion, and retained evidence"
+      ]
+    },
+    "webProductionBuild": "passed",
+    "apiBuild": "passed",
+    "lintAndTypes": "passed",
+    "workspaceHttp": {
+      "malformedNamesRejectedWith400": 8,
+      "validTrimmedNamePersisted": true
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "status": "fresh_live_rerun_pending",
+      "change": "Company-specific product searches, retained page text, strict person/role binding, and exact cross-page company evidence. Generic educational pages and customer classifications do not establish a vendor business model.",
+      "verification": "Source replay supports 1 US, 2 London, and 1 Austin match. The initial live cohorts in this iteration returned 0, 0, and 1 respectively before the final matcher changes. London replay includes additional real Tavily company-product snapshots. A fresh complete provider run of the final code remains pending."
+    },
+    {
+      "id": "F2",
+      "status": "code_fixed_live_model_verification_pending",
+      "change": "Worker launch loads provider settings without overriding exported values; stored brief generation metadata distinguishes model assistance from fallback.",
+      "verification": "Actual Qwen extraction stored 21 evidence items from 12 sources. Later requests returned HTTP 403 insufficient_quota. Brief generation recorded fallback/provider_error; the model-backed end-to-end assertion correctly failed."
+    },
+    {
+      "id": "F3",
+      "status": "regression_tests_passed",
+      "change": "Question/FAQ fragments cannot become evidence or ground a model paraphrase. Stated factual answers remain usable.",
+      "verification": "Six targeted cases cover fallback, the legacy model path, current source grounding, answers, and valid business statements. All 169 worker tests pass."
+    },
+    {
+      "id": "F4",
+      "status": "live_verified",
+      "change": "Workspace names are validated without implicit numeric/string coercion and trimmed only after type checks.",
+      "verification": "Eight malformed authenticated HTTP requests return 400; valid trimmed names save and survive a GET."
+    }
+  ],
+  "cohorts": [
+    {
+      "name": "US SaaS sales leaders",
+      "criteria": {
+        "title": "US SaaS sales leaders",
+        "industry": "B2B SaaS",
+        "role": "Head of Sales",
+        "location": "United States",
+        "roleMatch": "function",
+        "depth": "deep"
+      },
+      "initialLiveCandidates": 6,
+      "initialLiveSupported": 0,
+      "postFixReplaySupported": 1,
+      "replaySourceCount": 64,
+      "leads": [
+        {
+          "name": "Dave Kranowitz",
+          "company": "Grafana Labs",
+          "role": "Chief Revenue Officer",
+          "evidence": {
+            "industry": {
+              "quote": "s builders turn signals into action in every corner of their business. Grafana Labs is a leading observability company that builds open-source and cloud-based observability tools to monitor and understand their systems. The company is best known for Grafana Cloud, the open observability cloud that offers a full stack observability solution that is built on open source, open standards, and open ecosystems. #### Grafana Cloud. A fully managed open observability platform that includes:. Grafana Cloud is offered as a SaaS product with a free tier and paid plans. Grafana Labs is founded on the principles of open source, open standards, open ecosystems, and open culture. We are the primary maintainers and contributors to the following open source projects:. These open source tools are widely used in cloud native, Kubernetes, and microservices environments. They also serve as the foundation for the Grafana Cloud platform. Grafana Labs is also a top contributor to the following open source projects:. Grafana Labs products are commonly used for:. Grafana Labs is trusted by software-led companies that want to see and understand their data. Today, more than 25 million users and 7,000+ custome",
+              "url": "https://grafana.com/ja/ai-info"
+            },
+            "role": {
+              "quote": "Dave Kranowitz is Chief Revenue Officer of Grafana Labs.",
+              "url": "https://siliconvalleyinvestclub.com/companies/grafana/team/dave-kranowitz"
+            },
+            "location": {
+              "quote": "headquarters New York, NY, United States",
+              "url": "https://siliconvalleyinvestclub.com/companies/grafana/team/dave-kranowitz"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "London SaaS sales leaders",
+      "criteria": {
+        "title": "London SaaS sales leaders",
+        "industry": "B2B SaaS",
+        "role": "Head of Sales",
+        "location": "London",
+        "roleMatch": "function",
+        "depth": "deep"
+      },
+      "initialLiveCandidates": 4,
+      "initialLiveSupported": 0,
+      "postFixReplaySupported": 2,
+      "replaySourceCount": 76,
+      "leads": [
+        {
+          "name": "Ollie Sharpe",
+          "company": "trumpet",
+          "role": "Chief Revenue Officer (CRO)",
+          "evidence": {
+            "industry": {
+              "quote": "Common examples of B2B SaaS include CRM tools like Salesforce, communication platforms like Slack, and, of course, our auto-personalisation \"pods\" here at Trumpet.",
+              "url": "https://www.sendtrumpet.com/blog-posts/how-to-build-a-sales-funnel-for-b2b-saas"
+            },
+            "role": {
+              "quote": "Chief Revenue Officer (CRO) at trumpet 🎺 (Feb 2025 to present)",
+              "url": "https://uk.linkedin.com/in/olliesharpe"
+            },
+            "location": {
+              "quote": "We’re excited to be hiring two roles in London: 1 x SDR 1 x SMB Account Executive Both are important hires for us as we continue to build out the next phase of trumpet.",
+              "url": "https://uk.linkedin.com/company/sendtrumpet"
+            }
+          }
+        },
+        {
+          "name": "Kevin Bowen",
+          "company": "trumpet 🎺",
+          "role": "Vice President of Sales",
+          "evidence": {
+            "industry": {
+              "quote": "Common examples of B2B SaaS include CRM tools like Salesforce, communication platforms like Slack, and, of course, our auto-personalisation \"pods\" here at Trumpet.",
+              "url": "https://www.sendtrumpet.com/blog-posts/how-to-build-a-sales-funnel-for-b2b-saas"
+            },
+            "role": {
+              "quote": "Vice President of Sales at trumpet 🎺 (Aug 2026 to present)",
+              "url": "https://uk.linkedin.com/in/kevin-bowen-ca"
+            },
+            "location": {
+              "quote": "Location: London, England, United Kingdom",
+              "url": "https://uk.linkedin.com/in/kevin-bowen-ca"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Austin agency founders",
+      "criteria": {
+        "title": "Austin agency founders",
+        "industry": "digital marketing agency",
+        "role": "Founder",
+        "location": "Austin",
+        "roleMatch": "exact",
+        "depth": "quick"
+      },
+      "initialLiveCandidates": 1,
+      "initialLiveSupported": 1,
+      "postFixReplaySupported": 1,
+      "replaySourceCount": 15,
+      "leads": [
+        {
+          "name": "Chad Markham",
+          "company": "Allegiant Digital Marketing",
+          "role": "Founder, President & CEO",
+          "evidence": {
+            "role": {
+              "quote": "Chad Markham is the founder, President & CEO of Allegiant Digital Marketing.",
+              "url": "https://allegiantdigital.com/about"
+            },
+            "industry": {
+              "quote": "Allegiant Digital Marketing is a self-funded, 25-year-discipline digital marketing agency headquartered in Austin, Texas.",
+              "url": "https://allegiantdigital.com/about"
+            },
+            "location": {
+              "quote": "Allegiant Digital Marketing is a self-funded, 25-year-discipline digital marketing agency headquartered in Austin, Texas.",
+              "url": "https://allegiantdigital.com/about"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "remaining": [
+    "Restore the configured Qwen quota or provide an available existing model, then rerun both deep cohorts and model-backed meeting/outreach research.",
+    "Verify real Google Calendar OAuth/event creation and real email delivery only with the appropriate authorized account flow. These were not exercised by this regression pass."
+  ],
+  "cleanup": {
+    "taskServices": "stopped after tests",
+    "temporaryFiles": "removed after delivery",
+    "existingDevelopmentWeb": "restored and verified HTTP 200",
+    "existingApiWorkerAndDatabase": "preserved"
+  }
+}

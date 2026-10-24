@@ -45,15 +45,25 @@ export function roleMatches(title: string, requested: string, mode?: string) {
   if (/\bfounder\b/i.test(requested)) return /\bco[- ]?founder\b/i.test(title)
   return false
 }
-function industryMatches(text: string, requested: string) {
+export function explicitSaasExample(text: string, company: string) {
+  const normalized = normalizeIdentity(text)
+  const examples = normalized.match(/\bexamples? of (?:b2b )?(?:saas|software as a service) (?:include|are)\b(.*)/)?.[1]
+  if (!examples || !contains(examples, company)) return false
+  // A vendor can explicitly include its own product in a category, alongside
+  // other products. Merely teaching the category or listing customers is not enough.
+  const companyName = normalizeIdentity(company)
+  return new RegExp(`\\bour (?!customers?\\b|clients?\\b|partners?\\b)[\\p{L}\\p{N} ]{1,180}\\b(?:at|from|by) ${companyName}(?: |$)`, 'u').test(examples)
+}
+function industryMatches(text: string, requested: string, company: string) {
   // An author's experience or another employee's biography does not establish
   // the company's business model, even when published on its own website.
   if (/\b(?:his|her|she|he|seasoned|expertise|background|career|experience in|brings)\b/i.test(text)) return false
   if (/\bsaas\b/i.test(requested)) {
+    if (/\b(?:customers?|clients?)\s+(?:are|include)\b|\bservices?\s+(?:for|to)\s+(?:b2b\s+)?saas\b/i.test(text)) return false
     const software = /\b(?:(?:saas|software[- ]as[- ]a[- ]service)\s+(?:company|platform|provider|products?|solutions?|software|business)\b|cloud[- ](?:based[- ])?[^.\n]{0,80}(?:software|platform)|subscription[- ]software)\b/i.test(text)
     const business = /\b(?:b2b|business[- ]to[- ]business|businesses|enterprises|organizations|organisations|companies|sales teams|sales reps)\b/i.test(text)
     const remaining = requested.replace(/\b(?:b2b|saas|software as a service)\b/gi, '').trim()
-    return software && (!/\bb2b\b/i.test(requested) || business) && (!remaining || matches(text, remaining))
+    return (software || explicitSaasExample(text, company)) && (!/\bb2b\b/i.test(requested) || business) && (!remaining || matches(text, remaining))
   }
   return matches(text, requested)
 }
@@ -89,7 +99,7 @@ export function validateExtractedLeads(payload: unknown, sources: LeadSourceInpu
     const source = sources.find((source) => source.id === candidate.sourceId)
     const evidence = source ? normalizeIdentity(`${source.title} ${quote}`) : ''
     const quoteText = normalizeIdentity(quote)
-    if (!source || source.sourceKind === 'registry' || normalizeIdentity(name).length < 2 || normalizeIdentity(companyName).length < 2 || !/[\p{L}]/u.test(name) || !/[\p{L}]/u.test(companyName) || /\b\p{L}\./u.test(name) || quoteText.length < 20 || !exactQuote(source, quote) || !normalizeIdentity(`${source.title} ${source.excerpt}`).includes(normalizeIdentity(name)) || !evidence.includes(normalizeIdentity(companyName)) || (jobTitle && !quoteText.includes(normalizeIdentity(jobTitle))) || historicalRole(source, quote, companyName, jobTitle)) { rejected++; continue }
+    if (!source || source.sourceKind === 'registry' || normalizeIdentity(name).length < 2 || normalizeIdentity(companyName).length < 2 || !/[\p{L}]/u.test(name) || !/[\p{L}]/u.test(companyName) || /\b\p{L}\./u.test(name) || quoteText.length < 20 || !exactQuote(source, quote) || !contains(`${source.title} ${quote}`, name) || !evidence.includes(normalizeIdentity(companyName)) || (jobTitle && !quoteText.includes(normalizeIdentity(jobTitle))) || historicalRole(source, quote, companyName, jobTitle)) { rejected++; continue }
     const matchedCriteria: string[] = [], missingCriteria: string[] = []
     const proofs: Record<string, CriterionEvidence> = {}
     const supplied = candidate.evidence && typeof candidate.evidence === 'object' ? candidate.evidence as Record<string, unknown> : {}
@@ -103,7 +113,7 @@ export function validateExtractedLeads(payload: unknown, sources: LeadSourceInpu
       const host = (entry: LeadSourceInput) => new URL(entry.url).hostname.replace(/^www\./, '')
       const companyPage = proofSource && (contains(`${proofSource.title} ${proofSource.excerpt}`, companyName) || (host(source) === host(proofSource) && !/(?:linkedin|facebook|instagram)\.com$/.test(host(source))))
       const usable = proofSource && companyPage && exactQuote(proofSource, proofQuote) && !(key === 'industry' && proofSource.sourceKind === 'registry')
-      const fits = (text: string) => key === 'location' ? geographicMatch(text, value, name) : key === 'industry' ? industryMatches(text, value) : matches(text, value)
+      const fits = (text: string) => key === 'location' ? geographicMatch(text, value, name) : key === 'industry' ? industryMatches(text, value, companyName) : matches(text, value)
       const useProvided = usable && fits(proofQuote)
       const proofText = useProvided ? proofQuote : quote
       const matched = key === 'role' ? Boolean(jobTitle && roleMatches(jobTitle, value, criteria.roleMatch)) : fits(proofText)

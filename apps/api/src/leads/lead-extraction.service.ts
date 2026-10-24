@@ -22,7 +22,16 @@ export class LeadExtractionService {
         ],
       }) })
     } catch { throw new BadGatewayException('Lead extraction could not be reached. Retry this search.') }
-    if (!response.ok) throw new BadGatewayException('Lead extraction is temporarily unavailable. Check the model provider configuration and retry.')
+    if (!response.ok) {
+      const failure = await response.json().catch(() => null) as { error?: { code?: string; type?: string } } | null
+      if ([failure?.error?.code, failure?.error?.type].includes('insufficient_quota')) {
+        throw new ServiceUnavailableException('The model provider quota is exhausted. Restore its quota before retrying lead generation.')
+      }
+      if (response.status === 401 || response.status === 403) {
+        throw new ServiceUnavailableException('The model provider rejected access. Check its credentials and model access before retrying.')
+      }
+      throw new BadGatewayException('Lead extraction is temporarily unavailable. Check the model provider configuration and retry.')
+    }
     try {
       const payload = await response.json() as { choices?: { message?: { content?: string } }[] }
       return validateExtractedLeads(JSON.parse(payload.choices?.[0]?.message?.content || ''), sources, criteria)

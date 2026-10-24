@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 from lead_trace_worker.extract import extract_claims, numeric_quantities
 from lead_trace_worker.evidence import ExtractedClaim as GroundedClaim, filter_claims_for_source, wrap_source_excerpt
 from lead_trace_worker.model_gateway import CLIENT_MAX_RETRIES, CLIENT_TIMEOUT_SECONDS
-from lead_trace_worker.models import BriefSections, ConversationAngle, EvidenceDraft, RunContext, SignalType, SourceBundle
+from lead_trace_worker.models import BriefGeneration, BriefSections, ConversationAngle, EvidenceDraft, RunContext, SignalType, SourceBundle
 
 log = logging.getLogger('lead-trace.worker.llm')
 
@@ -267,7 +267,9 @@ def refine_claims(
 
 def polish_brief(context: RunContext, sections: BriefSections, evidence: list[dict]) -> BriefSections:
     if not llm_enabled() or not evidence:
-        return sections
+        return sections.model_copy(update={'generation': BriefGeneration(
+            mode='fallback', reason='not_configured' if not llm_enabled() else 'no_cited_evidence',
+        )})
 
     raw_outcome = ' '.join(context.value_proposition.split()).strip()
     seller_intent = ('i want to sell', 'i need to get', 'buy my', 'sell my', 'get him to', 'get her to', 'get them to')
@@ -321,7 +323,7 @@ def polish_brief(context: RunContext, sections: BriefSections, evidence: list[di
         copy = LlmBriefCopy.model_validate(payload)
     except Exception as error:
         log.warning('llm brief polish failed: %s', error)
-        return sections
+        return sections.model_copy(update={'generation': BriefGeneration(mode='fallback', reason='provider_error')})
 
     allowed_quantities = numeric_quantities(' '.join(citation.claim for citation in sections.key_signals))
     def grounded_text(text: Optional[str]) -> bool:
@@ -351,8 +353,15 @@ def polish_brief(context: RunContext, sections: BriefSections, evidence: list[di
         'next_steps': grounded_list(copy.next_steps, sections.next_steps),
     }
     outreach_draft = (copy.outreach_draft if grounded_text(copy.outreach_draft) else sections.outreach_draft) if context.goal == 'outreach' else None
+    config = resolve_llm_config() if os.environ.get('OPENAI_API_KEY', '').strip() or os.environ.get('DASHSCOPE_API_KEY', '').strip() else None
+    generation = BriefGeneration(
+        mode='model_assisted', provider=('openai' if os.environ.get('OPENAI_API_KEY', '').strip() else 'dashscope') if config else None,
+        model=config.model if config else None,
+    )
+    log.info('brief generation run_id=%s mode=%s provider=%s model=%s', context.run_id, generation.mode, generation.provider, generation.model)
     return sections.model_copy(
         update={
+            'generation': generation,
             'summary': copy.summary if grounded_text(copy.summary) else sections.summary,
             'talking_points': grounded_list(copy.talking_points, sections.talking_points),
             'conversation_angles': angles or sections.conversation_angles,

@@ -7,6 +7,13 @@ from typing import Iterable, Mapping, Optional
 from lead_trace_worker.models import ExtractedClaim, RunContext, SignalType
 
 SENTENCE_SPLIT = re.compile(r'(?<=[.!?])\s+')
+QUESTION_START = re.compile(
+    r'^(?:q(?:uestion)?\s*[:.)-]\s*)?'
+    r'(?:(?:what|where|when|why|how|which|whose|whom)\s+'
+    r'(?:is|are|was|were|do|does|did|has|have|had|can|could|should|will|would|might)\b|'
+    r'who\s+(?:is|are|was|were|leads|owns|runs|founded|manages)\b)',
+    re.I,
+)
 JUNK = re.compile(
     r'\b1-800\b|\b1[- ]?800[- ]?\d{3}|\bcall us\b|\bcopyright\b|©|\ball rights reserved\b|\bprivacy policy\b|'
     r'\bterms of use\b|\bcookies?\b|\bliked by\b|\bview post\b|\bview profile\b|\bactivity image\b|'
@@ -96,11 +103,16 @@ def _contains_identity(text: str, identity: str) -> bool:
     return bool(identity and re.search(r'(?<!\w)' + re.escape(identity) + r'(?!\w)', normalized))
 
 
+def is_question(text: str) -> bool:
+    cleaned = text.strip().rstrip('\"\'”’')
+    return cleaned.endswith(('?', '？')) or bool(QUESTION_START.search(cleaned))
+
+
 def is_junk_claim(sentence: str) -> bool:
     cleaned = ' '.join(sentence.split()).strip()
     if len(cleaned) < 20 or len(cleaned) > 500:
         return True
-    if JUNK.search(cleaned) or TRUNCATED.search(cleaned):
+    if is_question(cleaned) or JUNK.search(cleaned) or TRUNCATED.search(cleaned):
         return True
     if '#' in cleaned:
         return True

@@ -61,7 +61,7 @@ test('real CRM persists contacts, notes, deals, follow-ups, imports and research
   await page.getByRole('button', { name: 'Save contact', exact: true }).click()
   await expect(page.getByRole('dialog')).not.toBeVisible()
   await page.reload()
-  await expect(page.getByText('Head of sales · Northstar', { exact: true })).toBeVisible()
+  await expect(page.getByRole('banner').getByText('Customer · Head of sales · Northstar', { exact: true })).toBeVisible()
   await page.getByRole('link', { name: 'Research contact', exact: true }).click()
   await expect(page.getByLabel('Prospect name')).toHaveValue('CRM Real Tester')
   // Queue research through the real HTTP API, without calling paid discovery from this deterministic test.

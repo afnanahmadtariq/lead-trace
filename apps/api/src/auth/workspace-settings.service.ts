@@ -48,9 +48,9 @@ export class WorkspaceSettingsService {
     }
   }
 
-  async updateWorkspace(session: AuthenticatedSession, name?: string) {
+  async updateWorkspace(session: AuthenticatedSession, name?: unknown) {
     const membership = await this.assertAdmin(session)
-    const nextName = name?.trim() || ''
+    const nextName = typeof name === 'string' ? name.trim() : ''
     if (nextName.length < 2 || nextName.length > 80) {
       throw new BadRequestException('Workspace name must be between 2 and 80 characters')
     }

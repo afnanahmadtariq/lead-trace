@@ -5,12 +5,12 @@ import os
 import threading
 import time
 from contextlib import contextmanager
-from pathlib import Path
 from typing import Callable, Optional
 from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 from uuid import uuid4
 
 from lead_trace_worker.model_gateway import ModelGatewayConfig, build_client
+from lead_trace_worker.environment import load_environment
 from lead_trace_worker.pipeline import BACKOFF_SQL, CLAIM_SQL, COUNTS_SQL, FAIL_SQL, HEARTBEAT_SQL, next_stage
 
 log = logging.getLogger('lead-trace.worker')
@@ -25,20 +25,10 @@ def postgres_url(url: str) -> str:
 
 
 def load_database_url() -> str:
+    if not os.environ.get('DATABASE_URL', '').strip():
+        load_environment()
     if url := os.environ.get('DATABASE_URL', '').strip():
         return postgres_url(url)
-    for start in (Path.cwd(), Path(__file__).resolve().parent):
-        for folder in [start, *start.parents]:
-            env_file = folder / '.env'
-            if not env_file.is_file():
-                continue
-            for raw in env_file.read_text().splitlines():
-                line = raw.strip()
-                if not line or line.startswith('#') or '=' not in line:
-                    continue
-                key, value = line.split('=', 1)
-                if key.strip() == 'DATABASE_URL':
-                    return postgres_url(value.strip().strip('"').strip("'"))
     raise RuntimeError('DATABASE_URL is required')
 
 
@@ -57,6 +47,7 @@ class Worker:
 
     @classmethod
     def from_env(cls) -> Worker:
+        load_environment()
         return cls(load_database_url())
 
     def check_connection(self) -> None:
