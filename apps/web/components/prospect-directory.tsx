@@ -115,7 +115,6 @@ export function ProspectDirectory({ runs }: { runs: ResearchRunSummary[] }) {
             <option value="meeting">Meeting briefs</option>
             <option value="outreach">Outreach drafts</option>
           </select>
-          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[.65rem] text-lt-500">▼</span>
         </label>
 
         <label className="relative">
@@ -128,7 +127,6 @@ export function ProspectDirectory({ runs }: { runs: ResearchRunSummary[] }) {
             <option value="company">Company A–Z</option>
             <option value="evidence">Most cited signals</option>
           </select>
-          <span className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-[.65rem] text-lt-500">▼</span>
         </label>
       </div>
     </section>

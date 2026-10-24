@@ -32,6 +32,40 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; overflow-x: clip; background: var(--color-lt-50); color: var(--color-lt-950); font-family: Outfit, ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
 button, input, textarea, select { font: inherit; }
+
+/* Keep dropdown arrows inset and reserve space for long option labels. */
+select:not([multiple]):is(:not([size]), [size='1']) {
+  appearance: none;
+  padding-inline-end: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23617798' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+}
+select:not([multiple]):is(:not([size]), [size='1']):dir(rtl) { background-position: left 1rem center; }
+
+/* Native details keep their keyboard behavior while sharing one chevron. */
+details > summary { display: flex; align-items: center; gap: .5rem; list-style: none; }
+details > summary::marker { content: ''; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::before {
+  content: '';
+  flex: 0 0 1rem;
+  width: 1rem;
+  height: 1rem;
+  background-color: currentColor;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 150ms var(--ease-fluid);
+}
+details > summary:dir(rtl)::before { transform: rotate(180deg); }
+details[open] > summary::before { transform: rotate(90deg); }
+details > summary.list-none > span:first-child { flex: 1; min-width: 0; }
+
+@media (forced-colors: active) {
+  select:not([multiple]):is(:not([size]), [size='1']) { appearance: auto; background-image: none; }
+  details > summary::before { background-color: CanvasText; forced-color-adjust: none; }
+}
+
 button:not(:disabled), [role='button']:not(:disabled) { cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 img, svg { display: block; }
