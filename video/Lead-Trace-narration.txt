@@ -12,7 +12,7 @@ Keep ownership, notes, opportunities, and research together. Each contact highli
 
 Use Board or Table view to track deals. Filter follow-ups by overdue, today, or upcoming, and reopen completed actions.
 
-Prepare for a meeting or draft outreach using your prospect and offer context. Inspect source claims, hypotheses, and questions before use.
+Prepare for a meeting or write outreach using your prospect and offer context. Inspect source claims, hypotheses, and questions before use.
 
 Discovery and research run in the background. The API and Python worker use stored evidence, with Qwen supporting qualification and briefing.
 

@@ -21,13 +21,13 @@ test('malformed model output cannot crash citation rendering or create unsafe li
   expect(briefCitations({ key_signals: [null, {}, { ...citation, source_url: 'javascript:alert(1)' }, citation] })).toEqual([citation])
 })
 
-test('outreach exports preserve the draft, objections, gaps and source references', () => {
+test('outreach exports preserve the message, objections, gaps and source references', () => {
   const pack = formatConversationPack({ summary: 'Summary', outreach_draft: 'Hello, would a short conversation help?', objection_handling: ['Ask about timing.'], gaps: ['Budget is not established.'], key_signals: [citation] }, 'outreach')
-  for (const value of ['OUTREACH DRAFT', 'Hello, would a short conversation help?', 'OBJECTION HANDLING', 'VERIFY BEFORE USE', 'Budget is not established.', citation.source_url]) expect(pack).toContain(value)
+  for (const value of ['OUTREACH MESSAGE', 'Hello, would a short conversation help?', 'OBJECTION HANDLING', 'VERIFY BEFORE USE', 'Budget is not established.', citation.source_url]) expect(pack).toContain(value)
 })
 
 test('refresh differences include changed outreach and new research gaps', () => {
-  expect(extractBriefDiff({ outreach_draft: 'Old draft', gaps: [] }, { outreach_draft: 'New draft', gaps: ['Unknown budget'] }).map((item) => item.field)).toEqual(['Outreach draft', 'Research gaps'])
+  expect(extractBriefDiff({ outreach_draft: 'Old message', gaps: [] }, { outreach_draft: 'New message', gaps: ['Unknown budget'] }).map((item) => item.field)).toEqual(['Outreach message', 'Research gaps'])
 })
 
 

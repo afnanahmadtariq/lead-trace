@@ -4,7 +4,7 @@ import './globals.css'
 export const metadata: Metadata = {
   metadataBase: new URL('https://leadtrace.online'),
   title: 'Lead Trace: Evidence-first sales intelligence',
-  description: 'Turn live prospect signals into focused meeting briefs and personalized outreach drafts with evidence one click away.',
+  description: 'Turn live prospect signals into focused meeting briefs and personalized outreach messages with evidence one click away.',
   icons: {
     icon: '/lead-trace-logo.svg',
     shortcut: '/lead-trace-logo.svg',

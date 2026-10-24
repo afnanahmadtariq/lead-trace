@@ -68,7 +68,7 @@ export function ResearchRunForm({ initialOffer, contact }: { initialOffer?: Offe
       <FormSectionHeader icon={<MessageSquareText/>} title="What do you need?" description="Choose the output you will use next."/>
       <div className="grid grid-cols-2 gap-3 max-[620px]:grid-cols-1">
         <GoalOption value="meeting" selected={goal === 'meeting'} title="Prepare for a meeting" description="Why now, talk track, questions, objections" onSelect={setGoal}/>
-        <GoalOption value="outreach" selected={goal === 'outreach'} title="Write personalized outreach" description="Relevant angle, opener, email draft, next step" onSelect={setGoal}/>
+        <GoalOption value="outreach" selected={goal === 'outreach'} title="Write personalized outreach" description="Relevant angle, opener, email message, next step" onSelect={setGoal}/>
       </div>
     </section>
 
@@ -101,7 +101,7 @@ export function ResearchRunForm({ initialOffer, contact }: { initialOffer?: Offe
     {error && <FormMessage tone="error" className="text-[.8rem]">{error}</FormMessage>}
     <div className="sticky bottom-4 z-2 flex items-center justify-between gap-4 rounded-2xl border border-lt-200 bg-white/94 p-3 shadow-panel backdrop-blur-xl max-[620px]:items-stretch">
       <p className="m-0 pl-2 text-xs leading-normal text-lt-500 max-[620px]:hidden">Research starts immediately. Key signals link back to their sources.</p>
-      <Button className="min-w-[220px] max-[620px]:w-full" type="submit" disabled={pending}>{pending ? 'Starting research…' : goal === 'meeting' ? 'Build meeting brief' : 'Build outreach draft'}{!pending && <ArrowRight size={18}/>}</Button>
+      <Button className="min-w-[220px] max-[620px]:w-full" type="submit" disabled={pending}>{pending ? 'Starting research…' : goal === 'meeting' ? 'Build meeting brief' : 'Build outreach message'}{!pending && <ArrowRight size={18}/>}</Button>
     </div>
   </form>
 }

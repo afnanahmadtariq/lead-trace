@@ -6,7 +6,7 @@ const evidence = [
 
 export function EvidencePanel() {
   return <div className="rounded-xl border border-lt-200 bg-white shadow-[0_1px_2px_rgb(16_38_79_/_5%)]" data-reveal>
-    <header className="flex items-center justify-between gap-3 border-b border-lt-200 px-6 py-4 text-sm max-sm:px-4"><span className="font-semibold text-lt-900">Evidence trail</span><span className="text-xs text-lt-500">Illustrative example</span></header>
+    <header className="flex items-center justify-between gap-3 border-b border-lt-200 px-6 py-4 text-sm max-sm:px-4"><span className="font-semibold text-lt-900">Evidence trail</span><span className="text-xs text-lt-500">Sample data</span></header>
     <ol className="m-0 list-none p-0">
       {evidence.map(({ domain, source, claim }, index) => <li className="grid grid-cols-[1fr_auto] items-start gap-x-4 gap-y-1 border-b border-lt-100 px-6 py-4 max-sm:grid-cols-1 max-sm:px-4" key={domain}>
         <p className="m-0 text-[.95rem] leading-snug text-lt-900">{claim}<sup className="ml-0.5 text-[.65rem] font-semibold text-brand">{index + 1}</sup></p>

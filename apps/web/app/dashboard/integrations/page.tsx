@@ -11,7 +11,7 @@ const descriptions: Record<string, string> = {
   intake: 'Save the contact and the context for your research.',
   'source-discovery': 'Find relevant public sources about the prospect.',
   'evidence-normalization': 'Extract claims and keep the sources behind them.',
-  'brief-synthesis': 'Turn the evidence into a meeting plan or an outreach draft.',
+  'brief-synthesis': 'Turn the evidence into a meeting plan or an outreach message.',
   'notification-delivery': 'Let you know when your brief is ready.',
 }
 

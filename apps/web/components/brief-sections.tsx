@@ -72,7 +72,7 @@ export function BriefSections({
     <ConversationAngles angles={brief.conversation_angles ?? []} citations={citations}/>
 
     {goal === 'outreach' && outreach && <section className="rounded-[18px] border border-brand-bright/25 bg-[#f4faff] p-6 max-[620px]:p-5">
-      <div className="mb-4 flex items-center justify-between gap-3"><SectionTitle icon={<Mail size={18}/>} title="Your outreach draft"/><CopyButton value={outreach} label="Copy email"/></div>
+      <div className="mb-4 flex items-center justify-between gap-3"><SectionTitle icon={<Mail size={18}/>} title="Your outreach message"/><CopyButton value={outreach} label="Copy email"/></div>
       <p className="m-0 whitespace-pre-wrap text-sm leading-[1.75] text-lt-700">{outreach}</p>
     </section>}
 

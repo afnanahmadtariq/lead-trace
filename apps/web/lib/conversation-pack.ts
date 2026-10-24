@@ -52,7 +52,7 @@ export function formatConversationPack(sections: unknown, goal: 'meeting' | 'out
   if (objections.length) lines.push('OBJECTION HANDLING', ...objections.map((item, index) => `${index + 1}. ${item}`), '')
 
   const outreach = text(brief.outreach_draft)
-  if (goal === 'outreach' && outreach) lines.push('OUTREACH DRAFT', outreach, '')
+  if (goal === 'outreach' && outreach) lines.push('OUTREACH MESSAGE', outreach, '')
 
   const gaps = list(brief.gaps)
   if (gaps.length) lines.push('VERIFY BEFORE USE', ...gaps.map((item) => `- ${item}`), '')
@@ -87,7 +87,7 @@ export function extractBriefDiff(previous: unknown, current: unknown): Array<{ f
     { field: 'Questions', key: 'questions_to_ask' },
     { field: 'Objections', key: 'objection_handling' },
     { field: 'Next steps', key: 'next_steps' },
-    { field: 'Outreach draft', key: 'outreach_draft' },
+    { field: 'Outreach message', key: 'outreach_draft' },
     { field: 'Research gaps', key: 'gaps' },
     { field: 'Conversation angles', key: 'conversation_angles' },
   ]

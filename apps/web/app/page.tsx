@@ -70,7 +70,7 @@ export default function Home() {
         <FeatureCard featured className="md:col-span-2 md:row-span-2" feature={{ icon: FileText, title: 'Conversation-ready output', body: 'Get an opener, talk track, questions, objections, and a next step that fit the job.' }}>
           <figure className="mx-0 mt-8 mb-0 border-l-2 border-brand pl-5">
             <blockquote className="m-0 text-base leading-relaxed text-lt-800">“Alex, I noticed Northstar is hiring across two new regions. Is ramping new hires a priority for your team right now?”</blockquote>
-            <figcaption className="mt-3 text-xs text-lt-600">Illustrative sample opener</figcaption>
+            <figcaption className="mt-3 text-xs text-lt-600">Conversation opener · sample data</figcaption>
           </figure>
         </FeatureCard>
         <FeatureCard delay="delay-one" feature={{ icon: Globe2, title: 'Multi-source research', body: 'Resolve a prospect and research the public web in parallel.' }}/>

@@ -145,8 +145,8 @@ Click a preview to view the full desktop screenshot.
     </td>
     <td width="50%" align="center">
       <strong>Personalized outreach</strong><br />
-      <a href="docs/assets/lead-trace-outreach.png"><img src="docs/assets/lead-trace-outreach.png" alt="Actual outreach draft with talking points and objections" width="360" /></a><br />
-      <sub>Adapt the draft, then copy or download it.</sub>
+      <a href="docs/assets/lead-trace-outreach.png"><img src="docs/assets/lead-trace-outreach.png" alt="Outreach message with talking points and objections" width="360" /></a><br />
+      <sub>Adapt the message, then copy or download it.</sub>
     </td>
   </tr>
   <tr>
@@ -171,7 +171,7 @@ A company profile can tell you what a business does. Preparing for a conversatio
 
 | Prepare for a meeting | Start a conversation | Check the evidence |
 | --- | --- | --- |
-| Talking points, discovery questions, likely objections, and next steps | Email and social drafts tailored to your prospect and offer | Source-linked signals, confidence scores, and clear research gaps |
+| Talking points, discovery questions, likely objections, and next steps | Email and social messages tailored to your prospect and offer | Source-linked signals, confidence scores, and clear research gaps |
 
 ## What makes the brief useful
 
@@ -194,7 +194,7 @@ A company profile can tell you what a business does. Preparing for a conversatio
 
 The API saves your context and discovers relevant public sources with **Tavily**, with Wikipedia as a fallback when discovery returns no sources. A background **Python worker** uses **Qwen through DashScope** to extract and reconcile claims. **LangGraph** then assembles a brief for your chosen goal, and a citation check matches each key signal to its stored claim and source before completion.
 
-You can inspect the result, copy or export it, retry failed research, or regenerate a brief from stored evidence and compare changes. Missing evidence appears as a gap. Citations make claims traceable; review the sources and recommendations before use. Outreach is drafted for you to review and send.
+You can inspect the result, copy or export it, retry failed research, or regenerate a brief from stored evidence and compare changes. Missing evidence appears as a gap. Citations make claims traceable; review the sources and recommendations before use. Review your outreach message before sending.
 
 ## How we built it
 
@@ -228,7 +228,7 @@ The web app runs on **Cloudflare Workers via OpenNext**. The API, research worke
 
 | Available in the current application | Planned direction |
 | --- | --- |
-| Deep lead discovery, source review, CRM contacts and deal pipeline, notes, follow-ups, CSV, cited research, outreach drafts, shared briefs, workspace accounts, and optional Google Calendar event creation | Shared company records, contact merging, recurring searches, email integration, and two-way Calendar sync |
+| Deep lead discovery, source review, CRM contacts and deal pipeline, notes, follow-ups, CSV, cited research, outreach messages, shared briefs, workspace accounts, and optional Google Calendar event creation | Shared company records, contact merging, recurring searches, email integration, and two-way Calendar sync |
 
 Planned capabilities do not yet represent a finalized feature list or a release commitment. We will update this distinction as each capability becomes available.
 

@@ -57,7 +57,7 @@ completed actions.
 
 14
 00:00:54,278 --> 00:00:59,847
-Prepare for a meeting or draft outreach using your prospect and
+Prepare for a meeting or write outreach using your prospect and
 offer context.
 
 15

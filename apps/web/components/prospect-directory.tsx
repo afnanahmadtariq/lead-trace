@@ -113,7 +113,7 @@ export function ProspectDirectory({ runs }: { runs: ResearchRunSummary[] }) {
           <select value={goal} onChange={(event) => setGoal(event.target.value as GoalFilter)} className="h-11 w-full appearance-none rounded-control border border-lt-200 bg-white px-3.5 pr-9 text-[.82rem] text-lt-800 outline-none transition-[border-color,box-shadow] focus:border-brand focus:ring-3 focus:ring-brand/10">
             <option value="all">All brief types</option>
             <option value="meeting">Meeting briefs</option>
-            <option value="outreach">Outreach drafts</option>
+            <option value="outreach">Outreach messages</option>
           </select>
         </label>
 
@@ -134,7 +134,7 @@ export function ProspectDirectory({ runs }: { runs: ResearchRunSummary[] }) {
     <WorkspaceSection title="All prospects" description={hasFilters ? `${visibleRuns.length} of ${runs.length} prospects shown.` : `${runs.length} researched in this workspace.`}>
       {visibleRuns.length ? <WorkspaceList>{visibleRuns.map((run) => <WorkspaceListLink href={run.brief ? `/dashboard/briefs/${run.brief.id}` : `/dashboard/research/${run.id}`} key={run.id}>
         <ItemIcon>{run.brief ? <Sparkles size={18}/> : <Search size={18}/>}</ItemIcon>
-        <ItemBody heading="h2" title={<>{run.prospect.name}{run.prospect.companyName ? ` · ${run.prospect.companyName}` : ''}</>} description={<>{run.goal === 'meeting' ? 'Meeting brief' : 'Outreach draft'} · {run.offer.name} · {run._count?.evidence ?? 0} cited signals</>}/>
+        <ItemBody heading="h2" title={<>{run.prospect.name}{run.prospect.companyName ? ` · ${run.prospect.companyName}` : ''}</>} description={<>{run.goal === 'meeting' ? 'Meeting brief' : 'Outreach message'} · {run.offer.name} · {run._count?.evidence ?? 0} cited signals</>}/>
         <ItemMeta><div className="flex flex-col items-end gap-1.5"><StatusBadge status={run.brief ? 'ready' : run.status}/>{run.brief && <UrgencyBadge label={briefUrgencyLabel(run.brief.sections)}/>}</div><time>{run.brief ? 'Open brief' : formatDate(run.requestedAt, { year: undefined })}</time></ItemMeta>
       </WorkspaceListLink>)}</WorkspaceList> : <EmptyState
         icon={<Search size={20}/>}

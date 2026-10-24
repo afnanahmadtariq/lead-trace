@@ -27,7 +27,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
   const prospect = brief.researchRun.prospect
   const goalLabel = brief.researchRun.goal === 'meeting' ? 'Meeting brief' : 'Outreach brief'
   const urgencyLabel = briefUrgencyLabel(brief.sections)
-  const statusLabel = brief.status === 'refreshing' ? 'Refreshing' : brief.status === 'ready' ? 'Ready' : brief.status.replace(/^./, (letter) => letter.toUpperCase())
+  const statusLabel = brief.status === 'draft' ? 'Preparing' : brief.status === 'refreshing' ? 'Refreshing' : brief.status === 'ready' ? 'Ready' : brief.status.replace(/^./, (letter) => letter.toUpperCase())
 
   return <WorkspacePage>
     <BriefStatusPoller status={brief.status}/>
@@ -58,7 +58,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
             <p className="my-0 text-sm leading-relaxed text-lt-700">{item.claim}</p>
             {item.observedAt && <time className="mt-2 block text-xs text-lt-500">Observed {formatDate(item.observedAt, {})}</time>}
             <a className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-brand" href={item.source.url} target="_blank" rel="noreferrer"><FileCheck2 size={14}/>{item.source.title}<ArrowUpRight size={13}/></a>
-          </article>) : <p className="m-0 p-2 text-sm text-lt-500">No citations are attached to this draft yet.</p>}
+          </article>) : <p className="m-0 p-2 text-sm text-lt-500">No citations are attached to this brief yet.</p>}
         </div>
       </details>
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-lt-200 bg-lt-50 px-5 py-4 text-sm text-lt-600">
