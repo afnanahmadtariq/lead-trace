@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "checkedAt": "2026-10-24T03:59:38.742694+00:00",
+  "checkedAt": "2026-10-24T04:38:24.342786+00:00",
   "baseCommit": "5e37a0c296916207900f3faa9221e7624cbbb4c0",
   "overallStatus": "live_verification_pending",
   "scope": "Repairs for the four findings in backend-live-api-audit.json and non-regression checks. Production configuration and deployment were not changed.",
@@ -45,6 +45,97 @@
       "signInReached": true,
       "pkceMethod": "S256",
       "requestedScope": "https://www.googleapis.com/auth/calendar.events.owned"
+    },
+    "calendarLiveIntegration": {
+      "checkedAt": "2026-10-24T04:37:58.839Z",
+      "kind": "live_local_backend_real_google_calendar",
+      "checks": [
+        {
+          "name": "existing_session_authenticated",
+          "status": 200
+        },
+        {
+          "name": "calendar_connected",
+          "status": 200,
+          "configured": true,
+          "connected": true
+        },
+        {
+          "name": "temporary_contact_created_without_email",
+          "status": 201
+        },
+        {
+          "name": "string_invitation_flag_rejected",
+          "status": 400
+        },
+        {
+          "name": "past_meeting_rejected",
+          "status": 400
+        },
+        {
+          "name": "invalid_end_rejected",
+          "status": 400
+        },
+        {
+          "name": "missing_attendee_email_rejected",
+          "status": 400
+        },
+        {
+          "name": "unknown_contact_rejected",
+          "status": 404
+        },
+        {
+          "name": "private_event_synced",
+          "status": 201,
+          "synced": true,
+          "safeGoogleLink": true
+        },
+        {
+          "name": "token_lifecycle",
+          "refreshWasDue": false,
+          "refreshed": false,
+          "connectionPreserved": true
+        },
+        {
+          "name": "google_event_read_back",
+          "status": 200,
+          "confirmed": true,
+          "exactTitleAndTimes": true,
+          "attendeeCount": 0
+        },
+        {
+          "name": "same_request_retry_is_idempotent",
+          "status": 201,
+          "localMeetingCount": 1,
+          "sameGoogleEventId": true
+        },
+        {
+          "name": "changed_request_id_rejected",
+          "status": 409
+        },
+        {
+          "name": "meeting_persisted_on_contact",
+          "status": 200,
+          "syncedMeetingCount": 1
+        }
+      ],
+      "cleanup": {
+        "googleEventRemoved": true,
+        "googleDeleteStatus": 204,
+        "googleReadBackStatus": 200,
+        "googleEventState": "cancelled",
+        "localContactAndMeetingRemoved": true,
+        "calendarConnectionPreserved": true
+      },
+      "result": "passed",
+      "automaticTokenRefresh": {
+        "checkedAt": "2026-10-24T04:37:42.256Z",
+        "result": "passed",
+        "expiredTokenRefreshed": true,
+        "connectionPreserved": true
+      },
+      "scope": "Authenticated requests to the running local backend using the existing locally issued app session; real Google Calendar event creation and read-back. No attendees or invitations. User connection preserved.",
+      "timePrecision": "Google returned event times at second precision. The initial fixture included milliseconds; the fixture was aligned to seconds and the complete journey passed on rerun."
     }
   },
   "findings": [
@@ -204,7 +295,7 @@
   ],
   "remaining": [
     "Restore the configured Qwen quota or provide an available existing model, then rerun both deep cohorts and model-backed meeting/outreach research.",
-    "Google Calendar authorization reaches Google sign-in, but consent, token exchange, and real event creation require the selected account to be connected. Actual email delivery remains unverified."
+    "Actual email delivery remains unverified; Calendar tests used private events with no attendees or invitations."
   ],
   "cleanup": {
     "taskServices": "stopped after tests",
@@ -213,12 +304,12 @@
     "existingApiWorkerAndDatabase": "preserved"
   },
   "latestModelProbe": {
-    "checkedAt": "2026-10-24T04:04:59.118192+00:00",
+    "checkedAt": "2026-10-24T04:38:24.342786+00:00",
     "provider": "dashscope",
     "model": "qwen3.8-max",
     "httpStatus": 403,
     "code": "insufficient_quota",
     "message": "Free quota exhausted."
   },
-  "followupCheckedCommit": "844bb86160f2276dad3511a9b3f2adf923406cab"
+  "followupCheckedCommit": "70c9d55"
 }
