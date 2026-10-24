@@ -24,7 +24,7 @@ We listened to feedback from industry professionals and used it to rethink the p
 
 The project began with AI-assisted prospect research and cited Deal Briefs. We are building on that foundation toward a broader sales workflow that brings lead generation, research, and CRM together. The new name reflects that direction: helping teams follow a lead from discovery through the sales relationship.
 
-The repository now includes built-in CRM and source-linked lead generation: persistent contacts, a deal pipeline, notes, follow-ups, CSV import/export, Google Calendar meeting creation, and a reviewed discovery-to-CRM workflow. Deeper integrations remain planned. We will refine the feature set and pitch as development progresses. The existing pitch and narrated demo show the research foundation and the original expansion roadmap.
+The repository now includes built-in CRM and source-linked lead generation: persistent contacts, a deal pipeline, notes, follow-ups, CSV import/export, Google Calendar meeting creation, and a reviewed discovery-to-CRM workflow. Deeper integrations remain planned. We will refine the feature set and pitch as development progresses. The pitch, overview, product images, and narrated demo now show this connected workflow and distinguish current features from future priorities.
 
 ## Meet Lead Trace
 
@@ -44,7 +44,7 @@ The everyday flow is **add a contact → prepare with research → track an oppo
 - **Research:** open a contact and choose **Research contact**. The saved identity is used and each research run retains its immutable snapshot. Email matching is case-insensitive. Historical duplicate prospects are preserved with their research; the oldest matching record becomes the canonical email identity during migration.
 - **Permissions:** workspace members collaborate on CRM records. Owners/assignees must be members of the active workspace. Contacts and their deals, notes, tasks, and meetings share compound tenant relationships. Wiping research data preserves CRM records; only owners can delete a workspace, which removes its CRM records.
 
-Company details are currently stored on contacts. Shared company records, custom pipelines, contact merging/deletion, email integration, recurring lead searches, and two-way Calendar sync are future work. Contact pages display the latest 50 research runs and up to 100 of each other history type; the follow-up list shows up to 500 actions, open first.
+Company details are currently stored on contacts. Shared company records, custom pipelines, contact merging, email integration, recurring lead searches, and two-way Calendar sync are future work. Deals, notes, and follow-ups have deletion controls; contacts can be deleted only when they have no research history. Deleting a local contact or meeting record does not delete existing Google Calendar events. Contact pages display the latest 50 research runs and up to 100 of each other history type; the follow-up list shows up to 500 actions, open first.
 
 ## Lead generation
 
@@ -120,9 +120,9 @@ Click a preview to view the full desktop screenshot.
       <sub>Choose a goal and add prospect context.</sub>
     </td>
     <td width="50%" align="center">
-      <strong>Prospect library</strong><br />
-      <a href="docs/assets/lead-trace-prospects.png"><img src="docs/assets/lead-trace-prospects.png" alt="Lead Trace prospect library desktop screenshot" width="360" /></a><br />
-      <sub>Find prospects and open ready briefs.</sub>
+      <strong>Contact directory</strong><br />
+      <a href="docs/assets/lead-trace-prospects.png"><img src="docs/assets/lead-trace-prospects.png" alt="Current Lead Trace contact directory with fictional sample data" width="360" /></a><br />
+      <sub>Track contacts, lifecycle, ownership, and linked research.</sub>
     </td>
   </tr>
   <tr>
@@ -149,9 +149,21 @@ Click a preview to view the full desktop screenshot.
       <sub>Adapt the draft, then copy or download it.</sub>
     </td>
   </tr>
+  <tr>
+    <td width="50%" align="center"><strong>Deep lead discovery</strong><br /><a href="docs/assets/lead-trace-leads.png"><img src="docs/assets/lead-trace-leads.png" alt="Current Lead Trace deep lead discovery with fictional sample data" width="360" /></a><br /><sub>Review role, industry, and location evidence.</sub></td>
+    <td width="50%" align="center"><strong>Contact workspace</strong><br /><a href="docs/assets/lead-trace-contact.png"><img src="docs/assets/lead-trace-contact.png" alt="Current Lead Trace contact workspace with fictional sample data" width="360" /></a><br /><sub>Keep notes, deals, and the next action with the contact.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>Deal pipeline</strong><br /><a href="docs/assets/lead-trace-pipeline-table.png"><img src="docs/assets/lead-trace-pipeline-table.png" alt="Current Lead Trace deal pipeline with fictional sample data" width="360" /></a><br /><sub>Switch between Board and Table views.</sub></td>
+    <td width="50%" align="center"><strong>Follow-ups</strong><br /><a href="docs/assets/lead-trace-follow-ups.png"><img src="docs/assets/lead-trace-follow-ups.png" alt="Current Lead Trace follow-ups with fictional sample data" width="360" /></a><br /><sub>Filter overdue, today, and upcoming actions.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><strong>Buyer profile</strong><br /><a href="docs/assets/lead-trace-lead-search.png"><img src="docs/assets/lead-trace-lead-search.png" alt="Current Lead Trace buyer profile with fictional sample data" width="360" /></a><br /><sub>Choose a market, role, location, and search depth.</sub></td>
+    <td width="50%" align="center"><strong>Integrations</strong><br /><a href="docs/assets/lead-trace-integrations.png"><img src="docs/assets/lead-trace-integrations.png" alt="Current Lead Trace integrations with fictional sample data" width="360" /></a><br /><sub>Connect Google Calendar when you need scheduling.</sub></td>
+  </tr>
 </table>
 
-*The landing page uses an illustrative example. Product screenshots show the current local app with deterministic demonstration fixtures, including a Tim Cook / Apple example. They do not represent a live research run, customer adoption, or measured sales results.*
+*Product images were refreshed from the current local app on 24 October 2026. Authenticated screens use a disposable workspace labeled “sample data,” with fictional people, companies, email addresses, deals, and research. They are not live lead results, customer adoption, or measured sales outcomes. Recorded live-provider results are described separately in the [dated audit](docs/lead-generation-live-audit.html).*
 
 ## The idea: research with a purpose
 
@@ -171,10 +183,10 @@ A company profile can tell you what a business does. Preparing for a conversatio
 ## Getting started
 
 1. **Enter your workspace.** [Create an account](https://leadtrace.online/sign-up) and verify your email.
-2. **Add your context.** Enter a prospect's name, company, domain, or public profile, then describe what you sell.
-3. **Choose your goal.** Pick meeting preparation or outreach and follow the research progress.
-4. **Choose an angle.** Inspect its source, consider the possible fit, and use the question to start a conversation.
-5. **Make it yours.** Review the gaps, adapt the draft, then copy or download the complete brief.
+2. **Find a prospect or add a contact.** Describe a buyer profile in Find leads, or add/import contacts directly.
+3. **Review and save.** Inspect the source quotes, qualify the fit, and save reviewed leads to CRM.
+4. **Prepare the conversation.** Research a contact with your offer and goal, then inspect the cited claims, hypotheses, questions, and gaps.
+5. **Track the next action.** Add a deal, record notes, set a follow-up, or schedule through your authorized Google Calendar account.
 
 ## How it works
 
@@ -189,12 +201,18 @@ You can inspect the result, copy or export it, retry failed research, or regener
 Our guiding idea was simple: **keep evidence behind the output, and uncertainty visible**. We store sources separately from claims and use accepted evidence to generate the brief. The web app handles the interactive experience while a background worker handles longer research jobs.
 
 ```mermaid
+%%{init: {'theme':'base','themeVariables': {'fontFamily':'Helvetica Neue, Arial, sans-serif','primaryColor':'#FFFFFF','primaryTextColor':'#173B75','primaryBorderColor':'#C4DAF5','lineColor':'#1768C7','background':'#F7FAFF'}}}%%
 flowchart LR
-    A["Web dashboard<br/>Next.js"] <--> B["API and accounts<br/>NestJS"]
-    B <--> C["Data and job queue<br/>PostgreSQL"]
-    C <--> D["Research worker<br/>Python + LangGraph"]
-    B <--> E["Public discovery<br/>Tavily"]
-    D <--> F["AI inference<br/>Qwen<br/>DashScope"]
+    Web("<b>Web dashboard</b><br/>Next.js · Cloudflare / OpenNext") --> API("<b>API and accounts</b><br/>NestJS · Better Auth<br/>CRM + lead jobs")
+    API --> DB("<b>Data and jobs</b><br/>PostgreSQL · Prisma · job leases")
+    DB --> Worker("<b>Research worker</b><br/>Python · LangGraph")
+    API --> Discovery("<b>Public discovery and company registries</b><br/>Tavily Search · Extract · Crawl<br/>GLEIF · Wikidata · SEC EDGAR")
+    API --> Model("<b>AI inference</b><br/>Qwen / DashScope<br/>Qualification + briefs")
+    Worker --> Model
+    API --> Calendar("<b>Optional integration</b><br/>Google Calendar<br/>OAuth · meetings")
+    classDef component fill:#FFFFFF,stroke:#C4DAF5,stroke-width:2px,color:#173B75,rx:12,ry:12;
+    class Web,API,DB,Worker,Discovery,Model,Calendar component;
+    linkStyle default stroke:#1768C7,stroke-width:2px;
 ```
 
 | Layer | Its job | Technology |
@@ -210,22 +228,24 @@ The web app runs on **Cloudflare Workers via OpenNext**. The API, research worke
 
 | Available in the current application | Planned direction |
 | --- | --- |
-| Prospect and offer context, public-source research, cited Deal Briefs, outreach drafts, shared briefs, and workspace accounts | Lead generation, CRM, and related sales workflows |
+| Deep lead discovery, source review, CRM contacts and deal pipeline, notes, follow-ups, CSV, cited research, outreach drafts, shared briefs, workspace accounts, and optional Google Calendar event creation | Shared company records, contact merging, recurring searches, email integration, and two-way Calendar sync |
 
 Planned capabilities do not yet represent a finalized feature list or a release commitment. We will update this distinction as each capability becomes available.
 
 ## Supporting attachments
 
-The materials below use the new Lead Trace identity. The transition page shows the former InsightIQ logo alongside the new mark to explain the project’s evolution. Lead generation and CRM are identified as planned capabilities:
+The materials below reflect the current code and redesigned UI as of 24 October 2026. The transition page preserves the former InsightIQ logo alongside Lead Trace to explain the industry-feedback story. Current discovery, CRM, and research features are separated from future priorities; fictional screenshots and the recorded live audit are clearly distinguished:
 
 | Attachment | What's inside |
 | --- | --- |
-| [PowerPoint pitch](presentation/Lead-Trace-pitch-enhanced.pptx) · [PDF pitch](supporting/Lead-Trace-pitch.pdf) | 12-slide pitch covering the industry-feedback transition, current product, planned direction, screenshots, workflow, architecture, and team |
-| [Narrated product demo](video/Lead-Trace-demo.mp4) · [Captions](video/Lead-Trace-captions.srt) | An 81-second, 1080p narrated walkthrough with the logo transition, current app captures, captions, and the planned product direction |
-| [Project overview](supporting/Lead-Trace-overview.pdf) | A three-page overview of the transition, current research workflow, and planned lead generation and CRM direction |
-| [Architecture diagram](supporting/Lead-Trace-architecture.png) | The system architecture shown above |
-| [Workflow diagram](supporting/Lead-Trace-workflow.png) | From prospect context to a reviewable Deal Brief |
+| [PowerPoint pitch](presentation/Lead-Trace-pitch-enhanced.pptx) · [PDF pitch](supporting/Lead-Trace-pitch.pdf) | 12-slide pitch covering the transition, deep discovery, CRM, pipeline/follow-ups, cited research, Calendar, architecture, recorded live audit, future priorities, and team |
+| [Narrated product demo](video/Lead-Trace-demo.mp4) · [Captions](video/Lead-Trace-captions.srt) | A 103-second, 1080p narrated product tour with the logo transition, current app captures, matching captions, recorded audit context, and future priorities |
+| [Project overview](supporting/Lead-Trace-overview.pdf) | A three-page overview of the transition, implemented sales workflow, current scope, architecture, and future priorities |
+| [Architecture diagram](supporting/Lead-Trace-architecture.png) | The current API lead worker, Python research worker, public registries, model provider, and optional Calendar connection; [SVG](docs/assets/architecture.svg) · [Mermaid source](docs/assets/architecture.mmd) |
+| [Workflow diagram](supporting/Lead-Trace-workflow.png) | Discovery → source review → CRM → research/deal tracking → follow-up or meeting; [SVG](docs/assets/workflow.svg) · [Mermaid source](docs/assets/workflow.mmd) |
 | [Demo inputs](supporting/Lead-Trace-demo-inputs.csv) | Fictional prospect and offer examples for demonstrations; not a benchmark or measured results |
+| [Local backend API audit](docs/backend-live-api-audit.html) · [Detailed results](docs/backend-live-api-audit.json) | Recorded 24 October API verification, live lead cohorts, and unresolved findings; separate from demonstration fixtures |
+| [Material sources and scope](supporting/Lead-Trace-materials-notes.md) | Capture date, source-code references, fixture disclosures, and audit limitations |
 | [All attachments](supporting/Lead-Trace-attachments.zip) | The supporting materials in one download |
 
 The walkthrough uses the installed Samantha system voice. Its [narration script](video/Lead-Trace-narration.txt) is included for future voiceover revisions.

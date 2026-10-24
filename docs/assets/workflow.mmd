@@ -1,0 +1,9 @@
+%%{init: {'theme':'base','themeVariables': {'fontFamily':'Helvetica Neue, Arial, sans-serif','primaryColor':'#FFFFFF','primaryTextColor':'#173B75','primaryBorderColor':'#C4DAF5','lineColor':'#1768C7','background':'#F7FAFF'}}}%%
+flowchart LR
+    Discover("<b>01 Discover</b><br/>Buyer profile and sourced companies") --> Review("<b>02 Review</b><br/>Current role, buyer-fit evidence, and qualification")
+    Review --> Save("<b>03 Save</b><br/>Reviewed lead becomes a CRM contact")
+    Save --> Prepare("<b>04 Prepare</b><br/>Offer context and a cited conversation brief")
+    Prepare --> Act("<b>05 Act</b><br/>Deal, note, follow-up, or Calendar meeting")
+    classDef step fill:#FFFFFF,stroke:#C4DAF5,stroke-width:2px,color:#173B75,rx:12,ry:12;
+    class Discover,Review,Save,Prepare,Act step;
+    linkStyle default stroke:#1768C7,stroke-width:2px;

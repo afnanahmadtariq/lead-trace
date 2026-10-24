@@ -1,0 +1,3464 @@
+{
+  "checks": [
+    {
+      "name": "Password sign-in a",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 123
+    },
+    {
+      "name": "Password sign-in b",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 54
+    },
+    {
+      "name": "Password sign-in member",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 51
+    },
+    {
+      "name": "No active workspace is rejected",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Create workspace a",
+      "method": "POST",
+      "path": "/api/auth/organization/create",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Select workspace a",
+      "method": "POST",
+      "path": "/api/auth/organization/set-active",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Create workspace b",
+      "method": "POST",
+      "path": "/api/auth/organization/create",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Select workspace b",
+      "method": "POST",
+      "path": "/api/auth/organization/set-active",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Member selects own workspace",
+      "method": "POST",
+      "path": "/api/auth/organization/set-active",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Lead discovery configuration",
+      "method": "GET",
+      "path": "/leads/capabilities",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Create quick live lead search",
+      "method": "POST",
+      "path": "/leads/searches",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 18
+    },
+    {
+      "name": "Queue quick discovery",
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "status": 202,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Create deep live lead search",
+      "method": "POST",
+      "path": "/leads/searches",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Queue deep discovery",
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "status": 202,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Anonymous denied /account-context",
+      "method": "GET",
+      "path": "/account-context",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 34
+    },
+    {
+      "name": "Anonymous denied /workspace-settings",
+      "method": "GET",
+      "path": "/workspace-settings",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 1
+    },
+    {
+      "name": "Anonymous denied /crm/members",
+      "method": "GET",
+      "path": "/crm/members",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Anonymous denied /crm/contacts",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Anonymous denied /crm/deals",
+      "method": "GET",
+      "path": "/crm/deals",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Anonymous denied /crm/tasks",
+      "method": "GET",
+      "path": "/crm/tasks",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Anonymous denied /crm/calendar",
+      "method": "GET",
+      "path": "/crm/calendar",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Anonymous denied /leads/capabilities",
+      "method": "GET",
+      "path": "/leads/capabilities",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Anonymous denied /leads/searches",
+      "method": "GET",
+      "path": "/leads/searches",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Anonymous denied /research-runs",
+      "method": "GET",
+      "path": "/research-runs",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Anonymous denied /deal-briefs",
+      "method": "GET",
+      "path": "/deal-briefs",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Anonymous denied /evidence",
+      "method": "GET",
+      "path": "/evidence",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Anonymous denied /notifications",
+      "method": "GET",
+      "path": "/notifications",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Anonymous denied /integrations",
+      "method": "GET",
+      "path": "/integrations",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Public health",
+      "method": "GET",
+      "path": "/health",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Public auth configuration",
+      "method": "GET",
+      "path": "/auth-config",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Invalid shared token is rejected",
+      "method": "GET",
+      "path": "/shared/briefs/:token",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "E2E seed endpoint unavailable",
+      "method": "POST",
+      "path": "/e2e/seed",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Wrong password rejected",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 82
+    },
+    {
+      "name": "Auth rejects untrusted Origin",
+      "method": "POST",
+      "path": "/api/auth/update-user",
+      "status": 403,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Account context contains only own workspaces",
+      "method": "GET",
+      "path": "/account-context",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Owner workspace settings",
+      "method": "GET",
+      "path": "/workspace-settings",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Member workspace settings",
+      "method": "GET",
+      "path": "/workspace-settings",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Member cannot rename workspace",
+      "method": "PATCH",
+      "path": "/workspace-settings",
+      "status": 403,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Member cannot delete workspace",
+      "method": "DELETE",
+      "path": "/workspace-settings",
+      "status": 403,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Invalid workspace name",
+      "method": "PATCH",
+      "path": "/workspace-settings",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Owner rename workspace",
+      "method": "PATCH",
+      "path": "/workspace-settings",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Foreign workspace switch denied",
+      "method": "POST",
+      "path": "/api/auth/organization/set-active",
+      "status": 403,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Members list is tenant scoped",
+      "method": "GET",
+      "path": "/crm/members",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Create contact normalizes identity",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Duplicate email rejected case-insensitively",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 21
+    },
+    {
+      "name": "Foreign workspace may use same email",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "outcome": "setup-corrected",
+      "error": "expected 201; got 404: {\"message\":\"Select a workspace before continuing\",\"error\":\"Not Found\",\"statusCode\":404}"
+    },
+    {
+      "name": "Contact validation short name",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Contact validation invalid email",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Contact validation unknown field",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Contact validation invalid lifecycle",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Contact validation foreign owner",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Contact validation null body",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Contact invalid page 0",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Contact invalid page 1.5",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Contact invalid page abc",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Contact invalid page 200001",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Contact search is case insensitive",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Search treats SQL punctuation as text",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Update contact lifecycle qualified",
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Update contact lifecycle customer",
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Update contact lifecycle inactive",
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Update contact lifecycle lead",
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Member can add shared CRM note",
+      "method": "POST",
+      "path": "/crm/contacts/:id/notes",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Empty note rejected",
+      "method": "POST",
+      "path": "/crm/contacts/:id/notes",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Create contact note",
+      "method": "POST",
+      "path": "/crm/contacts/:id/notes",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "CSV import skips duplicate emails atomically",
+      "method": "POST",
+      "path": "/crm/contacts/import",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "CSV invalid row rejects entire batch",
+      "method": "POST",
+      "path": "/crm/contacts/import",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Rejected CSV leaves no partial contact",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "CSV export contains quoted fields",
+      "method": "GET",
+      "path": "/crm/contacts/export",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "CSV export isolated between workspaces",
+      "method": "GET",
+      "path": "/crm/contacts/export",
+      "outcome": "setup-corrected",
+      "error": "expected 200; got 404: {\"message\":\"Select a workspace before continuing\",\"error\":\"Not Found\",\"statusCode\":404}"
+    },
+    {
+      "name": "CSV formula prefix is neutralized",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "CSV export neutralizes spreadsheet formula",
+      "method": "GET",
+      "path": "/crm/contacts/export",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Bulk contact import",
+      "method": "POST",
+      "path": "/crm/contacts/import",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 40
+    },
+    {
+      "name": "Contact pagination page one",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Contact pagination page two has no overlap",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Create deal with value and owner",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Deal stage transition qualified",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Deal stage transition proposal",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Deal stage transition negotiation",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Deal stage transition won",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Deal stage transition lost",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Deal stage transition new",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Deal list returns all pipeline stages",
+      "method": "GET",
+      "path": "/crm/deals",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Deal validation stage=bad",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Deal validation value=-1",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Deal validation value=1.234",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Deal validation currency=usd",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Deal validation ownerId=audit-member",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Deal validation prospectId=not-found",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Create follow-up",
+      "method": "POST",
+      "path": "/crm/tasks",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Complete follow-up",
+      "method": "PATCH",
+      "path": "/crm/tasks/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Completed timestamp persisted",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 13
+    },
+    {
+      "name": "Reopen follow-up",
+      "method": "PATCH",
+      "path": "/crm/tasks/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Boolean string is rejected",
+      "method": "PATCH",
+      "path": "/crm/tasks/:id",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Invalid follow-up date rejected",
+      "method": "POST",
+      "path": "/crm/tasks",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Task list contains reopened follow-up",
+      "method": "GET",
+      "path": "/crm/tasks",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Cross-tenant denied GET /crm/contacts/:id",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 1
+    },
+    {
+      "name": "Cross-tenant denied PATCH /crm/contacts/:id",
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 1
+    },
+    {
+      "name": "Cross-tenant denied DELETE /crm/contacts/:id",
+      "method": "DELETE",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied POST /crm/contacts/:id/notes",
+      "method": "POST",
+      "path": "/crm/contacts/:id/notes",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied DELETE /crm/deals/:id",
+      "method": "DELETE",
+      "path": "/crm/deals/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied PATCH /crm/deals/:id",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied DELETE /crm/notes/:id",
+      "method": "DELETE",
+      "path": "/crm/notes/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied DELETE /crm/tasks/:id",
+      "method": "DELETE",
+      "path": "/crm/tasks/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied PATCH /crm/tasks/:id",
+      "method": "PATCH",
+      "path": "/crm/tasks/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied GET /leads/searches/:id",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Cross-tenant denied POST /leads/searches/:id/cancel",
+      "method": "POST",
+      "path": "/leads/searches/:id/cancel",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Missing contact returns 404",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Delete own note",
+      "method": "DELETE",
+      "path": "/crm/notes/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Delete own deal",
+      "method": "DELETE",
+      "path": "/crm/deals/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Delete own task",
+      "method": "DELETE",
+      "path": "/crm/tasks/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Repeated delete returns 404 notes",
+      "method": "DELETE",
+      "path": "/crm/notes/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Repeated delete returns 404 deals",
+      "method": "DELETE",
+      "path": "/crm/deals/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Repeated delete returns 404 tasks",
+      "method": "DELETE",
+      "path": "/crm/tasks/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Create disposable contact for cascade test",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Create child follow-up for cascade",
+      "method": "POST",
+      "path": "/crm/tasks",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Delete contact without research",
+      "method": "DELETE",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Deleted contact is absent",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Child follow-up cascaded away",
+      "method": "PATCH",
+      "path": "/crm/tasks/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Workspace data wipe confirmation required",
+      "method": "DELETE",
+      "path": "/workspace-settings/research-data",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Brief deletion confirmation required",
+      "method": "DELETE",
+      "path": "/workspace-settings/briefs",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Workspace deletion confirmation required",
+      "method": "DELETE",
+      "path": "/workspace-settings",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Member cannot wipe research data",
+      "method": "DELETE",
+      "path": "/workspace-settings/research-data",
+      "status": 403,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Calendar configuration/status",
+      "method": "GET",
+      "path": "/crm/calendar",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Calendar connect generates PKCE authorization",
+      "method": "POST",
+      "path": "/crm/calendar/connect",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Calendar OAuth cancellation redirects safely",
+      "method": "GET",
+      "path": "/crm/calendar/callback",
+      "outcome": "pass",
+      "status": 302,
+      "durationMs": 5
+    },
+    {
+      "name": "Meeting requires connected Calendar",
+      "method": "POST",
+      "path": "/crm/calendar/meetings",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Meeting rejects invalid time range",
+      "method": "POST",
+      "path": "/crm/calendar/meetings",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Meeting rejects past time",
+      "method": "POST",
+      "path": "/crm/calendar/meetings",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Calendar disconnect without connection is safe",
+      "method": "DELETE",
+      "path": "/crm/calendar",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Restore B after rejected workspace switch",
+      "method": "POST",
+      "path": "/api/auth/organization/set-active",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 46
+    },
+    {
+      "name": "Confirm B is in its own workspace",
+      "method": "GET",
+      "path": "/workspace-settings",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 17
+    },
+    {
+      "name": "Foreign workspace may use same email — retest",
+      "method": "POST",
+      "path": "/crm/contacts",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 15
+    },
+    {
+      "name": "CSV export isolated between workspaces — retest",
+      "method": "GET",
+      "path": "/crm/contacts/export",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Recreate isolation note",
+      "method": "POST",
+      "path": "/crm/contacts/:id/notes",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Recreate isolation deal",
+      "method": "POST",
+      "path": "/crm/deals",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Recreate isolation task",
+      "method": "POST",
+      "path": "/crm/tasks",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Verified tenant isolation GET /crm/contacts/:id",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Verified tenant isolation PATCH /crm/contacts/:id",
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Verified tenant isolation DELETE /crm/contacts/:id",
+      "method": "DELETE",
+      "path": "/crm/contacts/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Verified tenant isolation POST /crm/contacts/:id/notes",
+      "method": "POST",
+      "path": "/crm/contacts/:id/notes",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Verified tenant isolation DELETE /crm/deals/:id",
+      "method": "DELETE",
+      "path": "/crm/deals/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Verified tenant isolation PATCH /crm/deals/:id",
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Verified tenant isolation DELETE /crm/notes/:id",
+      "method": "DELETE",
+      "path": "/crm/notes/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Verified tenant isolation DELETE /crm/tasks/:id",
+      "method": "DELETE",
+      "path": "/crm/tasks/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Verified tenant isolation PATCH /crm/tasks/:id",
+      "method": "PATCH",
+      "path": "/crm/tasks/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Verified tenant isolation GET /leads/searches/:id",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Verified tenant isolation POST /leads/searches/:id/cancel",
+      "method": "POST",
+      "path": "/leads/searches/:id/cancel",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Verified tenant isolation POST /leads/searches/:id/discover",
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "A records unchanged after foreign mutation attempts",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 14
+    },
+    {
+      "name": "quick live discovery completed",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 49
+    },
+    {
+      "name": "quick every criterion quote matches its stored source",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 14
+    },
+    {
+      "name": "quick completed search cannot be rediscovered",
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "quick completed search cannot be cancelled",
+      "method": "POST",
+      "path": "/leads/searches/:id/cancel",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "deep live discovery completed",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "deep every criterion quote matches its stored source",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "deep completed search cannot be rediscovered",
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "deep completed search cannot be cancelled",
+      "method": "POST",
+      "path": "/leads/searches/:id/cancel",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Lead page validation",
+      "method": "GET",
+      "path": "/leads/searches",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Lead criteria validation",
+      "method": "POST",
+      "path": "/leads/searches",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Create cancellation probe",
+      "method": "POST",
+      "path": "/leads/searches",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Cancel queued lead search",
+      "method": "POST",
+      "path": "/leads/searches/:id/cancel",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Session details available",
+      "method": "GET",
+      "path": "/api/auth/get-session",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 55
+    },
+    {
+      "name": "Session listing restricted to current user",
+      "method": "GET",
+      "path": "/api/auth/list-sessions",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Invalid session cookie rejected",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Invalid sign-up rejected before email delivery",
+      "method": "POST",
+      "path": "/api/auth/sign-up/email",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Invalid security action rejected without email",
+      "method": "POST",
+      "path": "/account-context/security-confirmations",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Security approval without code rejected",
+      "method": "POST",
+      "path": "/account-context/security-confirmations/verify",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Update own profile",
+      "method": "POST",
+      "path": "/api/auth/update-user",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 15
+    },
+    {
+      "name": "Password change rejects incorrect current password",
+      "method": "POST",
+      "path": "/api/auth/change-password",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 122
+    },
+    {
+      "name": "Change password with valid current password",
+      "method": "POST",
+      "path": "/api/auth/change-password",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 97
+    },
+    {
+      "name": "Enable TOTP with password confirmation",
+      "method": "POST",
+      "path": "/api/auth/two-factor/enable",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 66
+    },
+    {
+      "name": "Verify TOTP enrollment",
+      "method": "POST",
+      "path": "/api/auth/two-factor/verify-totp",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 17
+    },
+    {
+      "name": "TOTP flag persisted",
+      "method": "GET",
+      "path": "/api/auth/get-session",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Sign out member",
+      "method": "POST",
+      "path": "/api/auth/sign-out",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Signed out session inaccessible",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "MFA login requires second factor",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 60
+    },
+    {
+      "name": "Pending MFA cannot access CRM",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 2
+    },
+    {
+      "name": "Wrong TOTP denied",
+      "method": "POST",
+      "path": "/api/auth/two-factor/verify-totp",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 13
+    },
+    {
+      "name": "Correct TOTP completes sign-in",
+      "method": "POST",
+      "path": "/api/auth/two-factor/verify-totp",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 14
+    },
+    {
+      "name": "MFA session available",
+      "method": "GET",
+      "path": "/api/auth/get-session",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Sign out for backup-code check",
+      "method": "POST",
+      "path": "/api/auth/sign-out",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Start backup-code login",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 57
+    },
+    {
+      "name": "Backup code completes MFA login",
+      "method": "POST",
+      "path": "/api/auth/two-factor/verify-backup-code",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 19
+    },
+    {
+      "name": "Sign out to test backup-code reuse",
+      "method": "POST",
+      "path": "/api/auth/sign-out",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Start reuse probe login",
+      "method": "POST",
+      "path": "/api/auth/sign-in/email",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 57
+    },
+    {
+      "name": "Used backup code cannot be replayed",
+      "method": "POST",
+      "path": "/api/auth/two-factor/verify-backup-code",
+      "status": 401,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Cancelled search cannot restart",
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 60024
+    },
+    {
+      "name": "Create London SaaS deep cohort",
+      "method": "POST",
+      "path": "/leads/searches",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 16
+    },
+    {
+      "name": "Queue London deep discovery",
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "status": 202,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Unqualified lead cannot convert",
+      "method": "POST",
+      "path": "/leads/candidates/:id/convert",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 19
+    },
+    {
+      "name": "Foreign workspace cannot review lead",
+      "method": "PATCH",
+      "path": "/leads/candidates/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Lead status validation",
+      "method": "PATCH",
+      "path": "/leads/candidates/:id",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Dismiss a candidate",
+      "method": "PATCH",
+      "path": "/leads/candidates/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 13
+    },
+    {
+      "name": "Restore candidate for review",
+      "method": "PATCH",
+      "path": "/leads/candidates/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Qualify supported live lead",
+      "method": "PATCH",
+      "path": "/leads/candidates/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 19
+    },
+    {
+      "name": "Foreign workspace cannot convert lead",
+      "method": "POST",
+      "path": "/leads/candidates/:id/convert",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 15
+    },
+    {
+      "name": "Convert live lead to CRM",
+      "method": "POST",
+      "path": "/leads/candidates/:id/convert",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 14
+    },
+    {
+      "name": "Repeated conversion reuses same contact",
+      "method": "POST",
+      "path": "/leads/candidates/:id/convert",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Converted lead cannot be re-reviewed",
+      "method": "PATCH",
+      "path": "/leads/candidates/:id",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Converted contact keeps discovery provenance",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 15
+    },
+    {
+      "name": "Research payload requires offer context",
+      "method": "POST",
+      "path": "/research-runs",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Research requires identity anchor",
+      "method": "POST",
+      "path": "/research-runs",
+      "status": 400,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Foreign contact cannot start research",
+      "method": "POST",
+      "path": "/research-runs",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Create live meeting research",
+      "method": "POST",
+      "path": "/research-runs",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 12
+    },
+    {
+      "name": "Foreign workspace cannot read meeting run",
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Queued meeting run cannot retry",
+      "method": "POST",
+      "path": "/research-runs/:id/retry",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Queued meeting run cannot refresh",
+      "method": "POST",
+      "path": "/research-runs/:id/refresh",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Discover real meeting research sources",
+      "method": "POST",
+      "path": "/research-runs/:id/discover",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 7393
+    },
+    {
+      "name": "Running meeting discovery is not duplicated",
+      "method": "POST",
+      "path": "/research-runs/:id/discover",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Create live outreach research",
+      "method": "POST",
+      "path": "/research-runs",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 14
+    },
+    {
+      "name": "Foreign workspace cannot read outreach run",
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Queued outreach run cannot retry",
+      "method": "POST",
+      "path": "/research-runs/:id/retry",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Queued outreach run cannot refresh",
+      "method": "POST",
+      "path": "/research-runs/:id/refresh",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Discover real outreach research sources",
+      "method": "POST",
+      "path": "/research-runs/:id/discover",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 284
+    },
+    {
+      "name": "TOTP still works after failed backup replay",
+      "method": "POST",
+      "path": "/api/auth/two-factor/verify-totp",
+      "outcome": "setup-corrected",
+      "error": "expected 200; got 401: {\"message\":\"Invalid code\",\"code\":\"INVALID_CODE\"}"
+    },
+    {
+      "name": "Disable TOTP with password",
+      "method": "POST",
+      "path": "/api/auth/two-factor/disable",
+      "outcome": "setup-corrected",
+      "error": "expected 200; got 401: {\"message\":\"Unauthorized\",\"code\":\"UNAUTHORIZED\"}"
+    },
+    {
+      "name": "TOTP disabled flag persisted",
+      "method": "GET",
+      "path": "/api/auth/get-session",
+      "outcome": "setup-corrected",
+      "error": "Cannot read properties of null (reading 'user')"
+    },
+    {
+      "name": "Running outreach discovery is not duplicated",
+      "method": "POST",
+      "path": "/research-runs/:id/discover",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 60021
+    },
+    {
+      "name": "Contact with research history cannot delete",
+      "method": "DELETE",
+      "path": "/crm/contacts/:id",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 14
+    },
+    {
+      "name": "Repeated research retains same CRM identity",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 23
+    },
+    {
+      "name": "Fresh TOTP works after failed backup replay — retest",
+      "method": "POST",
+      "path": "/api/auth/two-factor/verify-totp",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 52
+    },
+    {
+      "name": "Disable TOTP with password — retest",
+      "method": "POST",
+      "path": "/api/auth/two-factor/disable",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 82
+    },
+    {
+      "name": "TOTP disabled flag persisted — retest",
+      "method": "GET",
+      "path": "/api/auth/get-session",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "meeting research reaches completed state",
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 57
+    },
+    {
+      "name": "meeting brief references real stored claims and URLs",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 14
+    },
+    {
+      "name": "meeting goal-specific sections present",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Foreign workspace cannot access meeting brief",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "meeting brief factual signals exclude FAQ questions",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "outcome": "fail",
+      "error": "A question was accepted as a factual signal"
+    },
+    {
+      "name": "Share meeting brief",
+      "method": "POST",
+      "path": "/deal-briefs/:id/share",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 13
+    },
+    {
+      "name": "Anonymous can view explicitly shared meeting brief",
+      "method": "GET",
+      "path": "/shared/briefs/:token",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Revoking meeting share",
+      "method": "DELETE",
+      "path": "/deal-briefs/:id/share",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Revoked meeting share inaccessible",
+      "method": "GET",
+      "path": "/shared/briefs/:token",
+      "status": 410,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "outreach research reaches completed state",
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "outreach brief references real stored claims and URLs",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "outreach goal-specific sections present",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Foreign workspace cannot access outreach brief",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "outreach brief factual signals exclude FAQ questions",
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "outcome": "fail",
+      "error": "A question was accepted as a factual signal"
+    },
+    {
+      "name": "Share outreach brief",
+      "method": "POST",
+      "path": "/deal-briefs/:id/share",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Anonymous can view explicitly shared outreach brief",
+      "method": "GET",
+      "path": "/shared/briefs/:token",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Revoking outreach share",
+      "method": "DELETE",
+      "path": "/deal-briefs/:id/share",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Revoked outreach share inaccessible",
+      "method": "GET",
+      "path": "/shared/briefs/:token",
+      "status": 410,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "London deep cohort completed",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 19
+    },
+    {
+      "name": "London criterion quotes match stored sources",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 13
+    },
+    {
+      "name": "deep deep discovery delivers at least one fully supported buyer",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "outcome": "fail",
+      "error": "Completed search produced zero fully supported buyers"
+    },
+    {
+      "name": "london deep discovery delivers at least one fully supported buyer",
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "outcome": "fail",
+      "error": "Completed search produced zero fully supported buyers"
+    },
+    {
+      "name": "Evidence library populated",
+      "method": "GET",
+      "path": "/evidence",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 12
+    },
+    {
+      "name": "Foreign evidence library is empty",
+      "method": "GET",
+      "path": "/evidence",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Brief library contains both goals",
+      "method": "GET",
+      "path": "/deal-briefs",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Foreign brief library is empty",
+      "method": "GET",
+      "path": "/deal-briefs",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Completion notifications generated",
+      "method": "GET",
+      "path": "/notifications",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Foreign user cannot mark notification read",
+      "method": "POST",
+      "path": "/notifications/:id/read",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Mark completion notification read",
+      "method": "POST",
+      "path": "/notifications/:id/read",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 6
+    },
+    {
+      "name": "Read flag persists",
+      "method": "GET",
+      "path": "/notifications",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Clear own notifications",
+      "method": "DELETE",
+      "path": "/notifications",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Integration capabilities endpoint responds",
+      "method": "GET",
+      "path": "/integrations",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 4
+    },
+    {
+      "name": "Refresh completed brief through API",
+      "method": "POST",
+      "path": "/research-runs/:id/refresh",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "A second refresh cannot run concurrently",
+      "method": "POST",
+      "path": "/research-runs/:id/refresh",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 5
+    },
+    {
+      "name": "Malformed numeric workspace name returns validation error",
+      "method": "PATCH",
+      "path": "/workspace-settings",
+      "outcome": "fail",
+      "error": "expected 400; got 500: {\"statusCode\":500,\"message\":\"Internal server error\"}"
+    },
+    {
+      "name": "Malformed object workspace name returns validation error",
+      "method": "PATCH",
+      "path": "/workspace-settings",
+      "outcome": "fail",
+      "error": "expected 400; got 500: {\"statusCode\":500,\"message\":\"Internal server error\"}"
+    },
+    {
+      "name": "Refreshed research completes again",
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 56
+    },
+    {
+      "name": "Load CRM identity for snapshot tests",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 16
+    },
+    {
+      "name": "Research reuses case-insensitive CRM email identity",
+      "method": "POST",
+      "path": "/research-runs",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 21
+    },
+    {
+      "name": "Email reuse does not overwrite CRM contact",
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Update CRM contact after run creation",
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Existing run snapshot remains immutable",
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 7
+    },
+    {
+      "name": "Create no-results research probe",
+      "method": "POST",
+      "path": "/research-runs",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "No matching public sources returns 422",
+      "method": "POST",
+      "path": "/research-runs/:id/discover",
+      "status": 422,
+      "outcome": "pass",
+      "durationMs": 11081
+    },
+    {
+      "name": "No-results run is marked failed",
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 19
+    },
+    {
+      "name": "Failed research can retry through API",
+      "method": "POST",
+      "path": "/research-runs/:id/retry",
+      "status": 201,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Google social-login initiation creates authorization URL",
+      "method": "POST",
+      "path": "/api/auth/sign-in/social",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Calendar state replay redirects to failure",
+      "method": "GET",
+      "path": "/crm/calendar/callback",
+      "status": 302,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "No Calendar connection created without consent",
+      "method": "GET",
+      "path": "/crm/calendar",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Owner can delete workspace briefs with confirmation",
+      "method": "DELETE",
+      "path": "/workspace-settings/briefs",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Brief library empty after confirmed deletion",
+      "method": "GET",
+      "path": "/deal-briefs",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Completed run with deleted brief cannot refresh",
+      "method": "POST",
+      "path": "/research-runs/:id/refresh",
+      "status": 409,
+      "outcome": "pass",
+      "durationMs": 9
+    },
+    {
+      "name": "Owner can wipe only own research data",
+      "method": "DELETE",
+      "path": "/workspace-settings/research-data",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 20
+    },
+    {
+      "name": "Research wipe preserves CRM contacts",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Research wipe preserves deals",
+      "method": "GET",
+      "path": "/crm/deals",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 8
+    },
+    {
+      "name": "Research wipe preserves follow-ups",
+      "method": "GET",
+      "path": "/crm/tasks",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Research library empty after wipe",
+      "method": "GET",
+      "path": "/research-runs",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 15
+    },
+    {
+      "name": "Discovery library empty after wipe",
+      "method": "GET",
+      "path": "/leads/searches",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Foreign tenant unaffected by research wipe",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 10
+    },
+    {
+      "name": "Owner deletes isolated workspace A",
+      "method": "DELETE",
+      "path": "/workspace-settings",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 11
+    },
+    {
+      "name": "Deleted workspace cannot expose contacts",
+      "method": "GET",
+      "path": "/crm/contacts",
+      "status": 404,
+      "outcome": "pass",
+      "durationMs": 3
+    },
+    {
+      "name": "Owner deletes isolated workspace B",
+      "method": "DELETE",
+      "path": "/workspace-settings",
+      "status": 200,
+      "outcome": "pass",
+      "durationMs": 6
+    }
+  ],
+  "facts": {
+    "leadCapabilities": {
+      "discoveryConfigured": true,
+      "extractionConfigured": true,
+      "maxCandidates": 40,
+      "queriesPerSearch": 30,
+      "publicRegistries": [
+        "GLEIF",
+        "Wikidata",
+        "SEC EDGAR"
+      ],
+      "modes": [
+        "quick",
+        "deep"
+      ]
+    },
+    "untrustedOrigin": {
+      "status": 201,
+      "cors": {
+        "access-control-allow-origin": null,
+        "access-control-allow-credentials": "true",
+        "content-type": "application/json; charset=utf-8"
+      }
+    },
+    "calendar": {
+      "configured": true,
+      "connected": false,
+      "updatedAt": null
+    },
+    "harnessCorrections": [
+      "A rejected organization switch cleared B’s active workspace. Restored it and repeated all tenant checks against existing records; the two initial 404s were test setup effects.",
+      "A TOTP request retried after a rate-limit wait reused an expired code. Generated a fresh code, then repeated verification and disabling successfully."
+    ],
+    "liveSearches": [
+      {
+        "mode": "quick",
+        "criteria": {
+          "industry": "digital marketing agency",
+          "role": "Founder",
+          "location": "Austin",
+          "roleMatch": "exact"
+        },
+        "sources": 15,
+        "candidates": 2,
+        "fullySupported": 1,
+        "needsReview": 1,
+        "failedQueries": 0,
+        "rejectedCandidates": 1,
+        "attempts": 1,
+        "durationSeconds": 14.971,
+        "activity": [
+          {
+            "status": "ok",
+            "credits": 6,
+            "records": 18,
+            "provider": "Tavily",
+            "requests": 3,
+            "operation": "search"
+          }
+        ],
+        "candidatesDetail": [
+          {
+            "name": "Jonathan Windham",
+            "company": "Blackhawk Digital Marketing",
+            "role": "CEO, Founder",
+            "source": "https://blackhawkdm.com/",
+            "missingCriteria": [],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "Headshot of Jonathan Windham, Founder and CEO at Blackhawk.\n\nCEO, Founder",
+                "url": "https://blackhawkdm.com/"
+              },
+              "industry": {
+                "quote": "Digital marketing agency Based in Austin, Texas",
+                "url": "https://blackhawkdm.com/"
+              },
+              "location": {
+                "quote": "Digital marketing agency Based in Austin, Texas",
+                "url": "https://blackhawkdm.com/"
+              }
+            }
+          },
+          {
+            "name": "Ernest Corder",
+            "company": "Redroc Austin",
+            "role": "Founder & President",
+            "source": "https://www.redrocadvertising.com/about-redroc-austin",
+            "missingCriteria": [
+              "industry",
+              "location"
+            ],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "Ernest Corder\n\nFounder & President",
+                "url": "https://www.redrocadvertising.com/about-redroc-austin"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "mode": "deep",
+        "criteria": {
+          "industry": "B2B SaaS",
+          "role": "Head of Sales",
+          "location": "United States",
+          "roleMatch": "function"
+        },
+        "sources": 64,
+        "candidates": 5,
+        "fullySupported": 0,
+        "needsReview": 5,
+        "failedQueries": 0,
+        "rejectedCandidates": 1,
+        "attempts": 1,
+        "durationSeconds": 40.429,
+        "activity": [
+          {
+            "status": "ok",
+            "credits": 12,
+            "records": 36,
+            "provider": "Tavily",
+            "requests": 6,
+            "operation": "search"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 8,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company registry search"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 8,
+            "provider": "Qwen",
+            "requests": 1,
+            "operation": "company planning"
+          },
+          {
+            "status": "ok",
+            "credits": 48,
+            "records": 144,
+            "provider": "Tavily",
+            "requests": 24,
+            "operation": "search"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 1,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 1,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 1,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 1,
+            "provider": "Wikidata",
+            "requests": 2,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 1,
+            "provider": "Wikidata",
+            "requests": 2,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 1,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 1,
+            "provider": "Wikidata",
+            "requests": 2,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 1,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "SEC EDGAR",
+            "requests": 1,
+            "operation": "public-company lookup"
+          },
+          {
+            "status": "ok",
+            "credits": 0,
+            "records": 0,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "ok",
+            "credits": 0,
+            "records": 0,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "ok",
+            "credits": 2,
+            "records": 1,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "ok",
+            "credits": 2,
+            "records": 2,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "partial",
+            "credits": 6,
+            "records": 15,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "full-page extraction"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 9,
+            "provider": "Qwen",
+            "requests": 3,
+            "operation": "people qualification"
+          }
+        ],
+        "candidatesDetail": [
+          {
+            "name": "Scott Shapiro",
+            "company": "SPOTIO",
+            "role": "President of SPOTIO",
+            "source": "https://spotio.com/blog/field-sales-private-equity-value-creation",
+            "missingCriteria": [
+              "role"
+            ],
+            "issues": [],
+            "evidence": {
+              "industry": {
+                "quote": "SPOTIO is a Dallas-based SaaS platform that enables field sales teams to become more efficient and productive since they began operations in 2014.",
+                "url": "https://spotio.com/newsroom/spotio-announces-office-relocation-and-expansion"
+              },
+              "location": {
+                "quote": "Dallas, Texas, 75254,\n\nUnited States",
+                "url": "https://www.cbinsights.com/company/spotio"
+              }
+            }
+          },
+          {
+            "name": "Emanuel Bertolin",
+            "company": "AppDirect",
+            "role": "Chief Revenue Officer",
+            "source": "https://www.appdirect.com/about/leadership",
+            "missingCriteria": [
+              "industry"
+            ],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "### Emanuel Bertolin\n\n##### Chief Revenue Officer\n\nEmanuel, also known as Bert, leads the AppDirect go-to-market teams including sales, account management, business development, AppDirect Capital and other key functions.",
+                "url": "https://www.appdirect.com/about/leadership"
+              },
+              "location": {
+                "quote": "San Francisco, California, 94108,\n\nUnited States",
+                "url": "https://www.cbinsights.com/company/appdirect"
+              }
+            }
+          },
+          {
+            "name": "Tim Maitland",
+            "company": "MarketScale",
+            "role": "Chief Revenue Officer",
+            "source": "https://www.marketscale.com/about",
+            "missingCriteria": [
+              "industry",
+              "location"
+            ],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "Tim Maitland, Chief Revenue Officer",
+                "url": "https://www.marketscale.com/about"
+              }
+            }
+          },
+          {
+            "name": "Josh Sandman",
+            "company": "Draftwise",
+            "role": "Chief Sales Officer",
+            "source": "https://www.draftwise.com/blog/draftwise-promotes-josh-sandman-to-chief-sales-officer",
+            "missingCriteria": [
+              "industry",
+              "location"
+            ],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "NEW YORK — Draftwise, the proprietary legal intelligence platform trusted by over half of the Vault 10 and leading Fortune 500 legal teams, today announced the promotion of Josh Sandman to Chief Sales Officer.\n\nSince joining Draftwise in 2024, Sandman has led the company's global sales organization, helping grow revenue more than sixfold while expanding Draftwise's presence among many of the world's leading law firms and enterprise legal teams. As Chief Sales Officer, he will continue leading Draftwise's global sales strategy and go-to-market organization as the company enters its next phase of growth.",
+                "url": "https://www.draftwise.com/blog/draftwise-promotes-josh-sandman-to-chief-sales-officer"
+              }
+            }
+          },
+          {
+            "name": "Neil Arsenault",
+            "company": "SPOTIO",
+            "role": "Vice President of Sales",
+            "source": "https://spotio.com/newsroom/spotio-strengthens-sales-leadership",
+            "missingCriteria": [
+              "industry",
+              "location"
+            ],
+            "issues": [
+              "Role needs a current source"
+            ],
+            "evidence": {
+              "role": {
+                "quote": "Addison, TX, February 22, 2023 – SPOTIO, the leading field sales engagement provider, has strengthened its leadership team by adding a new Chief Revenue Officer, Scott Shapiro, and Vice President of Sales, Neil Arsenault.",
+                "url": "https://spotio.com/newsroom/spotio-strengthens-sales-leadership"
+              }
+            }
+          }
+        ]
+      },
+      {
+        "mode": "deep",
+        "criteria": {
+          "industry": "B2B SaaS",
+          "role": "Head of Sales",
+          "location": "London",
+          "roleMatch": "function"
+        },
+        "sources": 64,
+        "candidates": 3,
+        "fullySupported": 0,
+        "needsReview": 3,
+        "failedQueries": 0,
+        "rejectedCandidates": 4,
+        "attempts": 1,
+        "durationSeconds": 41.363,
+        "activity": [
+          {
+            "status": "ok",
+            "credits": 12,
+            "records": 36,
+            "provider": "Tavily",
+            "requests": 6,
+            "operation": "search"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 11,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company registry search"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 6,
+            "provider": "Qwen",
+            "requests": 1,
+            "operation": "company planning"
+          },
+          {
+            "status": "ok",
+            "credits": 36,
+            "records": 108,
+            "provider": "Tavily",
+            "requests": 18,
+            "operation": "search"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 2,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 1,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 2,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 1,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 1,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 1,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 1,
+            "provider": "Wikidata",
+            "requests": 2,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 2,
+            "provider": "GLEIF",
+            "requests": 1,
+            "operation": "company identity lookup"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 0,
+            "provider": "Wikidata",
+            "requests": 2,
+            "operation": "company website corroboration"
+          },
+          {
+            "status": "ok",
+            "credits": 0,
+            "records": 2,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "ok",
+            "credits": 0,
+            "records": 1,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "ok",
+            "credits": 0,
+            "records": 1,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "ok",
+            "credits": 0,
+            "records": 0,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "company-site crawl"
+          },
+          {
+            "status": "partial",
+            "credits": 4,
+            "records": 12,
+            "provider": "Tavily",
+            "requests": 1,
+            "operation": "full-page extraction"
+          },
+          {
+            "status": "ok",
+            "credits": null,
+            "records": 3,
+            "provider": "Qwen",
+            "requests": 3,
+            "operation": "people qualification"
+          }
+        ],
+        "candidatesDetail": [
+          {
+            "name": "James Baldwin",
+            "company": "Turtl",
+            "role": "VP of Sales",
+            "source": "https://uk.linkedin.com/in/jamesnbaldwin",
+            "missingCriteria": [
+              "industry"
+            ],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "- VP of Sales at Turtl (Aug 2025 to present)",
+                "url": "https://uk.linkedin.com/in/jamesnbaldwin"
+              },
+              "location": {
+                "quote": "Location: London Area, United Kingdom",
+                "url": "https://uk.linkedin.com/in/jamesnbaldwin"
+              }
+            }
+          },
+          {
+            "name": "Rich Dewire",
+            "company": "Alfa Financial Software",
+            "role": "Chief Revenue Officer",
+            "source": "https://uk.linkedin.com/in/richdewire",
+            "missingCriteria": [
+              "industry"
+            ],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "Current role: Chief Revenue Officer\nSeniority: C-Level, Sales\nLocation: Greater London, England, United Kingdom\nExperience: 25 years 7 months\nLinkedIn:  · 680 followers\n\n## Experience\n- Chief Revenue Officer at Alfa Financial Software (Sep 2019 to present)",
+                "url": "https://uk.linkedin.com/in/richdewire"
+              },
+              "location": {
+                "quote": "It was founded in 1990 and is based in London, England.",
+                "url": "https://www.cbinsights.com/company/alfa-financial-software"
+              }
+            }
+          },
+          {
+            "name": "Jamal Shakir",
+            "company": "Exclaimer",
+            "role": "VP Sales EMEA and APAC",
+            "source": "https://rocketreach.co/sonny-dillinger-email_64356887",
+            "missingCriteria": [
+              "industry"
+            ],
+            "issues": [],
+            "evidence": {
+              "role": {
+                "quote": "Jamal Shakir #### VP Sales EMEA and APAC at Exclaimer",
+                "url": "https://rocketreach.co/sonny-dillinger-email_64356887"
+              },
+              "location": {
+                "quote": "LONDON, UK – 3rd November 2022 - Today, Exclaimer, a leading email signature solutions provider, announced the expansion of its executive team with three significant C-level hires.",
+                "url": "https://exclaimer.com/company/press-releases/new-executive-team-hires"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "research": [
+      {
+        "goal": "meeting",
+        "status": "completed",
+        "sources": 9,
+        "evidence": 5,
+        "keySignals": 2,
+        "urgency": "Low",
+        "elapsedSeconds": 40.949,
+        "signalClaims": [
+          {
+            "claim": "Jonathan Windham, based in Austin, TX, US, is currently a Chief Executive Officer and Founder at Blackhawk Digital Marketing.",
+            "url": "https://rocketreach.co/jonathan-windham-email_23970367"
+          },
+          {
+            "claim": "What is Jonathan Windham's role at Blackhawk Digital Marketing?",
+            "url": "https://contactout.com/jonathan-windham-21088"
+          }
+        ],
+        "outreachDraft": null,
+        "summary": "Prepare your meeting with Jonathan Windham at Blackhawk Digital Marketing using 2 source-backed signal(s). Explore whether Lead Trace addresses a current priority; the research does not establish a buying need."
+      },
+      {
+        "goal": "outreach",
+        "status": "completed",
+        "sources": 9,
+        "evidence": 5,
+        "keySignals": 2,
+        "urgency": "Low",
+        "elapsedSeconds": 33.536,
+        "signalClaims": [
+          {
+            "claim": "Jonathan Windham, based in Austin, TX, US, is currently a Chief Executive Officer and Founder at Blackhawk Digital Marketing.",
+            "url": "https://rocketreach.co/jonathan-windham-email_23970367"
+          },
+          {
+            "claim": "What is Jonathan Windham's role at Blackhawk Digital Marketing?",
+            "url": "https://contactout.com/jonathan-windham-21088"
+          }
+        ],
+        "outreachDraft": "Hi Jonathan,\n\nI came across this public signal: Jonathan Windham, based in Austin, TX, US, is currently a Chief Executive Officer and Founder at Blackhawk Digital Marketing.\n\nI’m reaching out about Lead Trace. Is this area a current priority for your team at Blackhawk Digital Marketing? If so, would a short conversation be useful?\n\nBest,\nLocal API Audit a",
+        "summary": "Prepare your outreach with Jonathan Windham at Blackhawk Digital Marketing using 2 source-backed signal(s). Explore whether Lead Trace addresses a current priority; the research does not establish a buying need."
+      }
+    ],
+    "cors": {
+      "untrustedPreflightStatus": 204,
+      "untrustedAllowedOrigin": null
+    },
+    "workerRuntime": {
+      "pid": 56255,
+      "providerKeysPresentAtLaunch": {
+        "DASHSCOPE_API_KEY": false,
+        "OPENAI_API_KEY": false,
+        "RESEND_API_KEY": false
+      },
+      "assessment": "Running worker launch environment has no model keys. Worker code reads DATABASE_URL from .env but does not load its other keys. Completed briefs match deterministic fallback output; model-backed worker research was not demonstrated in this local run.",
+      "sourceFiles": [
+        "apps/worker/src/lead_trace_worker/db.py:27",
+        "apps/worker/src/lead_trace_worker/llm.py:110",
+        "apps/worker/src/lead_trace_worker/stages.py:108"
+      ]
+    },
+    "independentSourceCheck": {
+      "url": "https://blackhawkdm.com/",
+      "checkedAt": "2026-10-24T02:45:19.853Z",
+      "observation": "Official homepage identifies an Austin digital marketing agency and Jonathan as Founder/CEO. The linked LinkedIn URL identifies Jonathan Windham. No buying interest or contact deliverability was validated."
+    },
+    "unverified": [
+      "Google OAuth consent, token exchange, actual event creation, invitation delivery, and token revocation require a connected Google account; only initiation, PKCE/state/cancellation/disconnected guards were tested live.",
+      "Verification/reset/invitation/OTP/completion email delivery was not tested; no external messages were intentionally sent.",
+      "Full model-backed Python research remains unverified in the running worker environment; API lead planning and qualification did use the configured model provider.",
+      "No browser UI, production deployment, load/concurrency/fault-injection, long-running lease expiry, or representative lead precision/recall benchmark was performed."
+    ],
+    "cleanup": {
+      "completedAt": "2026-10-24T02:45:48.186Z",
+      "testWorkspacesRemoved": 2,
+      "testUsersRemoved": 3,
+      "remainingAuditRows": {
+        "prospect": 0,
+        "researchRun": 0,
+        "evidence": 0,
+        "evidenceSource": 0,
+        "dealBrief": 0,
+        "leadSearch": 0,
+        "crmDeal": 0,
+        "crmTask": 0,
+        "crmNote": 0,
+        "calendarMeeting": 0,
+        "calendarConnection": 0
+      },
+      "sharedProcessesPreserved": [
+        "Web server localhost:3000 PID 56256",
+        "API localhost:3001 PID 56378",
+        "Research worker PID 56255",
+        "Shared PostgreSQL container lead-trace-postgres-1"
+      ],
+      "taskOwnedServersStarted": 0
+    }
+  },
+  "schemaVersion": "lead-trace-live-api-audit.v1",
+  "startedAt": "2026-10-24T02:38:21.601Z",
+  "completedAt": "2026-10-24T02:47:16.108489+00:00",
+  "commit": "9b48d53",
+  "apiBase": "http://localhost:3001",
+  "methodology": "HTTP requests against the existing local API and shared worker. Only disposable verified identities/member fixtures were bootstrapped directly in the local database; feature records and operations used APIs. Live Tavily/model/public-registry discovery, not seeded leads. Test-only data removed afterward.",
+  "findings": [
+    {
+      "id": "F1",
+      "priority": "P1",
+      "title": "Deep search did not yield a fully supported buyer in either SaaS cohort",
+      "observed": "US: 5 candidates / 0 fully supported; London: 3 / 0. Both jobs completed and their configured provider operations ran. Every London candidate lacks industry support. The quick Austin cohort produced 2 candidates / 1 fully supported.",
+      "impact": "A completed deep-search job is not a successful lead-generation outcome. Two deep cohorts consumed 122 reported Tavily credits without delivering a buyer backed on every requested criterion.",
+      "nextStep": "Improve company/industry context carried into person qualification, entity matching, and buyer-profile targeting; rerun the same cohorts before describing deep discovery as reliable. Keep unsupported candidates in Needs review.",
+      "source": "apps/api/src/leads/lead-deep-discovery.service.ts"
+    },
+    {
+      "id": "F2",
+      "priority": "P1",
+      "title": "The running Python worker did not demonstrate model-backed research",
+      "observed": "The existing worker launched without DASHSCOPE_API_KEY or OPENAI_API_KEY. Its database loader reads only DATABASE_URL from .env. Both completed briefs match the deterministic fallback text; the API, which loads .env separately, successfully used Qwen for lead planning/qualification.",
+      "impact": "Completed research and a ready brief do not prove that the Python model path ran. This is a finding about the tested local worker environment; production was not inspected.",
+      "nextStep": "Start the worker with its configured provider environment and rerun both goals. Make active model/fallback mode visible in health or job metadata. No environment or server configuration was changed in this audit.",
+      "source": "apps/worker/src/lead_trace_worker/db.py:27; apps/worker/src/lead_trace_worker/llm.py:110; apps/worker/src/lead_trace_worker/stages.py:108"
+    },
+    {
+      "id": "F3",
+      "priority": "P2",
+      "title": "A FAQ question was stored and cited as factual evidence",
+      "observed": "Both briefs include the question “What is Jonathan Windham’s role at Blackhawk Digital Marketing?” as a key signal and talking point. It resolves to stored evidence, but it is not a factual assertion.",
+      "impact": "Citation integrity passes while semantic evidence quality fails. In each initial brief this was one of only two displayed key signals.",
+      "nextStep": "Exclude interrogative/FAQ fragments and pair answers with their questions before extraction; test this case in both fallback and model paths.",
+      "source": "apps/worker/src/lead_trace_worker/extract.py:153; apps/worker/src/lead_trace_worker/llm.py:366"
+    },
+    {
+      "id": "F4",
+      "priority": "P2",
+      "title": "Malformed workspace names return HTTP 500",
+      "observed": "Authenticated PATCH /workspace-settings with {\"name\":123} or {\"name\":{\"invalid\":true}} returns 500 Internal server error rather than a validation response.",
+      "impact": "An ordinary bad request reaches name?.trim() with a non-string value. The server stays available, but the endpoint handles typed input inconsistently with CRM DTO validation.",
+      "nextStep": "Validate the request with a DTO or a string type check before trimming; return HTTP 400.",
+      "source": "apps/api/src/auth/workspace-settings.service.ts:53"
+    }
+  ],
+  "totals": {
+    "recordedChecks": 286,
+    "passed": 275,
+    "failedAssertions": 6,
+    "setupCorrected": 5,
+    "distinctFindings": 4
+  },
+  "routeCoverage": [
+    {
+      "method": "DELETE",
+      "path": "/crm/calendar",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/crm/contacts/:id",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/crm/deals/:id",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/crm/notes/:id",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/crm/tasks/:id",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/deal-briefs/:id/share",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/notifications",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/workspace-settings",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/workspace-settings/briefs",
+      "exercised": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/workspace-settings/research-data",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/account-context",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/auth-config",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/calendar",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/calendar/callback",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/contacts",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/contacts/:id",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/contacts/export",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/deals",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/members",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/crm/tasks",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/deal-briefs",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/deal-briefs/:id",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/evidence",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/integrations",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/leads/capabilities",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/leads/searches",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/leads/searches/:id",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/notifications",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/research-runs",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/research-runs/:id",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/shared/briefs/:token",
+      "exercised": true
+    },
+    {
+      "method": "GET",
+      "path": "/workspace-settings",
+      "exercised": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/crm/contacts/:id",
+      "exercised": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/crm/deals/:id",
+      "exercised": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/crm/tasks/:id",
+      "exercised": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/leads/candidates/:id",
+      "exercised": true
+    },
+    {
+      "method": "PATCH",
+      "path": "/workspace-settings",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/account-context/security-confirmations",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/account-context/security-confirmations/verify",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/crm/calendar/connect",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/crm/calendar/meetings",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/crm/contacts",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/crm/contacts/:id/notes",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/crm/contacts/import",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/crm/deals",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/crm/tasks",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/deal-briefs/:id/share",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/leads/candidates/:id/convert",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/leads/searches",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/leads/searches/:id/cancel",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/leads/searches/:id/discover",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/notifications/:id/read",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/research-runs",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/research-runs/:id/discover",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/research-runs/:id/refresh",
+      "exercised": true
+    },
+    {
+      "method": "POST",
+      "path": "/research-runs/:id/retry",
+      "exercised": true
+    }
+  ]
+}

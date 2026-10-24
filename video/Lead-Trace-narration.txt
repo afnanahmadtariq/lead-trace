@@ -1,15 +1,23 @@
-Insight I Q is now Lead Trace. We listened to feedback from industry professionals and used it to shape a broader direction for our project.
+Lead Trace connects lead discovery, a built-in CRM, and evidence-backed sales research in one workspace.
 
-Today, Lead Trace brings prospect research, source evidence, and deal briefs together.
+We listened to feedback from industry professionals. Insight I Q is now Lead Trace, expanded around the daily work of sales teams.
 
-We are building toward lead generation, customer relationship management, and connected sales workflows. Those features are planned, and we will refine them as we progress.
+Start with your buyer profile. Search companies and people, then inspect the evidence for industry, role, and location.
 
-Start with a prospect and describe what you sell. Choose meeting preparation or personalized outreach. The application keeps your prospect, offer, and goal together.
+Deep discovery combines web search, full-page reading, company-site crawls, and public registries. A source-supported match still needs human review.
 
-Research runs in the background. The system finds public sources, extracts relevant claims, and builds a brief with the evidence attached.
+Qualify a prospect before saving it to CRM. Source quotes stay attached to the contact.
 
-Each conversation angle connects a source claim to a possible fit for your offer. A question helps you test whether that fit is real. Hypotheses stay separate from facts.
+Keep ownership, notes, opportunities, and research together. Each contact highlights the next follow-up.
 
-Open a source, check the gaps, and review the outreach draft. Copy a question or download the complete brief for your own workflow. These screens use demonstration data.
+Use Board or Table view to track deals. Filter follow-ups by overdue, today, or upcoming, and reopen completed actions.
 
-Our next stage expands that research foundation toward lead generation and C R M. The feature set and release plans are still taking shape. Lead Trace. Follow the evidence. Move the conversation forward. Visit lead trace dot online.
+Prepare for a meeting or draft outreach using your prospect and offer context. Inspect source claims, hypotheses, and questions before use.
+
+Discovery and research run in the background. The API and Python worker use stored evidence, with Qwen supporting qualification and briefing.
+
+Connect your own Google Calendar to create a meeting from a contact. Invitations are optional. Two-way Calendar sync and email integration remain planned.
+
+A recorded live audit found nine prospects, with one supported by all requested criteria. The CRM-to-research journey completed. This small cohort is not a coverage benchmark.
+
+These product screens contain fictional sample data. Lead Trace. Find the lead, know the context, and track the next step. Visit lead trace dot online.

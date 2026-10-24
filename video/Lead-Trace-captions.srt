@@ -1,91 +1,116 @@
 1
-00:00:00,000 --> 00:00:02,180
-InsightIQ is now Lead Trace.
+00:00:00,000 --> 00:00:06,436
+Lead Trace connects lead discovery, a built-in CRM, and
+evidence-backed sales research in one workspace.
 
 2
-00:00:02,340 --> 00:00:07,984
-We listened to feedback from industry professionals and used it to shape a broader
-direction for our project.
+00:00:06,836 --> 00:00:09,575
+We listened to feedback from industry professionals.
 
 3
-00:00:08,145 --> 00:00:13,729
-Today, Lead Trace brings prospect research, source evidence, and deal briefs
-together.
+00:00:09,575 --> 00:00:14,663
+InsightIQ is now Lead Trace, expanded around the daily work of
+sales teams.
 
 4
-00:00:13,889 --> 00:00:20,033
-We are building toward lead generation, customer relationship management, and
-connected sales workflows.
+00:00:15,063 --> 00:00:17,173
+Start with your buyer profile.
 
 5
-00:00:20,193 --> 00:00:23,744
-Those features are planned, and we will refine them as we progress.
+00:00:17,173 --> 00:00:22,658
+Search companies and people, then inspect the evidence for
+industry, role, and location.
 
 6
-00:00:23,904 --> 00:00:26,657
-Start with a prospect and describe what you sell.
+00:00:23,058 --> 00:00:28,971
+Deep discovery combines web search, full-page reading, company-
+site crawls, and public registries.
 
 7
-00:00:26,817 --> 00:00:29,869
-Choose meeting preparation or personalized outreach.
+00:00:28,971 --> 00:00:32,419
+A source-supported match still needs human review.
 
 8
-00:00:30,029 --> 00:00:33,998
-The application keeps your prospect, offer, and goal together.
+00:00:32,819 --> 00:00:35,623
+Qualify a prospect before saving it to CRM.
 
 9
-00:00:34,158 --> 00:00:36,104
-Research runs in the background.
+00:00:35,623 --> 00:00:38,076
+Source quotes stay attached to the contact.
 
 10
-00:00:36,264 --> 00:00:42,673
-The system finds public sources, extracts relevant claims, and builds a brief with
-the evidence attached.
+00:00:38,476 --> 00:00:42,182
+Keep ownership, notes, opportunities, and research together.
 
 11
-00:00:42,833 --> 00:00:47,324
-Each conversation angle connects a source claim to a possible fit for your offer.
+00:00:42,182 --> 00:00:45,359
+Each contact highlights the next follow-up.
 
 12
-00:00:47,484 --> 00:00:50,197
-A question helps you test whether that fit is real.
+00:00:45,759 --> 00:00:49,178
+Use Board or Table view to track deals.
 
 13
-00:00:50,357 --> 00:00:52,885
-Hypotheses stay separate from facts.
+00:00:49,178 --> 00:00:53,878
+Filter follow-ups by overdue, today, or upcoming, and reopen
+completed actions.
 
 14
-00:00:53,045 --> 00:00:57,078
-Open a source, check the gaps, and review the outreach draft.
+00:00:54,278 --> 00:00:59,847
+Prepare for a meeting or draft outreach using your prospect and
+offer context.
 
 15
-00:00:57,238 --> 00:01:01,116
-Copy a question or download the complete brief for your own workflow.
+00:00:59,847 --> 00:01:03,274
+Inspect source claims, hypotheses, and questions before use.
 
 16
-00:01:01,276 --> 00:01:03,538
-These screens use demonstration data.
+00:01:03,674 --> 00:01:06,466
+Discovery and research run in the background.
 
 17
-00:01:03,698 --> 00:01:08,629
-Our next stage expands that research foundation toward lead generation and CRM.
+00:01:06,466 --> 00:01:12,051
+The API and Python worker use stored evidence, with Qwen
+supporting qualification and briefing.
 
 18
-00:01:08,789 --> 00:01:11,947
-The feature set and release plans are still taking shape.
+00:01:12,451 --> 00:01:17,060
+Connect your own Google Calendar to create a meeting from a
+contact.
 
 19
-00:01:12,107 --> 00:01:13,040
-Lead Trace.
+00:01:17,060 --> 00:01:18,213
+Invitations are optional.
 
 20
-00:01:13,200 --> 00:01:14,630
-Follow the evidence.
+00:01:18,213 --> 00:01:21,286
+Two-way Calendar sync and email integration remain planned.
 
 21
-00:01:14,790 --> 00:01:16,768
-Move the conversation forward.
+00:01:21,686 --> 00:01:27,554
+A recorded live audit found nine prospects, with one supported
+by all requested criteria.
 
 22
-00:01:16,928 --> 00:01:18,952
+00:01:27,554 --> 00:01:29,231
+The CRM-to-research journey completed.
+
+23
+00:01:29,231 --> 00:01:32,584
+This small cohort is not a coverage benchmark.
+
+24
+00:01:32,984 --> 00:01:35,766
+These product screens contain fictional sample data.
+
+25
+00:01:35,766 --> 00:01:36,561
+Lead Trace.
+
+26
+00:01:36,561 --> 00:01:40,933
+Find the lead, know the context, and track the next step.
+
+27
+00:01:40,933 --> 00:01:42,921
 Visit lead trace dot online.

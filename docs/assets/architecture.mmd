@@ -1,6 +1,12 @@
+%%{init: {'theme':'base','themeVariables': {'fontFamily':'Helvetica Neue, Arial, sans-serif','primaryColor':'#FFFFFF','primaryTextColor':'#173B75','primaryBorderColor':'#C4DAF5','lineColor':'#1768C7','background':'#F7FAFF'}}}%%
 flowchart LR
-    A["Web dashboard<br/>Next.js"] <--> B["API and accounts<br/>NestJS"]
-    B <--> C["Data and job queue<br/>PostgreSQL"]
-    C <--> D["Research worker<br/>Python + LangGraph"]
-    B <--> E["Public discovery<br/>Tavily"]
-    D <--> F["AI inference<br/>Qwen<br/>DashScope"]
+    Web("<b>Web dashboard</b><br/>Next.js · Cloudflare / OpenNext") --> API("<b>API and accounts</b><br/>NestJS · Better Auth<br/>CRM + lead jobs")
+    API --> DB("<b>Data and jobs</b><br/>PostgreSQL · Prisma · job leases")
+    DB --> Worker("<b>Research worker</b><br/>Python · LangGraph")
+    API --> Discovery("<b>Public discovery and company registries</b><br/>Tavily Search · Extract · Crawl<br/>GLEIF · Wikidata · SEC EDGAR")
+    API --> Model("<b>AI inference</b><br/>Qwen / DashScope<br/>Qualification + briefs")
+    Worker --> Model
+    API --> Calendar("<b>Optional integration</b><br/>Google Calendar<br/>OAuth · meetings")
+    classDef component fill:#FFFFFF,stroke:#C4DAF5,stroke-width:2px,color:#173B75,rx:12,ry:12;
+    class Web,API,DB,Worker,Discovery,Model,Calendar component;
+    linkStyle default stroke:#1768C7,stroke-width:2px;
